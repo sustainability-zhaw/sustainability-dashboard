@@ -1,0 +1,164 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="assets/css/index.css">
+        <script src="assets/js/bootstrap.min.js" defer></script>
+    </head>
+    <body>
+        <nav class="navbar sticky-top navbar-expand-sm navbar-light bg-light">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item" id="download">
+                  <a class="nav-link disabled" aria-current="page" href="#"><i class="bi-download " role="img"></i> Download Results</a>
+                </li>
+                
+                <li class="nav-item" id="visualize">
+                    <a class="nav-link disabled" aria-current="page" href="#"><i class="bi-bar-chart-line " role="img"></i> Visualize</a>
+                </li>
+
+                <li class="nav-item" id="people-list">
+                    <a class="nav-link disabled" aria-current="page" href="#"><i class="bi-person-lines-fill " role="img"></i> People</a>
+                </li>
+
+              </ul>
+            </div>
+          
+            <ul class="navbar-nav ms-auto me-2 me-lg-0 align-middle">
+                
+                <li class="nav-item " id="newsearch">
+                    <a class="nav-link disabled" aria-current="page" href="#"><i class=" bi-search" role="img"></i> New Search</a>
+                </li>
+                <li class="nav-item" id="bookmark">
+                    <a class="nav-link disabled" aria-current="page" href="#"><i class="bi-search-heart " role="img"></i> Bookmark Search</a>
+                </li>
+
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle disabled"  href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi-journal-bookmark " role="img"></i> Bookmarks
+                  </a>
+                  <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <li><a class="dropdown-item" href="#">Action</a></li>
+                    <li><a class="dropdown-item" href="#">Another action</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                  </ul>
+                </li>
+
+                <li class="nav-item fs-4" id="configure">
+                    <a class="nav-link disabled" aria-current="page" href="#"><i class="bi-wrench-adjustable-circle " role="img"></i></a>
+                </li>
+                <li class="nav-item fs-4" id="logout">
+                <a class="nav-link" aria-current="page" href="#"><i class="bi-unlock" role="img"></i></a>
+              </li>
+              <li class="nav-item" id="zhaw-about">
+                <a class="navbar-brand align-middle ls-4" disabled href="#"><i class="zhaw-logo"></i></a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+        <div id="mainarea">
+            <div>
+            <div class="searchbar">
+                <div class="searchform">
+                    <form>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="searchterms">
+                            <span class="input-group-text" id="basic-addon2">Press Return to add</span>
+                        </div>
+                    </form>
+                </div>
+                <div class="searchoptions">
+                    <div>
+                        <div class="optioncontainer">
+                            <span class="searchoption cat mark-01"></span>
+                            <span class="optionclose"><i class="bi-x"></i></span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="optioncontainer">
+                            <span class="searchoption">Some Search Term</span>
+                            <span class="optionclose"><i class="bi-x"></i></span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="optioncontainer">
+                            <span class="searchoption cat mark-W"></span>
+                            <span class="optionclose"><i class="bi-x"></i></span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="optioncontainer">
+                            <span class="searchoption"><i class="bi-person-circle"></i> glah</span>
+                            <span class="optionclose"><i class="bi-x"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="resulttypes">
+                
+                <div>
+                    <div id="type_publicataions">
+                        <span class="type active">Publications</span><span class="counter"  id="typecountPUB">123</span>
+                    </div>
+                </div>
+            
+                <div>
+                    <div id="type_projects">
+                        <span class="type">Projects</span><span class="counter"  id="typecountPRJ">321</span>
+                    </div>
+                </div>
+                <div>
+                    <div id="type_education">
+                        <span class="type">Modules</span><span class="counter"  id="typecountEDU">123</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="results">
+                Results
+            </div>
+        </div>
+        <header class="sidebar">
+            <h3>Sustainability Development Goals</h3>
+                <div class="listgrid">
+                    <div class="cat cat-01"><span class="marker mark-01"></span><span class="counter"  id="catcount01"></span></div>
+                    <div class="cat cat-02"><span class="marker mark-02"></span><span class="counter"  id="catcount02"></span></div>
+                    <div class="cat cat-03"><span class="marker mark-03"></span><span class="counter"  id="catcount03">5</span></div>
+                    <div class="cat cat-04"><span class="marker mark-04"></span><span class="counter"  id="catcount04"></span></div>
+                    <div class="cat cat-05"><span class="marker mark-05"></span><span class="counter"  id="catcount05"></span></div>
+                    <div class="cat cat-06"><span class="marker mark-06"></span><span class="counter"  id="catcount06"></span></div>
+                    <div class="cat cat-07"><span class="marker mark-07"></span><span class="counter"  id="catcount07"></span></div>
+                    <div class="cat cat-08"><span class="marker mark-08"></span><span class="counter"  id="catcount08"></span></div>
+                    <div class="cat cat-09"><span class="marker mark-09"></span><span class="counter"  id="catcount09"></span></div>
+                    <div class="cat cat-10"><span class="marker mark-10"></span><span class="counter"  id="catcount10"></span></div>
+                    <div class="cat cat-11"><span class="marker mark-11"></span><span class="counter"  id="catcount11"></span></div>
+                    <div class="cat cat-12"><span class="marker mark-12"></span><span class="counter"  id="catcount12"></span></div>
+                    <div class="cat cat-13"><span class="marker mark-13"></span><span class="counter"  id="catcount13"></span></div>
+                    <div class="cat cat-14"><span class="marker mark-14"></span><span class="counter"  id="catcount14"></span></div>
+                    <div class="cat cat-15"><span class="marker mark-15"></span><span class="counter"  id="catcount15"></span></div>
+                    <div class="cat cat-16"><span class="marker mark-16"></span><span class="counter"  id="catcount16"></span></div>
+                </div>
+            <h3>Departments</h3>
+                <div class="listgrid">
+                    <div class="cat cat-A"><span class="marker mark-A"></span><span class="counter"  id="catcountA"></span></div>
+                    <div class="cat cat-G"><span class="marker mark-G"></span><span class="counter"  id="catcountG"></span></div>
+                    <div class="cat cat-L"><span class="marker mark-L"></span><span class="counter"  id="catcountL"></span></div>
+                    <div class="cat cat-N"><span class="marker mark-N"></span><span class="counter"  id="catcountN"></span></div>
+                    <div class="cat cat-P"><span class="marker mark-P"></span><span class="counter"  id="catcountP"></span></div>
+                    <div class="cat cat-S"><span class="marker mark-S"></span><span class="counter"  id="catcountS"></span></div>
+                    <div class="cat cat-T"><span class="marker mark-T"></span><span class="counter"  id="catcountT"></span></div>
+                    <div class="cat cat-W"><span class="marker mark-W"></span><span class="counter"  id="catcountW"></span></div>
+                </div>
+
+            <h3>People</h3>
+            <div class="peoplelist">
+                xx
+            </div>
+        </header>
+    </div>
+    </body>
+</html>
