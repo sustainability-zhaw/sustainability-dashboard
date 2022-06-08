@@ -1,0 +1,134 @@
+.resultcontainer {
+    display: grid;
+    grid-template-columns: auto 5em;
+    // gap: .3em;
+
+    margin-bottom: 1em;
+
+    @extend .border;
+
+    .title {
+        @extend .fw-bolder;
+
+        grid-column: 1;
+        grid-row: 1;
+    }
+    .authors {
+        grid-column: 1 / span 2;
+        grid-row: 2;
+
+        .mark, .counter {
+            display: inline-block;
+            text-align: center;
+            padding: 0;
+            height: $font-size-base;
+            font-size: $font-size-base * .9;
+            line-height: $font-size-base;
+            vertical-align: baseline;
+        }
+        .counter {
+            padding-right: .4em;
+            padding-left: .4em;
+        }
+        .mark {
+            margin-left: 0.5em;
+            width: $font-size-base* 2;
+        }
+    }
+    .year {
+        grid-column: 2;
+        grid-row: 1;
+        text-align: center;
+    }
+    .tools {
+        grid-column: 2;
+        grid-row: 3;
+        text-align: center;
+
+        .tool {
+            display: inline-block;
+            margin: .3em;
+            line-height: 1em;
+        }
+    }
+    .categories {
+        grid-column: 1;
+        grid-row: 3;
+
+        .mark {
+            width: 3em;
+            // text-align: center;
+            padding-right: .5em;
+            padding-left: .5em;
+            margin-right: .5em;
+        }
+    }
+
+    .authors,
+    .type,
+    .categories,
+    .abstract, 
+    .keywords,
+    .classification,
+    .type,
+    .year,
+    .tools,
+    .title {
+        @extend .border;
+        padding: .2em;
+    }
+
+    .authors,
+    .type,
+    .categories,
+    .abstract, 
+    .keywords,
+    .classification {        
+        margin-left: 2em;
+
+        &::before {
+            @extend .col-2;
+            @extend .fw-bolder;
+            display: inline-block;
+            color: $gray-600;
+            margin-right: 2em;
+        }
+    }
+
+    .abstract {
+        grid-column: 1 / span 2;
+        grid-row: 4;
+
+        &::before {
+            content: "Abstract:";
+        }
+    }
+    .keywords {
+        grid-column: 1;
+        grid-row: 5;
+
+        &::before {
+            
+            content: "Keywords:";
+        }
+    }
+    .classification {
+        grid-column: 1 / span 2;
+        grid-row: 6;
+
+        &::before {
+            content: "Classifiation:";
+        }
+    }
+    .type {
+        grid-column: 1 / span 2;
+        grid-row: 5;
+
+        background-color: $white;
+        color: inherit;
+
+        &::before {
+            content: "Type:";
+        }
+    }
+}
