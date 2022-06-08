@@ -57,3 +57,4 @@ $utilities-bg-colors: map-loop($utilities-colors, rgba-css-var, "$key", "bg");
 @import "baseline";
 @import "zhaw_font";
 @import "sidebar";
+@import "results";
