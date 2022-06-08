@@ -1,37 +1,36 @@
-$sdg01: #E4253C;
-$sdg02: #DEA73A;
-$sdg03: #4C9F45;
-$sdg04: #C5202E;
-$sdg05: #F0412B;
-$sdg06: #29BEE2;
-$sdg07: #FAC315;
-$sdg08: #A21C44;
-$sdg09: #F26A2C;
-$sdg10: #DD1768;
-$sdg11: #F99D27;
-$sdg12: #BE8B2C;
-$sdg13: #417F45;
-$sdg14: #1C97D3;
-$sdg15: #5DBB47;
-$sdg16: #06699E;
-
-$deptA: #000000; 
-$deptG: #D59544; 
-$deptL: #1D3474; 
-$deptN: #799DCB; 
-$deptP: #EC702C; 
-$deptS: #BABE55; 
-$deptT: #CF312D; 
-$deptW: #558FBF; 
-
 $zhawlogo: #104D7D;
 
-.counter {                  
-    color: $gray-600;
-    background-color: $gray-400;
-}
+$sdgColors: (
+    1: #E4253C,
+    2: #DEA73A,
+    3: #4C9F45,
+    4: #C5202E,
+    5: #F0412B,
+    6: #29BEE2,
+    7: #FAC315,
+    8: #A21C44,
+    9: #F26A2C,
+    10: #DD1768,
+    11: #F99D27,
+    12: #BE8B2C,
+    13: #417F45,
+    14: #1C97D3,
+    15: #5DBB47,
+    16: #06699E 
+);
 
+$deptColors: (
+    "A": #000000,
+    "G": #D59544,
+    "L": #1D3474,
+    "N": #799DCB,
+    "P": #EC702C,
+    "S": #BABE55,
+    "T": #CF312D,
+    "W": #558FBF
+);
 
+// The search option MUST be first, because it overrides the mark classes otherwise
 .searchoption {
     background-color: $gray-500;
 
@@ -40,185 +39,42 @@ $zhawlogo: #104D7D;
     }
 }
 
-.optionclose {
-    background-color: $gray-500;
+@each $id, $code in $sdgColors {
+    $nullid: $id;
+    @if $id < 10 {
+        $nullid: "0#{$id}";
+    }
+
+    .mark-#{$nullid} {
+        background-color: $code;
+        &::before {
+            content: "#{$id}";
+        }
+    }
 }
+
+@each $id, $code in $deptColors {
+    .mark-#{$id} {
+        background-color: $code;
+        &::before {
+            content: "#{$id}";
+        }
+    }
+}
+
 
 .mark {
     color: $white;
 }
 
-.mark-01 {
-    background-color: $sdg01;
-
-    &::before {
-        content: "1";
-    }
+.counter {                  
+    color: $gray-600;
+    background-color: $gray-400;
 }
 
-.mark-02 {
-    background-color: $sdg02;
-    &::before {
-        content: "2";
-    }
+.optionclose {
+    background-color: $gray-500;
 }
-
-.mark-03 {
-    background-color: $sdg03;
-    &::before {
-        content: "3";
-    }
-}
-
-.mark-04 {
-    background-color: $sdg04;
-    &::before {
-        content: "4";
-    }
-}
-
-.mark-05 {
-    background-color: $sdg05;
-    &::before {
-        content: "5";
-    }
-}
-
-.mark-06 {
-    background-color: $sdg06;
-    &::before {
-        content: "6";
-    }
-}
-
-.mark-07 {
-    background-color: $sdg07;
-    &::before {
-        content: "7";
-    }
-}
-
-.mark-08 {
-    background-color: $sdg08;
-    &::before {
-        content: "8";
-    }
-}
-
-.mark-09 {
-    background-color: $sdg09;
-    &::before {
-        content: "9";
-    }
-}
-
-.mark-10 {
-    background-color: $sdg10;
-    &::before {
-        content: "10";
-    }
-}
-
-.mark-11 {
-    background-color: $sdg11;
-    &::before {
-        content: "11";
-    }
-}
-
-.mark-12 {
-    background-color: $sdg12;
-    &::before {
-        content: "12";
-    }
-}
-
-.mark-13 {
-    background-color: $sdg13;
-    &::before {
-        content: "13";
-    }
-}
-
-.mark-14 {
-    background-color: $sdg14;
-    &::before {
-        content: "14";
-    }
-}
-
-.mark-15 {
-    background-color: $sdg15;
-    &::before {
-        content: "15";
-    }
-}
-
-.mark-16 {
-    background-color: $sdg16;
-    &::before {
-        content: "16";
-    }
-}
-
-
-
-.mark-A {
-    background-color: $deptA;
-    &::before {
-        content: "A";
-    }
-}
-
-.mark-G {
-    background-color: $deptG;
-    &::before {
-        content: "G";
-    }
-}
-
-.mark-L {
-    background-color: $deptL;
-    &::before {
-        content: "L";
-    }
-}
-
-.mark-N {
-    background-color: $deptN;
-    &::before {
-        content: "N";
-    }
-}
-
-.mark-P {
-    background-color: $deptP;
-    &::before {
-        content: "P";
-    }
-}
-
-.mark-S {
-    background-color: $deptS;
-    &::before {
-        content: "S";
-    }
-}
-
-.mark-T {
-    background-color: $deptT;
-    &::before {
-        content: "T";
-    }
-}
-
-.mark-W {
-    background-color: $deptW;
-    &::before {
-        content: "W";
-    }
-}
-
 
 .type {
     
