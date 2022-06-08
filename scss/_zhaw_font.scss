@@ -1,0 +1,23 @@
+$zhaw-icons-font: "bootstrap-icons" !default;
+$zhaw-icons-font-src: url("https://www.zhaw.ch/typo3conf/ext/zhaw_package_www/Resources/Public/Fonts/ZhawGlyphicons/zhaw_glyphicons-webfont.woff2") format("woff2");
+
+@font-face {
+  font-family: $zhaw-icons-font;
+  src: $zhaw-icons-font-src;
+}
+
+.zhaw-logo::before {
+  display: inline-block;
+  color: $zhawlogo;
+  font-family: $bootstrap-icons-font !important;
+  font-style: normal;
+  font-weight: normal !important;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  vertical-align: -.125em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "\e900";
+  @extend .fs-1;
+}
