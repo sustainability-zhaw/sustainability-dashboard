@@ -1,9 +1,14 @@
 
 #mainarea {
+    top: 5em;
     display: grid;
     gap: 20px;
     grid-template-columns: auto 340px;
     margin-top: 10px;
+
+    .corecontent {
+        grid-column: 1;
+    }
 }
 
 // .sidebar, 
@@ -12,6 +17,13 @@
 // }
 
 .searchbar {
+    &.sticky-top {
+        top: 3.5em;
+        padding-top: .8em;
+    }
+
+    background-color: $white;
+
     .searchform {
         @extend .border;
 
@@ -104,7 +116,12 @@
 .sidebar {
     grid-column: 2;
     grid-row: 1;
-    width: 340px;
+    // width: 340px;
+
+    .sticky-top {
+        top: 3.5em;
+        padding-top: .8em;
+    }
 
     h3 {
 
