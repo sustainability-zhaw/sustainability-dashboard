@@ -1,0 +1,47 @@
+{
+  "name": "sustainability-dashboard",
+  "version": "1.0.0",
+  "description": "Fronend for The ZHAW Database Indexer",
+
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dxiai/sustainability-dashboard.git"
+  },
+  "author": "Christian Glahn",
+  "license": "MIT ",
+  "bugs": {
+    "url": "https://github.com/dxiai/sustainability-dashboard/issues"
+  },
+  "homepage": "https://github.com/dxiai/sustainability-dashboard#readme",
+
+  "scripts": {
+    "build": "npm run css",
+    "css-compile": "sass --load-path node_modules --style compressed --source-map scss:site/assets/css/",
+    "css-prefix": "postcss --replace site/assets/css/index.css --use autoprefixer --map",
+    "css-purge": "purgecss --keyframes --css site/assets/css/index.css --content site/index.html \"node_modules/bootstrap/js/dist/{util,modal}.js\" --output site/assets/css/",
+    "css": "npm-run-all css-compile css-prefix",
+    "all": "npm-run-all css-compile css-prefix js-move icon-font",
+    "js-move": "mkdir -p site/assets/js && cp node_modules/bootstrap/dist/js/bootstrap.min.js site/assets/js/",
+    "icon-font": "cp -r node_modules/bootstrap-icons/font/fonts site/assets/css/",
+    "clean": "rm -rf site/assets", 
+    "test": "npm run css-lint && npm run css"
+  },
+  "keywords": [
+    "bootstrap",
+    "sass",
+    "css",
+    "javascript"
+  ],
+  "dependencies": {
+    "bootstrap": "^5.1.3",
+    "bootstrap-icons": "^1.8.3"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.7",
+    "sass": "^1.52.2",
+    "npm-run-all": "^4.1.5",
+    "postcss": "^8.2.10",
+    "postcss-cli": "^8.3.1",
+    "purgecss": "^4.1.3"
+  }
+}
