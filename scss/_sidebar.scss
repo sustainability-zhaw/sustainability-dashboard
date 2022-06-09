@@ -70,37 +70,43 @@
                 display: inline-block;
                 margin-top: .2em;
                 margin-left: .3em;
-            
-                .optioncontainer {
-                    display: grid;
-                    grid-template-columns: auto 1.5em;
+            }
+
+            .optioncontainer {
+                display: grid;
+                grid-template-columns: auto 1.5em;
+                height: 1.5em;
+                justify-content: stretch;
+                justify-self: stretch;
+
+                .searchoption {
+                    text-align: center;
+                    padding-left: .3em;
+                    // padding-right: .3em;
+                }
+
+                .bi-bookmark::before,
+                .bi-person-circle::before {
+                    padding-right: .4em;
+                    // padding-right: .3em;
+                }
+
+                .searchoption.cat {
+                    width: 1.5em;
+                    padding-left: 0;
+                    text-align: center;
+                }
+
+                .optionclose {
+                    border-top-right-radius: 0.5em;
+                    border-bottom-right-radius: 0.5em;
+                    text-align: center;
                     height: 1.5em;
-                    justify-content: stretch;
-                    justify-self: stretch;
+                    line-height: 1.5em;
 
-                    .searchoption {
-                        text-align: center;
-                        padding-left: .3em;
-                        // padding-right: .3em;
-                    }
-
-                    .searchoption.cat {
-                        width: 1.5em;
-                        padding-left: 0;
-                        text-align: center;
-                    }
-
-                    .optionclose {
-                        border-top-right-radius: 0.5em;
-                        border-bottom-right-radius: 0.5em;
-                        text-align: center;
-                        height: 1.5em;
+                    &.bi-x-lg::before,
+                    &.bi-x::before {
                         line-height: 1.5em;
-
-                        &.bi-x-lg::before,
-                        &.bi-x::before {
-                            line-height: 1.5em;
-                        }
                     }
                 }
             }
