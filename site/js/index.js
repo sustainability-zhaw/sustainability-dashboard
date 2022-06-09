@@ -16,12 +16,20 @@ function toggleResultDetails(e) {
 
     e.addEventListener("click", function (evt) {
         const targetParent = evt.target.parentNode.parentNode;
-        const toggleElements = targetParent.querySelectorAll(".extra");
 
         if (evt.target.classList.contains("resultfold")) {
+            const toggleElements = targetParent.querySelectorAll(".extra");
+
             evt.target.classList.toggle("bi-layer-backward");
             evt.target.classList.toggle("bi-layer-forward");
             [...toggleElements].map(togglable => togglable.hidden = !togglable.hidden);
+
+            if (evt.target.classList.contains("bi-layer-backward")) {
+                evt.target.setAttribute("data-bs-original-title", "Show Details");
+            }
+            else {
+                evt.target.setAttribute("data-bs-original-title", "Hide Details");
+            }
         }
     });
 } 
