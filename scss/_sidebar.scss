@@ -17,10 +17,14 @@
 // }
 
 .searchbar {
+
     &.sticky-top {
         top: 3.5em;
         padding-top: .8em;
+        padding-bottom: .8em;
+        @extend .shadow-sm; 
     }
+
 
     background-color: $white;
 
@@ -48,47 +52,66 @@
         }
     }
 
-    .searchoptions {
+    .searchcontainer {
         background-color: var(--bs-gray-300);
         min-height: 2em;
         // padding-left: .5em;
-        padding-right: .5em;
+        padding-right: 0em;
         padding-bottom: .3em;
 
-        div {
-            display: inline-block;
-            margin-top: .2em;
-            margin-left: .3em;
-        
-            .optioncontainer {
-                display: grid;
-                grid-template-columns: auto 1.5em;
-                height: 1.5em;
-                justify-content: stretch;
-                justify-self: stretch;
+        display: grid;
+        grid-template-columns: auto 7em;
+        justify-content: top;
 
-                .searchoption {
-                    text-align: center;
-                    padding-left: .3em;
-                    // padding-right: .3em;
-                }
+        .searchoptions {
+            grid-column: 1;
 
-                .searchoption.cat {
-                    width: 1.5em;
-                    padding-left: 0;
-                    text-align: center;
+            div {
+                display: inline-block;
+                margin-top: .2em;
+                margin-left: .3em;
+            
+                .optioncontainer {
+                    display: grid;
+                    grid-template-columns: auto 1.5em;
+                    height: 1.5em;
+                    justify-content: stretch;
+                    justify-self: stretch;
+
+                    .searchoption {
+                        text-align: center;
+                        padding-left: .3em;
+                        // padding-right: .3em;
+                    }
+
+                    .searchoption.cat {
+                        width: 1.5em;
+                        padding-left: 0;
+                        text-align: center;
+                    }
                 }
+            }
+        }
+
+        .searchtools {
+            grid-column: 2;
+            text-align: right;
+            line-height: 2em;
+            padding-right: .5em;
+
+            .tool-item {
+                // margin-top: .2em;
+                display: inline-block;
             }
         }
     }
 }
 
 .resulttypes {
-    @extend .shadow-sm; 
 
     margin-top: 1em;
     background-color: $white;
-    padding-bottom: .8em;
+    
     
 
     div {
