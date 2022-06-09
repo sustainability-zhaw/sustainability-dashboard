@@ -84,15 +84,19 @@
 }
 
 .resulttypes {
+    @extend .shadow-sm; 
+
     margin-top: 1em;
-    margin-bottom: 1em;
+    background-color: $white;
+    padding-bottom: .8em;
+    
 
     div {
         display: inline-block;
 
         div {
             display: grid;
-            grid-template-columns: auto 46px;
+            grid-template-columns: auto 56px;
 
             margin-right: 1em;
             
@@ -183,5 +187,25 @@
     .bi-x-lg::before,
     .bi-x::before {
         line-height: 1.5em;
+    }
+}
+
+.person {
+    .mark, .counter {
+        display: inline-block;
+        text-align: center;
+        padding: 0;
+        height: $font-size-base;
+        font-size: $font-size-base * .9;
+        line-height: $font-size-base;
+        vertical-align: baseline;
+    }
+    .counter {
+        padding-right: .4em;
+        padding-left: .4em;
+    }
+    .mark {
+        margin-left: 0.5em;
+        width: $font-size-base* 2;
     }
 }
