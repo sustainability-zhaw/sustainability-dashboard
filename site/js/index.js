@@ -28,21 +28,15 @@ function toggleResultDetails(e) {
 
 function dropSearchElement(searchoptions) {
     searchoptions.addEventListener("click", function (evt) {
-        const parCL = evt.target.parentNode.classList;
-        const tarCL = evt.target.classList;
 
         var targetParent = evt.target.parentNode.parentNode;
 
-        if (!tarCL.contains("optionclose")) {
-            targetParent = targetParent.parentNode;
-        }
-
-        if (tarCL.contains("optionclose") || parCL.contains("optionclose"))  {
+        if (evt.target.classList.contains("optionclose"))  {
             targetParent.parentNode.removeChild(targetParent);
-        }
 
-        // FIXME drop also the entry from the search record.
-        // FIXME query the search results
+            // FIXME drop also the entry from the search record.
+            // FIXME query the search results
+        }
     });
 } 
 

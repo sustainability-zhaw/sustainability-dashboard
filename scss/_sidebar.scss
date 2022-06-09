@@ -89,6 +89,19 @@
                         padding-left: 0;
                         text-align: center;
                     }
+
+                    .optionclose {
+                        border-top-right-radius: 0.5em;
+                        border-bottom-right-radius: 0.5em;
+                        text-align: center;
+                        height: 1.5em;
+                        line-height: 1.5em;
+
+                        &.bi-x-lg::before,
+                        &.bi-x::before {
+                            line-height: 1.5em;
+                        }
+                    }
                 }
             }
         }
@@ -200,18 +213,6 @@
     // font-size: $font-size-base * .9;
 }
 
-
-.optionclose {
-    border-top-right-radius: 0.5em;
-    border-bottom-right-radius: 0.5em;
-    text-align: center;
-    height: 1.5em;
-
-    .bi-x-lg::before,
-    .bi-x::before {
-        line-height: 1.5em;
-    }
-}
 
 .person {
     .mark, .counter {
