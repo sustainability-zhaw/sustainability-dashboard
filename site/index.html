@@ -1,7 +1,9 @@
 <html>
     <head>
         <link rel="stylesheet" href="assets/css/index.css">
+        <script src="assets/js/popper.min.js" defer></script>
         <script src="assets/js/bootstrap.min.js" defer></script>
+        <script src="js/index.js" defer></script>
     </head>
     <body>
         <nav class="navbar sticky-top navbar-expand-sm navbar-light bg-light">
@@ -10,29 +12,37 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
               <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item" id="download">
-                  <a class="nav-link disabled" aria-current="page" href="#"><i class="bi-download " role="img"></i> Download Results</a>
+                <li class="nav-item" id="publication-list">
+                    <a class="nav-link active" aria-current="page" href="#"><i class="bi-journal-richtext" role="img"></i> Publications (<span id="publication-counter">123</span>)</a>
                 </li>
-                
-                <li class="nav-item" id="visualize">
-                    <a class="nav-link disabled" aria-current="page" href="#"><i class="bi-bar-chart-line " role="img"></i> Visualize</a>
+
+                <li class="nav-item" id="project-list">
+                    <a class="nav-link" aria-current="page" href="#"><i class="bi-kanban" role="img"></i> Projects (<span id="project-counter">321</span>)</a>
+                </li>
+
+                <li class="nav-item" id="education-list">
+                    <a class="nav-link" aria-current="page" href="#"><i class="bi-person-video3" role="img"></i> Modules (<span id="education-counter">123</span>)</a>
                 </li>
 
                 <li class="nav-item" id="people-list">
-                    <a class="nav-link disabled" aria-current="page" href="#"><i class="bi-person-lines-fill " role="img"></i> People</a>
+                    <a class="nav-link" aria-current="page" href="#"><i class="bi-person-lines-fill " role="img"></i> People (<span id="people-counter">12</span>)</a>
                 </li>
 
               </ul>
             </div>
           
             <ul class="navbar-nav ms-auto me-2 me-lg-0 align-middle">
+
                 
-                <li class="nav-item " id="newsearch">
-                    <a class="nav-link disabled" aria-current="page" href="#"><i class=" bi-search" role="img"></i> New Search</a>
+                <li class="nav-item" id="download">
+                    <a class="nav-link disabled" aria-current="page" href="#"><i class="bi-download " role="img"></i> Download Results</a>
                 </li>
-                <li class="nav-item" id="bookmark">
-                    <a class="nav-link disabled" aria-current="page" href="#"><i class="bi-search-heart " role="img"></i> Bookmark Search</a>
-                </li>
+                
+                <li class="nav-item" id="visualize">
+                    <a class="nav-link disabled" aria-current="page" href="#"><i class="bi-bar-chart-line " role="img"></i> Visualize</a>
+                </li>  
+
+                
 
                 <li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle disabled"  href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -47,10 +57,10 @@
                 </li>
 
                 <li class="nav-item fs-4" id="configure">
-                    <a class="nav-link disabled" aria-current="page" href="#"><i class="bi-wrench-adjustable-circle " role="img"></i></a>
+                    <a class="nav-link"  data-bs-toggle="tooltip" title="Settings" data-bs-placement="bottom"  href="#"><i class="bi-wrench-adjustable-circle " role="img"></i></a>
                 </li>
                 <li class="nav-item fs-4" id="logout">
-                <a class="nav-link" aria-current="page" href="#"><i class="bi-unlock" role="img"></i></a>
+                <a class="nav-link" aria-current="page" data-bs-toggle="tooltip" title="Logout" data-bs-placement="bottom" href="#"><i class="bi-unlock" role="img"></i></a>
               </li>
               <li class="nav-item" id="zhaw-about">
                 <a class="navbar-brand align-middle ls-4" disabled href="#"><i class="zhaw-logo"></i></a>
@@ -69,57 +79,47 @@
                             </div>
                         </form>
                     </div>
-                    <div class="searchoptions">
-                        <div>
-                            <div class="optioncontainer">
-                                <span class="searchoption cat mark-01"></span>
-                                <span class="optionclose"><i class="bi-x"></i></span>
+                    <div class="searchcontainer">
+                        <div class="searchoptions">
+                            <div>
+                                <div class="optioncontainer">
+                                    <span class="searchoption cat mark-01"></span>
+                                    <span class="optionclose"><i class="bi-x"></i></span>
+                                </div>
                             </div>
-                        </div>
 
-                        <div>
-                            <div class="optioncontainer">
-                                <span class="searchoption">Some Search Term</span>
-                                <span class="optionclose"><i class="bi-x"></i></span>
+                            <div>
+                                <div class="optioncontainer">
+                                    <span class="searchoption">Some Search Term</span>
+                                    <span class="optionclose"><i class="bi-x"></i></span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="optioncontainer">
+                                    <span class="searchoption cat mark-W"></span>
+                                    <span class="optionclose"><i class="bi-x"></i></span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="optioncontainer">
+                                    <span class="searchoption"><i class="bi-person-circle"></i> glah</span>
+                                    <span class="optionclose"><i class="bi-x"></i></span>
+                                </div>
                             </div>
                         </div>
-                        <div>
-                            <div class="optioncontainer">
-                                <span class="searchoption cat mark-W"></span>
-                                <span class="optionclose"><i class="bi-x"></i></span>
+                        <div class="searchtools">
+                            <div class="tool-item" id="newsearch">
+                                <a class="btn btn-outline-secondary btn-sm"  data-bs-toggle="tooltip" title="New Search" data-bs-placement="bottom" href="#"><i class="bi-eraser-fill" role="img"></i></a>
                             </div>
-                        </div>
-                        <div>
-                            <div class="optioncontainer">
-                                <span class="searchoption"><i class="bi-person-circle"></i> glah</span>
-                                <span class="optionclose"><i class="bi-x"></i></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="resulttypes">
-                        
-                        <div>
-                            <div id="type_publicataions">
-                                <span class="type active">Publications</span><span class="counter"  id="typecountPUB">123</span>
-                            </div>
-                        </div>
-                    
-                        <div>
-                            <div id="type_projects">
-                                <span class="type">Projects</span><span class="counter"  id="typecountPRJ">321</span>
-                            </div>
-                        </div>
-                        <div>
-                            <div id="type_education">
-                                <span class="type">Modules</span><span class="counter"  id="typecountEDU">123</span>
+                            <div class="tool-item" id="bookmark">
+                                <a class="btn btn-outline-secondary btn-sm" data-bs-toggle="tooltip" title="Bookmark Search" data-bs-placement="bottom"  href="#"><i class="bi-search-heart " role="img"></i></a>
                             </div>
                         </div>
                     </div>
             </div>
 
             <div class="results">
-                <div class="resultcontainer">
+                <div class="resultcontainer" id="result-007">
                     <div class="title">
                         Lorem ipsum dolor sit amet
                     </div>
@@ -133,7 +133,7 @@
                         <span class="mark mark-06"></span><span class="mark mark-08"></span>
                     </div>
                     <div class="tools">
-                        <span class="tool bi-download"></span><span class="tool bi-arrow-bar-down"></span>
+                        <span class="tool resultlink bi-download"></span><span class="tool resultfold bi-layer-backward"></span>
                     </div>
                     <div class="extra abstract" hidden>
                         Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dicta soluta eum quia porro voluptas, eius magnam impedit ipsum aliquid saepe ducimus veritatis, assumenda cum molestiae iure repellendus. Hic, animi quaerat!
@@ -149,7 +149,7 @@
                     </div>
                 </div>
 
-                <div class="resultcontainer">
+                <div class="resultcontainer" id="result-001">
                     <div class="title">
                         Lorem ipsum dolor sit amet
                     </div>
@@ -163,7 +163,7 @@
                         <span class="mark mark-06"></span><span class="mark mark-08"></span>
                     </div>
                     <div class="tools">
-                        <span class="tool bi-download"></span><span class="tool bi-arrow-bar-down"></span>
+                        <span class="tool bi-download"></span><span class="tool resultfold bi-layer-backward"></span>
                     </div>
                     <div class="extra abstract" hidden>
                         Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dicta soluta eum quia porro voluptas, eius magnam impedit ipsum aliquid saepe ducimus veritatis, assumenda cum molestiae iure repellendus. Hic, animi quaerat!
@@ -179,7 +179,7 @@
                     </div>
                 </div>
 
-                <div class="resultcontainer">
+                <div class="resultcontainer" id="result-002">
                     <div class="title">
                         Lorem ipsum dolor sit amet
                     </div>
@@ -193,7 +193,7 @@
                         <span class="mark mark-06"></span><span class="mark mark-08"></span>
                     </div>
                     <div class="tools">
-                        <span class="tool bi-download"></span><span class="tool bi-arrow-bar-down"></span>
+                        <span class="tool bi-download"></span><span class="tool resultfold bi-layer-backward"></span>
                     </div>
                     <div class="extra abstract" hidden>
                         Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dicta soluta eum quia porro voluptas, eius magnam impedit ipsum aliquid saepe ducimus veritatis, assumenda cum molestiae iure repellendus. Hic, animi quaerat!
@@ -209,7 +209,7 @@
                     </div>
                 </div>
 
-                <div class="resultcontainer">
+                <div class="resultcontainer"  id="result-003">
                     <div class="title">
                         Lorem ipsum dolor sit amet
                     </div>
@@ -223,7 +223,7 @@
                         <span class="mark mark-06"></span><span class="mark mark-08"></span>
                     </div>
                     <div class="tools">
-                        <span class="tool bi-download"></span><span class="tool bi-arrow-bar-down"></span>
+                        <span class="tool bi-download"></span><span class="tool resultfold bi-layer-backward"></span>
                     </div>
                     <div class="extra abstract" hidden>
                         Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dicta soluta eum quia porro voluptas, eius magnam impedit ipsum aliquid saepe ducimus veritatis, assumenda cum molestiae iure repellendus. Hic, animi quaerat!
@@ -239,7 +239,7 @@
                     </div>
                 </div>
 
-                <div class="resultcontainer">
+                <div class="resultcontainer" id="result-004">
                     <div class="title">
                         Lorem ipsum dolor sit amet
                     </div>
@@ -253,7 +253,7 @@
                         <span class="mark mark-06"></span><span class="mark mark-08"></span>
                     </div>
                     <div class="tools">
-                        <span class="tool bi-download"></span><span class="tool bi-arrow-bar-down"></span>
+                        <span class="tool bi-download"></span><span class="tool resultfold bi-layer-backward"></span>
                     </div>
                     <div class="extra abstract" hidden>
                         Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dicta soluta eum quia porro voluptas, eius magnam impedit ipsum aliquid saepe ducimus veritatis, assumenda cum molestiae iure repellendus. Hic, animi quaerat!
@@ -269,7 +269,7 @@
                     </div>
                 </div>
 
-                <div class="resultcontainer">
+                <div class="resultcontainer" id="result-005">
                     <div class="title">
                         Lorem ipsum dolor sit amet
                     </div>
@@ -283,7 +283,7 @@
                         <span class="mark mark-06"></span><span class="mark mark-08"></span>
                     </div>
                     <div class="tools">
-                        <span class="tool bi-download"></span><span class="tool bi-arrow-bar-down"></span>
+                        <span class="tool bi-download"></span><span class="tool resultfold bi-layer-backward"></span>
                     </div>
                     <div class="extra abstract" hidden>
                         Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dicta soluta eum quia porro voluptas, eius magnam impedit ipsum aliquid saepe ducimus veritatis, assumenda cum molestiae iure repellendus. Hic, animi quaerat!
@@ -299,7 +299,7 @@
                     </div>
                 </div>
 
-                <div class="resultcontainer">
+                <div class="resultcontainer" id="result-006">
                     <div class="title">
                         Lorem ipsum dolor sit amet
                     </div>
@@ -313,7 +313,7 @@
                         <span class="mark mark-06"></span><span class="mark mark-08"></span>
                     </div>
                     <div class="tools">
-                        <span class="tool bi-download"></span><span class="tool bi-arrow-bar-down"></span>
+                        <span class="tool bi-download"></span><span class="tool resultfold bi-layer-backward"></span>
                     </div>
                     <div class="extra abstract" hidden>
                         Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dicta soluta eum quia porro voluptas, eius magnam impedit ipsum aliquid saepe ducimus veritatis, assumenda cum molestiae iure repellendus. Hic, animi quaerat!
