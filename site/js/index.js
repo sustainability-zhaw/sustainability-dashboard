@@ -3,14 +3,10 @@
 const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
 const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 
-const resultsEntries = document.querySelectorAll('.results');
-const resultTriggers = [...resultsEntries].map(toggleResultDetails);
-
-const searchEntries = document.querySelectorAll('.searchoptions');
-const searchTriggers = [...searchEntries].map(dropSearchElement);
-
-const searchTools = document.querySelectorAll('#newsearch');
-const searchToolTriggers = [...searchTools].map(clearSearch);
+toggleResultDetails(document.querySelector('.results'));
+dropSearchElement(document.querySelector('.searchoptions'));
+clearSearch(document.querySelector('#newsearch'));
+addSearchElement(document.querySelector(".sidebar"));
 
 function toggleResultDetails(e) {
 
@@ -47,6 +43,28 @@ function dropSearchElement(searchoptions) {
         }
     });
 } 
+
+function addSearchElement(sidebarelement) {
+    const template = document.querySelector('#searchoption');
+    const searchoptions = document.querySelector('#searchcontainer .searchoptions');
+
+    sidebarelement.addEventListener("click", function(evt) {
+        if (evt.target.classList.contains("cat")) {
+            console.log("click on cat element");
+
+            const result = template.content.cloneNode(true);
+            const target_class = [...evt.target.classList].filter(cls => cls.startsWith("cat-"))[0];
+            const elementSearchoption = result.querySelector(".searchoption");
+
+            elementSearchoption.classList.add("marker");
+            elementSearchoption.classList.add(target_class);
+
+            if (!searchoptions.querySelector(`.${target_class}`)) {
+                searchoptions.appendChild(result);
+            }
+        }
+    });
+}
 
 function clearSearch(searchoptions) {
     searchoptions.addEventListener("click", function (evt) {
