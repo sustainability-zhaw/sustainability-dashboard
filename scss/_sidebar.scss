@@ -45,6 +45,7 @@
 
         .input-group-text {
             color: var(--bs-gray-600);
+            cursor: pointer;
         }
 
         form {
@@ -82,8 +83,11 @@
                 .searchoption {
                     text-align: center;
                     padding-left: .3em;
-                    padding-right: .3em;
                     // padding-right: .3em;
+
+                    &.marker {
+                        padding-left: 0;
+                    }
                 }
 
                 .bi-bookmark::before,
@@ -211,6 +215,7 @@
         line-height: inherit;
         font-size: $font-size-base;
         width: 1.5em;
+        padding-left: 0;
     }
 }
 
