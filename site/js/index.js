@@ -3,7 +3,7 @@ const QueryModel = {
     extra: ""
 }
 
-// model communication registration
+// department constraints. 
 const depts = ["A", "G", "L", "N", "P", "S", "T", "W"];
 
 // common interface for app related event triggering.
@@ -31,119 +31,7 @@ ModelEvents.queryUpdate();
 
 // function definitions
 
-function toggleResultDetails() {
-    const e = document.querySelector('.results'); 
-
-    e.addEventListener("click", function (evt) {
-        const targetParent = evt.target.parentNode.parentNode;
-
-        if (evt.target.classList.contains("resultfold")) {
-            const toggleElements = targetParent.querySelectorAll(".extra");
-
-            evt.target.classList.toggle("bi-layer-backward");
-            evt.target.classList.toggle("bi-layer-forward");
-            [...toggleElements].map(togglable => togglable.hidden = !togglable.hidden);
-
-            if (evt.target.classList.contains("bi-layer-backward")) {
-                evt.target.setAttribute("data-bs-original-title", "Show Details");
-            }
-            else {
-                evt.target.setAttribute("data-bs-original-title", "Hide Details");
-            }
-        }
-    });
-} 
-
-function dropSearchElement() {
-    const searchoptions = document.querySelector("#searchcontainer .searchoptions");
-
-    searchoptions.addEventListener("click", function (evt) {
-        if (evt.target.classList.contains("optionclose"))  {
-            var targetParent = evt.target.parentNode;
-
-            const type = targetParent.dataset.qtype;
-            const value = targetParent.dataset.qvalue;
-
-            QueryModel.qterms = QueryModel.qterms.filter(term => !(term.type === type && term.value === value));
-
-            ModelEvents.queryUpdate();
-        }
-    });
-} 
-
-function addSearchTerm() {
-    const searchFormElement = document.querySelector("#liveinput");
-    const searchFormButton = document.querySelector("#basic-addon2");
-    const searchTermElement = document.querySelector("#searchterms");
-
-
-    function handleSubmit(evt) {
-        var currentValue = searchTermElement.value.trim();
-        searchTermElement.value = "";
-    
-        let [type, value] = currentValue.split(":").map(str => str.trim());
-
-        switch (type) {
-            case "sdg": 
-            case "person":
-                break;
-            case "dept":
-            case "department":
-                type = "department";
-                break;
-            default: 
-                type = "term";
-                value = currentValue; 
-                break;
-        }
-
-        ModelEvents.queryAddItem(type, value);
-
-        evt.preventDefault();
-    }
-
-    searchFormElement.addEventListener("submit", handleSubmit);
-    searchFormButton.addEventListener("click", handleSubmit);
-}
-
-function liveQueryInput() {
-    const searchTermElement = document.querySelector("#searchterms");
-
-    searchTermElement.addEventListener("keyup", function(evt) {
-
-    });
-} 
-
-function addSearchElement() {
-    const sidebarelement = document.querySelector(".sidebar")
-    
-    sidebarelement.addEventListener("click", function(evt) {
-        if (evt.target.classList.contains("cat")) {
-            let target = evt.target;
-            if (!(target.dataset.qtype && target.dataset.qtype.length)) {
-                target = target.parentNode;
-            }
-            const type = target.dataset.qtype;
-            const value = target.dataset.qvalue;
-
-            ModelEvents.queryAddItem(type, value);            
-        }
-    });
-}
-
-function clearSearch() {
-    const newsearch = document.querySelector('#newsearch');
-    const searchoptions = document.querySelector('#searchcontainer .searchoptions');
-    const searchEntries = document.querySelector(".searchoptions");
-
-    newsearch.addEventListener("click", function (evt) {
-        searchoptions.innerHTML = "";
-        QueryModel.qterms = [];
-
-        ModelEvents.queryUpdate();
-    });
-} 
-
+// Signal helpers
 function initEventTrigger() {
     const evAnchor = document.querySelector("#zhaw-about");
 
@@ -201,10 +89,125 @@ function registerModelEvents() {
     evAnchor.addEventListener("dataupdate.bookmark", () => {});
 }
 
-function handleQueryUpdate(ev) {
-    // trigger search request to the backend
-    console.log("Query Update");
+// UI Usability functions 
+
+function toggleResultDetails() {
+    const e = document.querySelector('.results'); 
+
+    e.addEventListener("click", function (evt) {
+        const targetParent = evt.target.parentNode.parentNode;
+
+        if (evt.target.classList.contains("resultfold")) {
+            const toggleElements = targetParent.querySelectorAll(".extra");
+
+            evt.target.classList.toggle("bi-layer-backward");
+            evt.target.classList.toggle("bi-layer-forward");
+            [...toggleElements].map(togglable => togglable.hidden = !togglable.hidden);
+
+            if (evt.target.classList.contains("bi-layer-backward")) {
+                evt.target.setAttribute("data-bs-original-title", "Show Details");
+            }
+            else {
+                evt.target.setAttribute("data-bs-original-title", "Hide Details");
+            }
+        }
+    });
 } 
+
+// search query functions 
+
+// Self registering UI Events
+
+function addSearchTerm() {
+    const searchFormElement = document.querySelector("#liveinput");
+    const searchFormButton = document.querySelector("#basic-addon2");
+    const searchTermElement = document.querySelector("#searchterms");
+
+    function handleSubmit(evt) {
+        var currentValue = searchTermElement.value.trim();
+        searchTermElement.value = "";
+    
+        let [type, value] = currentValue.split(":").map(str => str.trim());
+
+        switch (type) {
+            case "sdg": 
+            case "person":
+                break;
+            case "dept":
+            case "department":
+                type = "department";
+                break;
+            default: 
+                type = "term";
+                value = currentValue; 
+                break;
+        }
+
+        ModelEvents.queryAddItem(type, value);
+
+        evt.preventDefault();
+    }
+
+    searchFormElement.addEventListener("submit", handleSubmit);
+    searchFormButton.addEventListener("click", handleSubmit);
+}
+
+function addSearchElement() {
+    const sidebarelement = document.querySelector(".sidebar")
+    
+    sidebarelement.addEventListener("click", function(evt) {
+        if (evt.target.classList.contains("cat")) {
+            let target = evt.target;
+            if (!(target.dataset.qtype && target.dataset.qtype.length)) {
+                target = target.parentNode;
+            }
+            const type = target.dataset.qtype;
+            const value = target.dataset.qvalue;
+
+            ModelEvents.queryAddItem(type, value);            
+        }
+    });
+}
+
+function dropSearchElement() {
+    const searchoptions = document.querySelector("#searchcontainer .searchoptions");
+
+    searchoptions.addEventListener("click", function (evt) {
+        if (evt.target.classList.contains("optionclose"))  {
+            var targetParent = evt.target.parentNode;
+
+            const type = targetParent.dataset.qtype;
+            const value = targetParent.dataset.qvalue;
+
+            QueryModel.qterms = QueryModel.qterms.filter(term => !(term.type === type && term.value === value));
+
+            ModelEvents.queryUpdate();
+        }
+    });
+} 
+
+function liveQueryInput() {
+    const searchTermElement = document.querySelector("#searchterms");
+
+    searchTermElement.addEventListener("keyup", function(evt) {
+
+    });
+} 
+
+function clearSearch() {
+    const newsearch = document.querySelector('#newsearch');
+    const searchoptions = document.querySelector('#searchcontainer .searchoptions');
+    const searchEntries = document.querySelector(".searchoptions");
+
+    newsearch.addEventListener("click", function (evt) {
+        searchoptions.innerHTML = "";
+        QueryModel.qterms = [];
+
+        ModelEvents.queryUpdate();
+    });
+} 
+
+// QueryModel event handler
 
 function handleQueryExtraUpdate(ev) {
     const searchterms = document.querySelector('#searchterms');
@@ -241,6 +244,13 @@ function handleQueryAdd(ev) {
     
     ModelEvents.queryUpdate();
 }
+
+// QueryModel Support functions
+
+function handleQueryUpdate(ev) {
+    // trigger search request to the backend
+    console.log("Query Update");
+} 
 
 function renderSearchOptions() {
     const template = document.querySelector('#searchoption');
