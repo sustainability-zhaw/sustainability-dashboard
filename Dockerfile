@@ -1,6 +1,7 @@
 # Create alpine builder 
 FROM alpine:latest AS builder 
 
+LABEL version="2022.0623.01"
 RUN apk add nodejs npm
 
 WORKDIR /app
