@@ -13,6 +13,15 @@ addSearchTerm();
 clearSearch();
 dropSearchElement();
 
+// model communication registration
+const depts = ["A", "G", "L", "N", "P", "S", "T", "W"];
+
+const ModelEvents = initEventTrigger();
+
+registerModelEvents();
+
+// function definitions
+
 function toggleResultDetails() {
     const e = document.querySelector('.results'); 
 
@@ -47,6 +56,7 @@ function dropSearchElement() {
 
             // FIXME drop also the entry from the search record.
             // FIXME query the search results
+            ModelEvents.queryUpdate();
         }
     });
 } 
@@ -96,8 +106,6 @@ function addSearchTerm() {
 
         if (currentValue.startsWith("dept:") || currentValue.startsWith("department:") ) {
             currentValue = currentValue.toLowerCase().replace(/^dep(?:artmen)?t:/, "").trim().toUpperCase();
-
-            const depts = ["A", "G", "L", "N", "P", "S", "T", "W"];
         
             if (depts.includes(currentValue)) {
                 currentValue = `cat-${currentValue}`;
@@ -131,6 +139,7 @@ function addSearchTerm() {
         
         if (!existingQuery.length) {
             searchoptions.appendChild(result);
+            ModelEvents.queryUpdate();
         }
 
         evt.preventDefault();
@@ -166,6 +175,8 @@ function addSearchElement() {
 
             if (!searchoptions.querySelector(`.${target_class}`)) {
                 searchoptions.appendChild(result);
+
+                ModelEvents.queryUpdate();
             }
         }
     });
@@ -179,6 +190,111 @@ function clearSearch() {
         while (searchEntries.firstChild) {
             searchEntries.removeChild(searchEntries.firstChild);
         }
-        // FIXME drop all entries from the search and display the default results
+
+        ModelEvents.queryUpdate();
     });
+} 
+
+// Model Events
+
+const queryUpdate        = new CustomEvent("queryupdate", {});
+const queryExtraUpdate        = new CustomEvent("queryupdate.extra", {});
+
+const dataUpdate         = new CustomEvent("dataupdate", {});
+const dataUpdateStat     = new CustomEvent("dataupdate.stat", {});
+const dataUpdatePerson   = new CustomEvent("dataupdate.person", {});
+const dataUpdatePub      = new CustomEvent("dataupdate.publication", {});
+const dataUpdateEdu      = new CustomEvent("dataupdate.education", {});
+const dataUpdatePrj      = new CustomEvent("dataupdate.project", {});
+const dataUpdateBookmark = new CustomEvent("dataupdate.bookmark", {});
+
+function initEventTrigger() {
+    const evAnchor = document.querySelector("#zhaw-about");
+
+    const triggers = {
+        queryUpdate: () => evAnchor.dispatchEvent(queryUpdate),
+        dataUpdate: () => evAnchor.dispatchEvent(dataUpdate),
+        
+        statUpdate: () => evAnchor.dispatchEvent(dataUpdateStat),
+        pubUpdate: () => evAnchor.dispatchEvent(dataUpdatePub),
+        projectUpdate: () => evAnchor.dispatchEvent(dataUpdatePrj),
+        eduUpdate: () => evAnchor.dispatchEvent(dataUpdateEdu),
+        personUpdate: () => evAnchor.dispatchEvent(dataUpdatePerson),
+        bookmarkUpdate: () => evAnchor.dispatchEvent(dataUpdateBookmark),
+    };
+    
+    // prevent from accidental dynamic changes
+    return Object.freeze(triggers);
+}
+
+function registerModelEvents() {
+    const evAnchor = document.querySelector("#zhaw-about");
+
+    evAnchor.addEventListener("queryupdate", handleQueryUpdate);
+    evAnchor.addEventListener("queryupdate.extra", handleQueryExtraUpdate);
+    
+    evAnchor.addEventListener("dataupdate", () => {});
+    evAnchor.addEventListener("dataupdate.stat", () => {});
+    evAnchor.addEventListener("dataupdate.publication", () => {});
+    evAnchor.addEventListener("dataupdate.project", () => {});
+    evAnchor.addEventListener("dataupdate.education", () => {});
+    evAnchor.addEventListener("dataupdate.person", () => {});
+    evAnchor.addEventListener("dataupdate.bookmark", () => {});
+}
+
+const QueryModel = {
+    extra: "",
+    category: [],
+    department: [],
+    person: [],
+    term: []
+}
+
+function handleQueryUpdate(ev) {
+    const searchoptions = [... document.querySelectorAll('#searchcontainer .searchoptions .searchoption')];
+    const searchterms = document.querySelector('#searchterms');
+
+    QueryModel.extra = "";
+    QueryModel.category = [];
+    QueryModel.department = [];
+    QueryModel.person = [];
+    QueryModel.term = [];
+
+    if (searchoptions && searchoptions.length) {
+        searchoptions.forEach(option => {
+            // option.classList.contains("marker") ? 
+            if (option.classList.contains("marker")) {
+                // TODO we better use data attributes for this purpose
+                const catid = option.classList.item(option.classList.length - 1).replace("cat-", "");
+                if (depts.includes(catid)) {
+                    QueryModel.department.push(catid);
+                }
+                else {
+                    QueryModel.category.push(catid);
+                }
+            }
+            else if ( option.classList.contains("bi-person-circle")) {
+                QueryModel.person.push(option.innerText.trim());
+            } 
+            else {
+                QueryModel.term.push(option.innerText.trim());
+            }
+        })
+    }
+
+    if (searchterms.value.length) {
+        QueryModel.extra = searchterms.value.trim();
+    }
+
+    // trigger search request
+} 
+
+function handleQueryExtraUpdate(ev) {
+    const searchterms = document.querySelector('#searchterms');
+
+    if (searchterms.value.length) {
+        QueryModel.extra = searchterms.value.trim();
+    }
+
+    // trigger search request 
 } 
