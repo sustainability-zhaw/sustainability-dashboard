@@ -3,12 +3,15 @@
 const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
 const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 
-toggleResultDetails();
-dropSearchElement();
+// interaction event registration
 
-clearSearch();
+toggleResultDetails();
+
 addSearchElement();
 addSearchTerm();
+
+clearSearch();
+dropSearchElement();
 
 function toggleResultDetails() {
     const e = document.querySelector('.results'); 
