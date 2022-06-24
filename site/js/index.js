@@ -276,7 +276,7 @@ async function staticQueryRequest() {
     const { signal } = RequestController;
     DataModel.message = "";
 
-    const response = await fetch(QueryModel.config.api.baseurl, {signal});
+    const response = await fetch(`${QueryModel.config.api.baseurl}/feed.json`, {signal});
 
     try {
         DataModel.feed = await response.json();
