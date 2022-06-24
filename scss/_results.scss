@@ -14,6 +14,8 @@
         grid-column: 2 / span 3;
     }
 
+    
+
     .type,
     .abstract, 
     .keywords,
@@ -56,23 +58,40 @@
         grid-row: 2;
         padding-left: .5em;
         padding-right: .5em;
+        white-space: normal;
         
-        .mark, .counter {
+        .author {
+            margin-right: .5em;
             display: inline-block;
-            text-align: center;
-            padding: 0;
-            height: $font-size-base;
-            font-size: $font-size-base * .9;
-            line-height: $font-size-base;
-            vertical-align: baseline;
-        }
-        .counter {
-            padding-right: .4em;
-            padding-left: .4em;
-        }
-        .mark {
-            margin-left: 0.5em;
-            width: $font-size-base* 2;
+
+            .mark, .counter {
+                display: inline-block;
+                text-align: center;
+                padding: 0;
+                height: $font-size-base;
+                font-size: $font-size-base * .9;
+                line-height: $font-size-base;
+                vertical-align: baseline;
+            }
+            .counter {
+                margin: 0;
+                padding-right: .4em;
+                padding-left: .4em;
+                // line-height: $font-size-base;
+                // font-size: $font-size-base * .8;
+            }
+            .mark {
+                margin-left: 0.5em;
+                width: $font-size-base* 2;
+            }
+
+            &::after {
+                content: ";";
+            }
+
+            &:last-child::after {
+                content: "";
+            }
         }
     }
     .year {
