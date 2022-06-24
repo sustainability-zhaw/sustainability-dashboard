@@ -223,13 +223,14 @@
     @extend .fw-light;
 
     display: inline-block;
-    padding-right: 1em;
+    padding-right: .75em;
+    padding-left: .25em;
     text-align: right;
     border-bottom-right-radius: .6em;
     border-top-right-radius: .6em;
     line-height: $font-size-base * 2;
     height: $font-size-base * 2;
-    // font-size: $font-size-base * .9;
+    font-size: $font-size-base * .85;
 }
 
 .person {
