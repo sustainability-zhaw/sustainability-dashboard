@@ -1,0 +1,16 @@
+{
+    "api": {
+        "host": "",
+        "path": "mock/api"
+    },
+    "departments": [
+        "A", 
+        "G", 
+        "L", 
+        "N", 
+        "P", 
+        "S", 
+        "T", 
+        "W"
+    ]
+}

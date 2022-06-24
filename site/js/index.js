@@ -1,33 +1,43 @@
 const QueryModel = {
     qterms: [],
-    extra: ""
+    extra: "",
+    config: {}
 }
 
-// department constraints. 
-const depts = ["A", "G", "L", "N", "P", "S", "T", "W"];
+const DataModel = {
+    feed: {},
+    message: ""
+}
 
-// common interface for app related event triggering.
-const ModelEvents = initEventTrigger();
+const RequestController = new AbortController();
 
-// stub to be filled with our service interactions
+// pull up the System with a basic configuration
+
+async function init() {
+    const response = await fetch("/config.json");
+    const Config = await response.json();
+
+    Config.api.baseurl = `${Config.api.host.length ? "https://" : ""}${Config.api.host.length ? Config.api.host : ""}/${Config.api.path}`;
+
+    addSearchElement();
+    addSearchTerm();
+    toggleResultDetails();
+
+    clearSearch();
+    dropSearchElement();
+
+    registerModelEvents();
+
+    QueryModel.config = Config;
+    QueryModel.events = initEventTrigger();
+}
+
+init().then(() => QueryModel.events.queryUpdate());
+
+// stub for Bootstrap Tooltips
 
 const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
 const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-
-// interaction event registration
-
-toggleResultDetails();
-
-addSearchElement();
-addSearchTerm();
-
-clearSearch();
-dropSearchElement();
-
-registerModelEvents();
-
-// conclude startup by sending the first signal
-ModelEvents.queryUpdate();
 
 // function definitions
 
@@ -143,7 +153,7 @@ function addSearchTerm() {
                 break;
         }
 
-        ModelEvents.queryAddItem(type, value);
+        QueryModel.events.queryAddItem(type, value);
 
         evt.preventDefault();
     }
@@ -164,7 +174,7 @@ function addSearchElement() {
             const type = target.dataset.qtype;
             const value = target.dataset.qvalue;
 
-            ModelEvents.queryAddItem(type, value);            
+            QueryModel.events.queryAddItem(type, value);            
         }
     });
 }
@@ -181,7 +191,7 @@ function dropSearchElement() {
 
             QueryModel.qterms = QueryModel.qterms.filter(term => !(term.type === type && term.value === value));
 
-            ModelEvents.queryUpdate();
+            QueryModel.events.queryUpdate();
         }
     });
 } 
@@ -203,7 +213,7 @@ function clearSearch() {
         searchoptions.innerHTML = "";
         QueryModel.qterms = [];
 
-        ModelEvents.queryUpdate();
+        QueryModel.events.queryUpdate();
     });
 } 
 
@@ -216,7 +226,7 @@ function handleQueryExtraUpdate(ev) {
         QueryModel.extra = searchterms.value.trim();
     }
 
-    ModelEvents.queryUpdate();
+    QueryModel.events.queryUpdate();
 } 
 
 function handleQueryAdd(ev) {
@@ -234,7 +244,7 @@ function handleQueryAdd(ev) {
         return; // value out of bounds
     }
 
-    if (type === "depatment" && !depts.includes(value)) {
+    if (type === "depatment" && !QueryModel.config.departments.includes(value)) {
         console.log("dept out of bounds");
         return; // value out of bounds
     }
@@ -242,7 +252,7 @@ function handleQueryAdd(ev) {
     QueryModel.qterms.push({type, value});
 
     
-    ModelEvents.queryUpdate();
+    QueryModel.events.queryUpdate();
 }
 
 // QueryModel Support functions
@@ -250,7 +260,32 @@ function handleQueryAdd(ev) {
 function handleQueryUpdate(ev) {
     // trigger search request to the backend
     console.log("Query Update");
+
+    const fetcher = QueryModel.qterms.length || QueryModel.extra.length ? dynamicQueryRequest : staticQueryRequest;
+
+    // cancel _all_ previous requests
+    RequestController.abort();
+    fetcher().then(() => QueryModel.events.dataUpdate())
 } 
+
+async function dynamicQueryRequest() {
+    await staticQueryRequest();
+}
+
+async function staticQueryRequest() {
+    const { signal } = RequestController;
+    DataModel.message = "";
+
+    const response = await fetch(QueryModel.config.api.baseurl, {signal});
+
+    try {
+        DataModel.feed = await response.json();
+    }
+    catch (err) {
+        DataModel.feed = {};
+        DataModel.message = err.message;
+    }
+}
 
 function renderSearchOptions() {
     const template = document.querySelector('#searchoption');
