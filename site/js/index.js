@@ -90,12 +90,13 @@ function registerModelEvents() {
     evAnchor.addEventListener("queryupdate.extra", handleQueryExtraUpdate);
     evAnchor.addEventListener("queryadd", handleQueryAdd);
     
-    evAnchor.addEventListener("dataupdate", () => {});
-    evAnchor.addEventListener("dataupdate.stat", () => {});
-    evAnchor.addEventListener("dataupdate.publication", () => {});
-    evAnchor.addEventListener("dataupdate.project", () => {});
-    evAnchor.addEventListener("dataupdate.education", () => {});
-    evAnchor.addEventListener("dataupdate.person", () => {});
+    evAnchor.addEventListener("dataupdate", handleDataUpdate);
+    evAnchor.addEventListener("dataupdate", updaterEdu);
+    evAnchor.addEventListener("dataupdate", updaterProj);
+    evAnchor.addEventListener("dataupdate", updaterPubs);
+    evAnchor.addEventListener("dataupdate", updaterStat);
+    evAnchor.addEventListener("dataupdate", updaterPersons);
+
     evAnchor.addEventListener("dataupdate.bookmark", () => {});
 }
 
@@ -261,10 +262,11 @@ function handleQueryUpdate(ev) {
     // trigger search request to the backend
     console.log("Query Update");
 
+    //RequestController.abort();
+
     const fetcher = QueryModel.qterms.length || QueryModel.extra.length ? dynamicQueryRequest : staticQueryRequest;
 
     // cancel _all_ previous requests
-    RequestController.abort();
     fetcher().then(() => QueryModel.events.dataUpdate())
 } 
 
@@ -276,9 +278,10 @@ async function staticQueryRequest() {
     const { signal } = RequestController;
     DataModel.message = "";
 
-    const response = await fetch(`${QueryModel.config.api.baseurl}/feed.json`, {signal});
+    console.log(`get ${QueryModel.config.api.baseurl}/feed.json`);
 
     try {
+        const response = await fetch(`${QueryModel.config.api.baseurl}/feed.json`, {signal});
         DataModel.feed = await response.json();
     }
     catch (err) {
@@ -315,4 +318,136 @@ function renderSearchOptions() {
 
         searchoptions.appendChild(result);
     });
+}
+
+function handleDataUpdate() {
+    console.log("data update");
+    if (DataModel.message.length){
+        console.log(`${DataModel.message}`);
+    }
+}
+
+function updaterStat() {
+    if (!DataModel.feed.stat) {
+        return;
+    }
+    
+    [...document.querySelectorAll(".cat.counter")]
+        .forEach(
+            counter => counter.innerText = DataModel.feed.stat[counter.parentNode.dataset.qtype][counter.parentNode.dataset.qvalue]
+        );
+}
+
+function updaterPubs() {
+    if (!DataModel.feed.stat) {
+        return;
+    }
+
+    const counter = document.querySelector('#publication-counter');
+    counter.innerText = DataModel.feed.stat.publications;
+
+    if (!counter.parentNode.classList.contains("active")) {
+        return
+    }
+
+    const targetsection = document.querySelector('.results');
+
+    if (!DataModel.feed.page || targetsection.dataset.resulttype !== "publication") {
+        // when we get the first results of a fresh search, reset the results section
+        targetsection.innerHTML = "";
+        targetsection.dataset.resulttype = "publication"
+    }
+    
+    const template = document.querySelector('#resultcontainer');
+    const authortemplate = document.querySelector('#resourceauthor');
+
+    DataModel.feed.publications.forEach(publication => {
+        const result = template.content.cloneNode(true);
+        result.querySelector(".pubtitle").innerText = publication.title;
+        result.querySelector(".year").innerText = publication.year;
+        result.querySelector(".tool.bi-download").href = publication.link;
+        result.querySelector(".categories").innerHTML = publication.sdg.map(sdg => `<span class="mark cat-${Number(sdg) < 10 ? "0": ""}${sdg}"></span>`).join(" ");
+        result.querySelector(".extra.abstract").innerText= publication.abstract;
+        result.querySelector(".extra.pubtype").innerText= publication.type;
+        result.querySelector(".extra.keywords").innerText= publication.keywords.join(", ");
+        result.querySelector(".extra.classification").innerText= Object.getOwnPropertyNames(publication.class).map(id => `${id}: ${publication.class[id]}`).join(", ");
+
+        const authorlist = result.querySelector(".authors");
+
+        publication.authors.forEach(author => {
+            const authorTag = authortemplate.content.cloneNode(true);
+            authorTag.querySelector(".name").innerText = author;
+            authorTag.querySelector(".counter").innerText = "0";
+
+            // FIXME The following line should do a lookup into the peoples list
+            authorTag.querySelector(".mark").classList.add(`cat-${publication.department[0]}`);
+
+            authorlist.appendChild(authorTag);    
+        })
+
+        targetsection.appendChild(result);
+    });
+}
+
+function updaterEdu() {
+    if (!DataModel.feed.stat) {
+        return;
+    }
+    
+    const counter = document.querySelector('#education-counter');
+    counter.innerText = DataModel.feed.stat.education;
+
+    if (!counter.parentNode.classList.contains("active")) {
+        return
+    } 
+
+    const targetsection = document.querySelector('.results');
+
+    if (!DataModel.feed.page || targetsection.dataset.resulttype !== "education") {
+        // when we get the first results of a fresh search, reset the results section
+        targetsection.innerHTML = "";
+        targetsection.dataset.resulttype = "education"
+    }
+}
+
+function updaterProj() {
+    if (!DataModel.feed.stat) {
+        return;
+    }
+    
+    const counter = document.querySelector('#project-counter');
+    counter.innerText = DataModel.feed.stat.projects;
+
+    if (!counter.parentNode.classList.contains("active")) {
+        return
+    }
+
+    const targetsection = document.querySelector('.results');
+
+    if (!DataModel.feed.page || targetsection.dataset.resulttype !== "projects") {
+        // when we get the first results of a fresh search, reset the results section
+        targetsection.innerHTML = "";
+        targetsection.dataset.resulttype = "projects"
+    }
+}
+
+function updaterPersons() {
+    if (!DataModel.feed.stat) {
+        return;
+    }
+    
+    const counter = document.querySelector('#people-counter');
+    counter.innerText = DataModel.feed.stat.people;
+
+    if (!counter.parentNode.classList.contains("active")) {
+        return
+    }
+
+    const targetsection = document.querySelector('.results');
+
+    if (!DataModel.feed.page || targetsection.dataset.resulttype !== "people") {
+        // when we get the first results of a fresh search, reset the results section
+        targetsection.innerHTML = "";
+        targetsection.dataset.resulttype = "people"
+    }
 }

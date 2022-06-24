@@ -1,6 +1,331 @@
 {
-    "stat": {},
-    "publications": [],
+    "stat": {
+        "all": 13007,
+        "sdg": {
+            "1": 100,
+            "2": 96,
+            "3": 1628,
+            "4": 196,
+            "5": 672,
+            "6": 1193,
+            "7": 603,
+            "8": 265,
+            "9": 22,
+            "10": 34,
+            "11": 1966,
+            "12": 671,
+            "13": 491,
+            "14": 2002,
+            "15": 788,
+            "16": 2280
+        },
+        "department": {
+            "A": 397,
+            "G": 2311,
+            "L": 787,
+            "N": 2601,
+            "P": 1431,
+            "S": 1301,
+            "T": 2613,
+            "W": 1691
+        },
+        "publications": 9381,
+        "education": 522,
+        "projects": 3204,
+        "people": 123
+    },
+    "publications": [
+        {
+            "title": "Lebensdauerverlängerung von Mobiltelefonen : der Entscheidungsprozess bei einem Reparaturfall in der Praxis",
+            "authors": ["Karakas, Esra"],
+            "abstract": "Mobiltelefone und weitere elektronische Geräte gehören zum Alltag jeder Person und führt auch dazu, dass immer mehr davon produziert wird und somit die Anzahl der Geräte steigen. Doch für die Produktion wird eine hohe Menge an Ressourcen und Energie benötigt, welches zu einer Umweltbelastung führt. Mit einer Verlängerung der Nutzungs- sowie der Lebensdauer der Geräte kann die Abfallerzeugung sowie der Ressourcen- und Energieverbrauch minimiert und die Kreislaufeffizienz erhöht werden, welches im gesamten die Umweltbelastung reduziert. Die Verlängerung der Nutzungs- sowie Lebensdauer können durch Massnahmen, wie das Teilen, der Wiederverwendung, das Reparieren und der Wiederaufbereitung erzielt werden.\n\nDie vorliegende Thesis untersucht den Entscheidungsprozess der Reparaturshops bei einem Reparaturfall in der Deutschschweiz. Dabei werden autorisierte sowie nicht autorisierte Reparaturstellen in Betracht gezogen. Durch die gesamtheitliche Betrachtung des Entscheidungsprozesses werden Kriterien für die Beurteilung der Reparierbarkeit sowie Limitationen bei der Durchführbarkeit einer Reparatur eruiert. Gleichzeitig wird beim Beratungsprozess untersucht, ob und welche Empfehlungen den Kundinnen und Kunden durch die Reparaturshops gemacht werden. Abschliessend werden dabei die Unterschiede zwischen den autorisierten und nicht autorisierten Reparaturshops dargestellt. Um diese forschungsleitenden Fragen zu beantworten, wurden Interviews mit acht Expertinnen und Experten aus dem Reparaturbereich durchgeführt.\n\nDie Erkenntnisse aus den Interviews zeigen, dass bei der Bewertung der Reparierbarkeit die Kundenentscheidung, die Kostensicht, Garantie und Versicherung, diverse Richtlinien, die Durchlaufzeit sowie das Kriterium der Verlängerung der Nutzungs- und Lebensdauer beachtet werden. Die Reparierbarkeit wird jedoch von internen und externen Limitationen beeinträchtigt. Des Weiteren werden die Kundinnen und Kunden von allen befragten Reparaturshops beraten und erhalten entsprechende Empfehlungen. Dabei werden die Investitionsmöglichkeiten für Neugeräte oder wiederaufbereitete Mobiltelefone aufgezeigt. Auch werden die Nutzerinnen und Nutzer durch die Reparaturshops mit Bedienungshilfen unterstützt, wobei in einigen Fällen auch Reparaturen somit umgangen werden können. Zwischen den autorisierten und nicht autorisierten Reparaturshops sind ebenfalls Unterschiede hinsichtlich der Garantie, der Qualität, der Wahrnehmung durch die Kundinnen und Kunden sowie der Durchlaufzeit zu beobachten.\n\nDie Verlängerung der Nutzungs- und Lebensdauer der Mobiltelefone können durch Reparaturen gefördert werden und dies führt zur Reduktion der Umweltbelastung. Damit so viele Mobiltelefone wie möglich im Kreislauf behalten werden können, wird die aktive Rückförderung der Reparaturshops, der nicht mehr gebrauchten Geräte, als optimal betrachtet. Ferner sind schnelle und unkomplizierte Reparaturprozesse einzuführen, damit die Hemmschwelle für die Kundinnen und Kunden für die Durchführung der Reparaturen minimiert wird. Abschliessend sollen durch die Reparaturshops Zugang für die Nutzerinnen und Nutzer zu Informationen bezüglich Bedienungshilfen geschaffen werden.",
+            "year": 2021,
+            "lang": "de",
+            "keywords": ["Bodenwirtschaft und Ressourcen","Elektro-, Kommunikations-, Steuerungs- und Regelungstechnik"],
+            "class": {
+                "333": "Bodenwirtschaft und Ressourcen", 
+                "621.3": "Elektro-, Kommunikations-, Steuerungs- und Regelungstechnik"
+            },
+            "sdg": [12,7],
+            "link": "https://digitalcollection.zhaw.ch/handle/11475/24361",
+            "department": ["W"],
+            "type": "Thesis: Bachelor"
+        },
+        {
+            "title": "Phosphorrückgewinnung aus kommunalem Klärschlamm mittels hydrothermaler Karbonisierung und Säureauswaschung : Einfluss von Kohlendioxid-Eingasung auf den Prozess der Hydrothermalen Karbonisierung und der Vergleich verschiedener Nachweismethoden",
+            "authors": ["Meyer, Luca"],
+            "abstract": "Die immer knapper werdenden Vorräte an hochwertigem Phosphor stellen die Menschheit vor ein Problem. Um den weltweit steigenden Nahrungsbedarf auch in Zukunft zu decken, sind alternative Phosphorquellen unumgänglich. Eine Möglichkeit diesen Bedarf zu decken, besteht durch das Schliessen von Phosphorkreisläufen. Das im Abwasser anfallende Phosphor sollte zurückgewonnen und der Landwirtschaft in Form von Dünger zur Verfügung gestellt werden. Es sind viele verschiedene Varianten der Phosphorrückgewinnung bekannt und teilweise bereits im Einsatz. In dieser Arbeit wird untersucht, welchen Vorteil die Kombination von zwei verschiedenen Varianten der Phosphorrückgewinnung bringt. Dabei handelt es sich um die hydrothermale Karbonisierung, welches den Klärschlamm karbonisiert und den Phosphor in das Prozesswasser überführt und das Budenheimer-Verfahren, bei welchem der Phosphor des Klärschlammes, bei einer Eingasung von CO2, gelöst und ebenfalls in das Prozesswasser überführt wird. Neben der Kombination dieser beiden Verfahren und einer Erfolgskontrolle, wurden verschiedene Phosphornachweismethoden und eine Brennwertanalyse vorgenommen. Die Auswertungen der Kombination der beiden Verfahren mittels ICP-OES hat ergeben, dass mit der Eingasung von CO2 während der hydrothermalen Karbonisierung doppelt so viel Phosphor ins Prozesswasser überführt werden kann. Dabei handelt es sich jedoch um lediglich 0.2 % des im Ausgangsmaterial enthaltenen Phosphor.\n\nBei den Nachweismethoden wurde untersucht, ob sich die Resultate der ICP-OES Messung, der photometrischer Bestimmung nach Hach Lange und der photometrischen Phosphorbestimmung mit Ammoniummolybdat, signifikante Unterschiede aufzeigen. Die Auswertung der Resultate hat ergeben, dass keine signifikanten Unterschiede feststellbar sind und sich demzufolge alle Nachweismethoden, abgesehen vom Preis und dem Aufwand, gleich gut zur Phosphorbestimmung eignen. Die abschliessende Brennwertanalyse hat ergeben, dass der Brennwert der bearbeiteten Klärschlammkohlen genug hoch ist, dass sich die Kohlen weiterhin als alternatives Brennmaterial eignet.",
+            "year": 2019,
+            "lang": "de",
+            "keywords": ["Klärschlamm","Mikrowellenaufschluss","Phosphorrückgewinnung","HTC","Photometrische Phosphorbestimmung","ICP-OES","Kohlendioxid-Eingasung","Schwermetalle"," Technische Chemie"],
+            "class": {
+                "660": "Technische Chemie"
+            },
+            "sdg": [2,6],
+            "link": "https://digitalcollection.zhaw.ch/handle/11475/24433",
+            "department": ["N"],
+            "type": "Thesis: Bachelor"
+        },
+        {
+            "title": "Does exhaled aerosol increase with COVID-19 infection correlate with body mass index-years?",
+            "authors": ["Stohner, Jürgen"],
+            "abstract": "",
+            "year": 2021,
+            "lang": "en",
+            "keywords": ["Aerosol","Body Mass Index","Exhalation","Human","SARS-CoV-2","COVID-19"," Physiologie und verwandte Themen"],
+            "class": {
+                "571": "Physiologie und verwandte Themen"
+            },
+            "sdg": [14],
+            "link": "https://digitalcollection.zhaw.ch/handle/11475/23994",
+            "department": ["N"],
+            "type": "Beitrag in wissenschaftlicher Zeitschrift"
+        },
+        {
+            "title": "Xanthomonas hortorum – beyond gardens : current taxonomy, genomics, and virulence repertoires",
+            "authors": ["Dia, Nay C.","Morinière, Lucas","Cottyn, Bart","Bernal, Eduardo","Jacobs, Jonathan M.","Koebnik, Ralf","Osdaghi, Ebrahim","Potnis, Neha","Pothier, Joël F."],
+            "abstract": "Taxonomy: Bacteria; Phylum Proteobacteria; Class Gammaproteobacteria; Order Lysobacterales (earlier synonym of Xanthomonadales); Family Lysobacteraceae (earlier synonym of Xanthomonadaceae); Genus Xanthomonas; Species X. hortorum; Pathovars: pv. carotae, pv. vitians, pv. hederae, pv. pelargonii, pv. taraxaci, pv. cynarae, and pv. gardneri.\n\nHost range: Xanthomonas hortorum affects agricultural crops, and horticultural and wild plants. Tomato, carrot, artichoke, lettuce, pelargonium, ivy, and dandelion were originally described as the main natural hosts of the seven separate pathovars. Artificial inoculation experiments also revealed other hosts. The natural and experimental host ranges are expected to be broader than initially assumed. Additionally, several strains, yet to be assigned to a pathovar within X. hortorum, cause diseases on several other plant species such as peony, sweet wormwood, lavender, and oak-leaf hydrangea.\n\nEpidemiology and control: X. hortorum pathovars are mainly disseminated by infected seeds (e.g., X. hortorum pvs carotae and vitians) or cuttings (e.g., X. hortorum pv. pelargonii) and can be further dispersed by wind and rain, or mechanically transferred during planting and cultivation. Global trade of plants, seeds, and other propagating material constitutes a major pathway for their introduction and spread into new geographical areas. The propagules of some pathovars (e.g., X. horturum pv. pelargonii) are spread by insect vectors, while those of others can survive in crop residues and soils, and overwinter until the following growing season (e.g., X. hortorum pvs vitians and carotae). Control measures against X. hortorum pathovars are varied and include exclusion strategies (i.e., by using certification programmes and quarantine regulations) to multiple agricultural practices such as the application of phytosanitary products. Copper-based compounds against X. hortorum are used, but the emergence of copper-tolerant strains represents a major threat for their effective management. With the current lack of efficient chemical or biological disease management strategies, host resistance appears promising, but is not without challenges. The intrastrain genetic variability within the same pathovar poses a challenge for breeding cultivars with durable resistance.\n\nUseful websites: https://gd.eppo.int/taxon/XANTGA, https://gd.eppo.int/taxon/XANTCR, https://gd.eppo.int/taxon/XANTPE, https://www.euroxanth.eu, http://www.xanthomonas.org, http://www.xanthomonas.org/dokuwiki",
+            "year": 2022,
+            "lang": "en",
+            "keywords": ["Bacterial blight","Carrot","Dandelion","Leaf spot","Lettuce","Pelargonium","Tomato","Xanthomonas hortorum"," Biochemie"," Mikrobiologie"],
+            "class": {
+                "572": "Biochemie", 
+                "579": "Mikrobiologie"
+            },
+            "sdg": [12,2],
+            "link": "https://digitalcollection.zhaw.ch/handle/11475/24016",
+            "department": ["N"],
+            "type": "Beitrag in wissenschaftlicher Zeitschrift"
+        },
+        {
+            "title": "Modelling the impact of climate change on agriculture productivity in Russia",
+            "authors": ["Bokusheva, Raushan","Bozzola, Martina","Kunze, Sven"],
+            "abstract": "Understanding mechanisms of the impacts of global warming on agriculture in main agricultural production regions of the world is important for identifying appropriate adaptation strategies and for ensuring food security of the planet’s growing population. In our study, we study the impact of climate change on agriculture productivity in Russia – a major grain producing and exporting country. To derive marginal effects of climate change on agriculture productivity in 65 Russian regions, we employ an approach that build upon both the standard Ricardian approach (Mendelson et al., 1994) as well as the identification strategy allowing to control for adaptation efforts and unobserved heterogeneity proposed by Gammans, Mérel and Paroissien (2020). Our preliminary results suggest that a uniform increase in temperature during the main growing period will negatively affect agricultural production in all important production regions of Russia, given the current state of technological upgrading and land use in Russian agriculture.",
+            "year": 2022,
+            "lang": "en",
+            "keywords": ["Russia","Ricardian approach","Climate change impact","Agriculture"," Landwirtschaft"],
+            "class": {
+                "630": "Landwirtschaft"
+            },
+            "sdg": [13,15,2],
+            "link": "https://digitalcollection.zhaw.ch/handle/11475/24961",
+            "department": ["N"],
+            "type": "Konferenz: Paper"
+        },
+        {
+            "title": "Duales Dachbegrünungssystem : «Orchideenwiesen und Weinanbau übereinander» am Beispiel von Projekt KHK St. Gallen",
+            "authors": ["Tribelhorn, Roman"],
+            "abstract": "Immer mehr Grün- und Brachflächen im Siedlungsgebiet werden aufgrund des steigenden Bedarfs an Wohnraum und der im neuen Raumplanungsgesetz angestrebten Inneren Verdichtung überbaut. Dadurch gehen wichtige Lebensräume für die einheimische Flora und Fauna verloren. Durch die Umzonung von Landwirtschaftsflächen in Bauland, schwinden wichtige Produktionsstandorte in den städtischen Gebieten. Dachbegrünungen können hier Abhilfe schaffen, in dem sie als Ersatzlebensraum und Produktionsfläche fungieren. Im 2017 realisierte die Forschungsgruppe Stadtökologie der Zürcher Hochschule für Angewandte Wissenschaften ein Duales Dachbegrünungssystem auf dem Dach des Kehrichtheizkraftwerkes St. Gallen, welches diese beiden Aspekte vereint. Für den Artenschutz wurden Magerwiesen geschaffen und unter dem Gesichtspunkt der Urbanen Landwirtschaft wird in denselben Flächen Rebbau betrieben.\n\nIm Rahmen dieser Arbeit wurde eruiert, ob sich der konträre Nährstoffhaushalt beider Nutzungsformen mit sich vereinbaren lässt und wie die Risikofaktoren in Einklang mit den Systemanforderungen gebracht werden können. Dazu wurden die Substrate der Magerwiesen und Rebtröge auf bodenökologische Faktoren untersucht sowie Vegetationsanalysen vorgenommen. Zudem wurde anhand der Trieblängen der Reben eine Vitalitätsbeurteilung durchgeführt.\n\nAufgrund der Nährstoffanalysen konnte aufgezeigt werden, dass sich die Magerwiesen bei allen Sichtaufbauten und Substraten etabliere können. Beim Substrat der Rebtröge wurde ein Mangel der Makronährstoffe Phosphor und Stickstoff festgestellt, welcher die Ursache für die festgestellte Wachstumsdepression bei einem Teil der Reben sein könnte. Die Vegetationsanalysen zeigen, dass es sich um eine junge Vegetation handelt, die im Anfangsstadium ihrer Entwicklung steht. Aufgrund der undifferenzierten Zeigerwerte konnten keine Rückschlüsse auf die Standortbedingungen gezogen werden. Die Resultate der Nährstoffanalysen sind diesbezüglich aussagekräftiger.",
+            "year": 2019,
+            "lang": "de",
+            "keywords": ["Roof top Farming","Nährstoffregulierung","Duales Dachbegrünungssystem","Magerwiesen","Orchideenwiese","Urbane Landwirtschaft","Wachstumsdepression","Zeigerwerte","Weinbau auf dem Dach"," Landflächen, Naturerholungsgebiete"],
+            "class": {
+                "333.7": "Landflächen, Naturerholungsgebiete"
+            },
+            "sdg": [11,2],
+            "link": "https://digitalcollection.zhaw.ch/handle/11475/24438",
+            "department": ["N"],
+            "type": "Thesis: Bachelor"
+        },
+        {
+            "title": "The strategic use of microlearning as a training approach for the purpose of workforce skills development in multinational corporations",
+            "authors": ["Loh Joey, Krystal"],
+            "abstract": "The rapid pace of digital disruption aggravated by socio-demographic trends have impacted the nature of work tremendously. The skills that multinational corporations (MNCs) value and relied upon have been evolving faster than ever. Hence, learning and development (L&D) has been finding new ways to help their workforce keep up with the shifting skills needs. However, there have been numerous issues with traditional training for skills development, including considerable financial and time investments that may interfere with a company's daily operations. As a result, an increasing trend toward technology-enabled learning, such as microlearning, has aided MNCs in quickly filling skill gaps.\n\nThe aim of this thesis was to shed light on the emerging topic of microlearning in hopes of paving the way for future research. With many L&D professionals still unfamiliar with the present state of microlearning, they would have been even far less aware of the factors to implement it successfully within their organizations. This research also took on the strategic lens in examining the role of strategic human resource management (SHRM) and organizational learning (OL) through the perspective of L&D professionals. Four research objectives have also been of particular interest throughout this thesis.\n\nIn order to fulfill the research question and stated objectives, this research adopted a qualitative research design of an exploratory nature. Semi-structured interviews were conducted with six L&D professionals. There were two categories of L&D experts interviewed: those with strategic level experience and those with systems or operational level expertise.\n\nThe results showed that L&D professionals agreed that SHRM and OL serve as a sources of competitive advantage. The conducted research also revealed that OL is not only a competitive advantage, but also a survival strategy, as it aids the firm in adapting to its ever-changing business environment. The findings also indicated that L&D is seen as a strategic enabler. The results gathered that the most critical skills gap is the need to enable employees to take care of their continuous self-development. By combining the information from the literature review with the findings from the interviews, five main drivers for the adoption of microlearning emerged. Likewise, this thesis also presented five main features that distinguish microlearning as an effective training approach for skills development.\n\nTaking into account the study's limitations, the findings led to recommendations for L&D professionals on nine multi-dimensional success factors for the implementation of microlearning. While L&D has a crucial role to play in the success of an organization’s training strategy and approach, it also demands significant buy-in and participation from top management, line management, and every single employee. Ultimately, every single learner should be responsible for his or her continuous self-development in order for the organization to gain a competitive advantage through its human capital.",
+            "year": 2021,
+            "lang": "en",
+            "keywords": [],
+            "class": {
+                "658.3": "Personalmanagement"
+            },
+            "sdg": [3],
+            "link": "https://digitalcollection.zhaw.ch/handle/11475/24663",
+            "department": ["W"],
+            "type": "Thesis: Master"
+        },
+        {
+            "title": "Clarification of yeast cell suspensions by a highly porous polyamide nanofiber sponge",
+            "authors": ["Mousavi, Sara","Filipová, Lucie","Ebert, Jürgen","Heiligtag, Florian Johannes","Daumke, Ralph","Loser, Werner","Ledergerber, Bettina","Frank, Brian","Adlhart, Christian"],
+            "abstract": "Depth filtration is an attractive method for initial clarification of broth for removing cells and cell debris. Electrospun nanofibers with their large specific surface area and a porous structure are known as attractive materials in filtration processes. However, dead-end filtration of cells through nanofiber mats (NFM) always leads to cake formation and increasing resistance. In this study, for the first time, a nanofiber sponge (NFS) or nanofiber aerogel was synthetized from polyamide 6 (PA6) building blocks. The NFS was flexible, highly porous and mechanically stable. The pore size of the NFS was tuned between 8 and 26 µm during the cryogenic processing step. Volumetric flux and filtration efficiency of the NFS depended on the pore size and the results were compared with those for NFM from the same PA6 nanofiber material. Dead-end filtration of Saccharomyces cerevisiae was feasible at a low differential pressure of 3.5 kPa and cell filtration efficiency was > 99 %. Modelling of the filtration process revealed that cake formation is prevented by NFS filters since cells are able to penetrate into the filter and to adsorb on their internal surface. The filtration characteristics were also compared with commercial depth filters and revealed the high flux of NFS filters along with the possibility to avoid filter aids and a low environmental impact. PA6-NFS filters may become a new and cost effective generation of filters for removing different cells or cell debris from broth and other applications.",
+            "year": 2022,
+            "lang": "en",
+            "keywords": ["Yeast cell filtration","Nanofibrous polyamide sponge","Depth filtration","Pore blocking mechanism","3D nanofiber aerogel"," Technische Chemie"],
+            "class": {
+                "660": "Technische Chemie"
+            },
+            "sdg": [3],
+            "link": "https://digitalcollection.zhaw.ch/handle/11475/23848",
+            "department": ["N"],
+            "type": "Beitrag in wissenschaftlicher Zeitschrift"
+        },
+        {
+            "title": "Supinationstrauma: Tape oder Stabilisationsschiene? : welches Hilfsmittel bringt während der Rehabilitation eines Supinationstraumas einen besseren Nutzen?",
+            "authors": ["Baumann, Mirja","Brander, Sarah"],
+            "abstract": "Darstellung der Thematik: Das Supinationstrauma zählt zu den häufigsten muskuloskelettalen Verletzungen. Für die Nachbehandlung werden in der Physiotherapie das Tape und die Stabilisationsschienen häufig genutzt, wobei sich deren Anwendung in den Institutionen sowie auch zwischen den medizinischen Fachpersonen unterscheidet.\n\nZiel: Diese Arbeit soll einen umfassenden Vergleich der Hilfsmittel Tape und Stabilisationsschiene als begleitende Massnahme während der Rehabilitation nach einem Supinationstrauma aufzeigen.\n\nMethode: Mittels vordefinierten Ein- und Ausschlusskriterien wurde in den Datenbanken CINAHL, MEDLINE, PubMed und Cochrane eine systematische Literaturrecherche durchgeführt. Dabei konnten vier Studien eingeschlossen werden, welche entsprechend dem Studiendesign mit dem AICA-Formular, der PEDro-Skala oder dem AMSTAR-Raster beurteilt wurden.\n\nRelevante Ergebnisse: Keine der Studien konnte einen Unterschied zwischen den Hilfsmitteln bezüglich funktionellen Outcomes evaluieren. In einer Studie erzielte die Stabilisationsschiene signifikant bessere Ergebnisse in Bezug auf die Patientenzufriedenheit.\n\nSchlussfolgerung: Die Stabilisationsschiene sowie das Tape können die Nachbehandlung von Supinationstraumata effektiv unterstützen. Bezüglich funktionellen Outcomes gibt es keinen Unterschied, jedoch kann durch die Behandlung mit einer Stabilisationsschiene eine bessere Patientenzufriedenheit erreicht werden.",
+            "year": 2022,
+            "lang": "de",
+            "keywords": ["Akute Verstauchung des Sprunggelenkes","Unelastisches Heftpflaster","Stützschiene","Rehabilitation","Acute ankle sprain","Tape","Brace","Rehabilitation"," Physiotherapie"],
+            "class": {
+                "615.82": "Physiotherapie"
+            },
+            "sdg": [3],
+            "link": "https://digitalcollection.zhaw.ch/handle/11475/24321",
+            "department": ["N"],
+            "type": "Thesis: Bachelor"
+        },
+        {
+            "title": "Impact of RFI on GNSS and avionics : a view from the cockpit",
+            "authors": ["Osechas, Okuary","Felux, Michael","Fohlmeister, Friederike","Dautermann, Thomas"],
+            "abstract": "Introduction: The increase of Radio Frequency Interference (RFI) events is a well-documented trend, that is becoming a threat to the use of Global Navigation Satellite Systems (GNSS) in aviation. EUROCONTROL’s voluntary ATM incident reporting system EVAIR is a platform for pilot to report relevant incidents, such as GNSS outages. In the years 2018 and 2019 more than 4300 and 3500 GPS outages were reported compared to less than 500 events in the previous years. While the tool is giving a good geographic perspective about the typical RFI hotspots, it is ultimately based on voluntarily reported data. As pilots get used to widespread RFI in certain areas and Notices to Airmen (NOTAMs) are published that RFI should be expected, these events are considered to be normal. This likely leads to the numbers behind the GNSS outages reported in EVAIR being significantly underestimated. In this presentation we will give the audience a feel for why we believe this to be true: outages in GNSS service due to RFI initially manifest themselves in the cockpit in subtle ways, not immediately identifiable to the unaware. \n\nBackground: The Nicosia Flight Information Region (FIR) has long reported difficulties with GNSS service coverage. It regularly issues NOTAMs warning pilots of the phenomenon and kindly requests radio reports of such observations. Pilots regularly report loss of GNSS on approach to Larnaca International Airport (LCA) making the introduction of GNSS-based approach procedures impossible. While many aircraft can cope with GNSS outages easily by using terrestrial navigation aids and/or Inertial Reference Systems onboard the aircraft, some aircraft do not have this option and may require ATC support. This is causing an increase in workload for air traffic controllers and pilots of the affected aircraft alike. As a way to better understand the prevalence of the phenomenon and its implications on main-line aircraft, DLR flew its Airbus 320 to LCA, equipped with a variety of GNSS monitoring instruments, including the baseline avionics of the aircraft, a set of experimental GNSS receivers and a recorder for sampling the raw radio signal.\n\nObservations and Data: An important feature of the flight is that we have been able to analyze the phenomenon from several perspectives. This includes photographs of the cockpit displays, and matching recordings of GNSS signals, where available, in terms of pseudorange and signal-to-noise ratio. In addition, we collected raw, pre-correlator signal samples, the analysis of which offers a very particular type of insight. The raw signal was captured with a recording device, after being downconverted to baseband. The sampling rate was set to 30.7 MHz, at eight bits per sample. This quality of recording allows us to study the response of a GNSS receiver in “playback” mode, but it also enables an analysis of the frequency contents of the radio band in question. Reception and Impact While it is not a particularly novel message that GNSS signals are being jammed with RFI in some parts of the world, the aviation community has already reacted to our findings. Some of the results have been discussed at EUROCONTROL-hosted events, as well as a white paper. The Cypriot Department of Civil Aviation has, since, stated that the measurements prompted a revision of the threat model behind the RFI events. As for the wider aviation community, these observations and measurements clearly show a need to revise the paradigms for the provision of resilient navigation services. An outdate understanding of the RFI threat was based on individual drivers sporadically disrupting GNSS services at airports, for example by using GNSS privacy devices. Our measurements make it evident that this threat model is outdated, as GNSS outages clearly last several hours (potentially even more) and cover an entire FIR.\n\nThe Presentation: We will present the measurements and results discussed above in a presentation designed to create awareness of the impact of RFI on avionics hardware. During this flight we observed that it is easy for pilots to underappreciate the degree of disruption to their GNSS avionics. An important part of the message is that we have found no evidence of intentional misleading, inside the GNSS signals. The service disruptions are likely collateral to the geopolitical reality of the region. In this sense, the results show that there is no direct threat to the safety of air traffic and, consequently, the need to act may not be acute. The results do, however, show a need to modernize the airspace and CNS infrastructure, to reflect the evolving nature of the RFI threat. We consider it important to point to the reduction in redundancy, and therefore in safety, that stems from a systematic, permanent disruption of the primary means of navigation. Disruptions of GNSS are also known to increase controller workload and cause other forms of operational expenses, for example due to increased numbers of go-arounds.",
+            "year": 2022,
+            "lang": "en",
+            "keywords": ["GNSS interference","RFI","Jamming"," Luftfahrt- und Fahrzeugtechnik"],
+            "class": {
+                "629": "Luftfahrt- und Fahrzeugtechnik"
+            },
+            "sdg": [3],
+            "link": "https://digitalcollection.zhaw.ch/handle/11475/24588",
+            "department": ["T"],
+            "type": "Konferenz: Sonstiges"
+        },
+        {
+            "title": "Value of co-benefits from energy saving ventilation systems : contingent valuations on Swiss home owners",
+            "authors": ["Boogen, Nina","Filippini, Massimo","Martinez-Cruz, Adan L."],
+            "abstract": "Previous efforts exploring options to increase residential sector’s energy efficiency have overlooked that highlighting co-benefits associated with energy efficiency may represent a promising strategy to draw attention from decision makers. For instance, in addition to savings in energy costs, buildings equipped with energy saving and comfort ventilation (ESV) system provide co-benefits such as improved indoor air quality (IAQ), thermal comfort, and noise reduction. These co-benefits are attributes of an experience goods as their value is difficult to appraise unless they have been experienced. This paper estimates the value of these co-benefits by inquiring willingness to accept (WTA) compensation to hold off on using ESV from Swiss owners of Minergie houses, which are equipped with ESV. Average monthly WTA is CHF 181 —value dominated by IAQ. WTA protocols may deliver overestimated values. Thus this paper estimates willingness to pay (WTP) on a sample of owners of conventional houses —i.e. respondents that have not experienced an ESV. Average monthly WTP is CHF 163 —value dominated by presence of allergies at home, an approximation to relevance of IAQ among respondents that have not experienced ESV. A back-of-the-envelope cost-benefit analysis informed with our estimates suggests that monthly benefits from ESV can be as much as twice the costs.",
+            "year": 2022,
+            "lang": "en",
+            "keywords": ["Co-benefits of energy efficiency","Residential investment decision","Willingness to accept","Willingness to pay","Swiss home owner"," Energie"],
+            "class": {
+                "333.79": "Energie"
+            },
+            "sdg": [11,7],
+            "link": "https://digitalcollection.zhaw.ch/handle/11475/24742",
+            "department": ["W"],
+            "type": "Working Paper – Gutachten – Studie"
+        },
+        {
+            "title": "What is the relapse risk during treatment? : survivor analysis of single and multiple relapse events in inpatients with alcohol use disorder as part of an observational study",
+            "authors": ["Senn, Smeralda","Volken, Thomas","Rösner, Susanne","Wieber, Frank"],
+            "abstract": "Introduction: During treatment for alcohol use disorder (AUD), about 40% of patients return to drinking. Whether the risk of relapse changes during treatment and how relapses may affect the risk of subsequent relapse are unclear, however. The current study, therefore, aims to identify when and with what probability relapses occur.\n\nMethods: One hundred and three inpatients at an AUD treatment center participated in this observational study. The study documented relapse to drinking using breath analyzers, urine tests, and self-reported incidents for 42 days after the start of treatment. Time to the first relapse event and to any subsequent relapse event served as the outcome measures. The study determined the proportion of patients who had not experienced a relapse event at any given point by Kaplan-Meier estimates and Cox proportional hazards models. The study team computed the instantaneous probability of experiencing an event at any given point using generalized estimating equation (GEE) models of the binomial family with log-link and exchangeable correlation structure to estimate unadjusted and adjusted hazards.\n\nResults: Whereas the hazards of experiencing a first relapse event declined steadily over the 42 days, the hazards of experiencing a subsequent relapse following an initial event remained stable. Both first-time and recurrent relapses were positively associated with the number of DSM-5 AUD criteria.\n\nConclusion: Whereas the risk of relapse declines with each day of abstinence during treatment, it remains high after an individual relapse for the first time. This finding implies that therapy should focus on strengthening selfefficacy for low-risk groups and on relapse-prevention strategies for high-risk groups.",
+            "year": 2022,
+            "lang": "en",
+            "keywords": ["Alcohol use disorder","Relapse","Survival analysis","Treatment"," Neurologie und Krankheiten des Nervensystems"],
+            "class": {
+                "616.8": "Neurologie und Krankheiten des Nervensystems"
+            },
+            "sdg": [3],
+            "link": "https://digitalcollection.zhaw.ch/handle/11475/24727",
+            "department": ["G"],
+            "type": "Beitrag in wissenschaftlicher Zeitschrift"
+        },
+        {
+            "title": "Moderater Alkoholkonsum während Schwangerschaft und Stillzeit",
+            "authors": ["Pehlke-Milde, Jessica","Radu, Irina","Meyer, Yvonne","Gouilhers, Solène","Hammer, Raphaël"],
+            "abstract": "",
+            "year": 2022,
+            "lang": "de",
+            "keywords": ["Alkoholkonsum","Schwangerschaft","Stillzeit","Risikowahrnehmung"],
+            "class": {
+                "618": "Geburtsmedizin und Hebammenarbeit"
+            },
+            "sdg": [3],
+            "link": "https://digitalcollection.zhaw.ch/handle/11475/23869",
+            "department": ["G"],
+            "type": "Konferenz: Sonstiges"
+        },
+        {
+            "title": "Change in alcohol consumption and binge drinking in university students during the early COVID-19 pandemic",
+            "authors": ["Zysset, Annina","Volken, Thomas","Amendola, Simone","von Wyl, Agnes","Dratva, Julia"],
+            "abstract": "Objectives: Young adults have been overly affected by the containment measures against COVID-19 and, consequently, worsening in mental health and change in health behavior have been reported. Because the life phase of emerging adulthood is crucial for developing health behaviors, this study aims to examine increase in alcohol consumption, single and multiple binge drinking, and associated factors in students during lockdown and post-lockdown periods.\n\nMethods: A prospective open cohort study design with nine survey time points between April 2020 and June 2021 was conducted. The present study uses pooled data from the first survey T0 (3 April to 14 April) and follow-ups at T1 (30 April to 11 May 2020) and T2 (28 May to 8 June 2020). Students from all faculties of the Zurich University of Applied Sciences (ZHAW) (N = 12’431) were invited. Of the 1,300 students who participated at baseline and in at least one follow-up, 1,278 (98.3%) completed the questionnaires, final net sample size was 947. Generalized Estimating Equations (GEE) models were used to investigate the factors associated with increases in alcohol consumption based on number of occasions/last 30 days; drinks/week, and binge drinking at T0, and respective changes at T1 and T2 (increases, decreases, no change).\n\nResults: Overall, 20% of Swiss university students reported an increased alcohol consumption and 26% engaged in binge drinking. Number of drinks at baseline was associated with a higher probability of increased alcohol consumption, as well as engaging in single and multiple binge drinking events. Higher anxiety scores were associated with a higher probability to increase the alcohol consumption and engaging at least once in binge drinking. Additional factors associated with any binge drinking were male gender, younger age and not living with parents. Higher perceived social support was only associated with engaging in heavy binge drinking.\n\nConclusions: A substantial number of students developed a more risky health behavior regarding alcohol consumption. It is important to identify at risk students and design target prevention including factors such as age, gender and social norms. Further, health behavior and determinants of health behaviors of students should be carefully monitored during the further course of the pandemic.",
+            "year": 2022,
+            "lang": "en",
+            "keywords": ["Pandemie","Gesundheitsverhalten","Alkoholkonsum","Studierendengesundheit","Risky health behavior","Alcohol","Binge drinking","Anxiety","Student","Emerging adulthood","COVID-19","Lockdown"],
+            "class": {
+                "305": "Personengruppen (Alter, Herkunft, Geschlecht, Einkommen)",
+                "616.8": "Neurologie und Krankheiten des Nervensystems"
+            },
+            "sdg": [3],
+            "link": "https://digitalcollection.zhaw.ch/handle/11475/24898",
+            "department": ["G", "P"],
+            "type": "Beitrag in wissenschaftlicher Zeitschrift"
+        },
+        {
+            "title": "Inflationserwartungen und parteipolitische Überzeugungen : empirische Evidenz aus den Vereinigten Staaten von Amerika",
+            "authors": ["Bachmann, Oliver","Gründler, Klaus","Morales, Jonas","Potrafke, Niklas","Seiberlich, Ruben"],
+            "abstract": "Der Zustand der heimischen Wirtschaft wird durch die Brille parteipolitischer Überzeugungen unterschiedlich wahrgenommen. Regiert eine Partei, der die Bürger nahestehen, wird der Zustand der heimischen Wirtschaft (z.B. BIP-Wachstum, Arbeitslosigkeit, Inflation) von diesen Bürgern als besser wahrgenommen, als er tatsächlich ist. Anhand neuer Daten für Inflationserwartungen in den Vereinigten Staaten von Amerika zeigen unsere Ergebnisse, dass nach dem Präsidentschaftswechsel von Donald Trump zu Joe Biden, Bürger in US-Staaten mit republikanischen Mehrheiten eine höhere Inflationsrate erwarten als Bürger in US-Staaten mit demokratischen Mehrheiten.",
+            "year": 2022,
+            "lang": "de",
+            "keywords": [],
+            "class": {
+                "320": "Politik", 
+                "332": "Finanzwirtschaft"
+            },
+            "sdg": [16,8],
+            "link": "https://digitalcollection.zhaw.ch/handle/11475/25040",
+            "department": ["W"],
+            "type": "Beitrag in wissenschaftlicher Zeitschrift"
+        },
+        {
+            "title": "Umkleidezeit – aktueller Stand : rechtliche Qualifikation und Rechtsfolgen",
+            "authors": ["Petrik, Andreas"],
+            "abstract": "RA lic. iur. Andreas Petrik entschlüsselt die Umkleidezeit anhand der kürzlich ergangenen Gerichtsurteile und zeigt auf, wie diese (öffentlich)arbeitsrechtlich zu qualifizieren ist und welche Rechtsfolgen daran anknüpfen.",
+            "year": 2022,
+            "lang": "de",
+            "keywords": [],
+            "class": {
+                "344": "Öffentliches Recht (CH), Arbeits-, Sozial-, Bildungs- und Kulturrecht"
+            },
+            "sdg": [8],
+            "link": "https://digitalcollection.zhaw.ch/handle/11475/24075",
+            "department": ["W"],
+            "type": "Beitrag in Magazin oder Zeitung"
+        },
+        {
+            "title": "Waldbaden und Waldtherapie als innovative Ansätze mit gesundheitsförderndem Potenzial",
+            "authors": ["Föhn, Martina"],
+            "abstract": "«Waldbaden» und «Waldtherapie» erfreuen sich zunehmender Beliebtheit. In Japan ist shinrin yoku (Waldbaden) fester Bestandteil des Gesundheitssystems. Der Aufenthalt im Wald kann gemäss Studien die Herzaktivität, die Atmung und die Aktivität des Nervensystems verbessern. Das Klima des Waldes und die von den Bäumen freigesetzten Terpene können bei Stresssymptomen, Schlaf- und Aufmerksamkeitsstörungen sowie Depressionen positiv wirken. Achtsamkeitsübungen, die auf verschiedenen Sinneswahrnehmungen basieren, werden präventiv und rehabilitativ eingesetzt. Die aus Japan stammende Methode hat mittlerweile auch in Europa Eingang gefunden. In der Schweiz wird dieser neue Bereich durch Ausbildungsangebote erschlossen. Während in Deutschland sogar schon Wälder für die Gesundheitsförderung konzipiert wurden, stehen in der Schweiz Untersuchungen zum Thema Waldtherapie und Therapiewälder noch aus.",
+            "year": 2022,
+            "lang": "de",
+            "keywords": ["Forest therapy","Health","Mindfulness","Distress","Forest medicine","Shinrin yoku","Cortisol","Forest bathing"],
+            "class": {
+                "615": "Pharmakologie und Therapeutik"
+            },
+            "sdg": [14,15],
+            "link": "https://digitalcollection.zhaw.ch/handle/11475/23944",
+            "department": "N",
+            "type": "Beitrag in wissenschaftlicher Zeitschrift"
+        },
+        {
+            "title": "Suffizienz in der Ernährung : Entwicklung und Durchführung eines Workshops zur Förderung suffizienter Ernährungsweisen",
+            "authors": ["Nydegger, Vera"],
+            "abstract": "Die Ernährung gehört zu den ressourcenintensivsten Lebensbereichen in westlichen Gesellschaf-ten. In der Schweiz macht sie einen Drittel der Gesamtumweltbelastung durch Konsum und Produktion aus. Eine der drei Nachhaltigkeitsstrategien ist die wissenschaftlich nicht definierte Suffizienzstrategie, bei der Änderungen in Konsummustern angestrebt werden, die helfen, innerhalb der ökologischen Tragfähigkeit der Erde zu bleiben. Viele EinwohnerInnen der Schweiz wüssten, wie sie sich im Bereich Ernährung nachhaltiger verhalten könnten und möchten dies auch tun. Jedoch folgt auf Bereitschaft nicht unbedingt Handeln, was ein zentrales Problem in der Umweltbildung darstellt. Für eine nachhaltige Entwicklung braucht es u.a. „Bildung für Suffizienz“. Ein solches Bildungsangebot – konkret ein wirkungsorientierter Workshop in der informellen Umweltbildung für Erwachsene zum Thema Suffizienz in der Ernährung – wurde innerhalb dieser Arbeit ausgearbeitet, durchgeführt und ausgewertet. Dafür wurden im ersten Teil der Arbeit zentrale Aspekte erarbeitet, was Suffizienz in der Ernährung bedeutet und Kompetenzen formuliert, deren Entwicklung im Workshop aufgenommen wurden.\n\nDie Erkenntnisse verschiedener Autoren aus unterschiedlichen wissenschaftlichen Disziplinen und die Ergebnisse von vier halbstrukturierten ExpertInnen-Interviews bildeten die Grundlage für die Beantwortung der Forschungsfragen.\n\nDas Fazit dieser Arbeit ist, dass es für wirkliche Suffizienz in der Ernährung eine Vereinfachung des Ernährungssystems braucht. Damit ist gemeint, dass sich landwirtschaftliche Produktion und Konsum von Nahrungsmitteln möglichst nahe kommen. Eine Möglichkeit, dies heute schon zu er-reichen, ist der Bezug von Lebensmitteln im Rahmen von Projekten der alternativen Lebensmittelversorgung. Grundsätzliche Charakteristika dieser Projekte sind wenig „Stationen“ zwischen landwirtschaftlicher Produktion und Konsum, schonende Anbausysteme (z.B. biologisch, humusaufbauend) und die Möglichkeit zur direkten Kommunikation zwischen ProduzentInnen und KonsumentInnen.",
+            "year": 2022,
+            "lang": "de",
+            "keywords": ["Suffizienz","Bildung für nachhaltige Entwicklung","Suffiziente Ernährung","Ernährungssystem","Kompetenzorientierung","Workshop","informelle Erwachsenenbildung","Ernährung","Nachhaltige Entwicklung","Bildung"],
+            "class": {
+                "333": "Bodenwirtschaft und Ressourcen", 
+                "613.2": "Diätetik"
+            },
+            "sdg": [2,4],
+            "link": "https://digitalcollection.zhaw.ch/handle/11475/24443",
+            "department": "N",
+            "type": "Thesis: Bachelor"
+        },
+        {
+            "title": "Indicators for urban circular bioeconomy development : a systematic review of EU-wide national bioeconomy monitoring frameworks and their utility to urban policy-makers",
+            "authors": ["Marcone, Roberto Davide"],
+            "abstract": "By combining principles of circularity with a transition to regenerative resource usage, the 2018 European bioeconomy strategy set a new vision for the continent’s sustainable development. With it, the EU Bioeconomy Monitoring System, an indicator set used to monitor the progress of the circular bioeconomy, was launched. It is the most comprehensive such tool and its conceptualization involved the collaboration of several EU member states. For a successful, synergistic and efficient transition of the European economy to a circular bioeconomy, policy and action must indeed be aligned throughout governance levels. While both the European and national efforts are reflected within the Monitoring System, it remains unclear whether national strategies and indicator sets are also suitable for urban governments to align with. As urban policy-making takes the role of implementing the bioeconomy strategies, it is vital that it does not diverge from national and international efforts, causing inefficiencies and adverse effects on the bioeconomy transition.\n\nThis thesis aimed to investigate EU-wide national bioeconomy strategies and to examine the composition, features and topical coverage of their bioeconomy measuring tools. In a second step, the suitability of these tools as guidance for the development of consistent urban indicator sets was evaluated. The national bioeconomy strategies were collected and appraised through a systematic review process, and their indicator sets’ forms and contents were examined. First, a factsheet and a quality appraisal of the single indicators gave insight into the construction of the indicator sets, then a heatmap of topical coverage was created showing areas of the bioeconomy tackled by the instruments.\n\nOf the 27 member states, only nine had a dedicated bioeconomy strategy, and four among them proposed an indicator set. Assessing these sets revealed that particularly the tools proposed after the issuance of the 2018 bioeconomy strategy followed indicator development standards rigorously. They also included circularity principles in their notion of bioeconomy and combined indicators for a profound and multi-faceted analysis with substantial informative and policy-relevant value. These factors strongly improve the potential for alignment and coherence with urban-level bioeconomy monitoring efforts. Nonetheless, urban governments cannot use them at face value, as the goal-setting and therefore the selection of single indicators, differs across policy levels.\n\nAlthough it is not the aim of national measuring tools to perfectly provide for urban needs, the findings of this thesis give insight into the importance of and ways how national bioeconomy policies can support a uniform circular bioeconomy transition across the EU.",
+            "year": 2021,
+            "lang": "en",
+            "keywords": [],
+            "class": {
+                "338.927": "Umweltökonomie und nachhaltige Entwicklung"
+            },
+            "sdg": [11,15],
+            "link": "https://digitalcollection.zhaw.ch/handle/11475/24678",
+            "department": "W",
+            "type": "Thesis: Master"
+        }
+    ],
     "education": [],
     "projects":[],
     "people": []
