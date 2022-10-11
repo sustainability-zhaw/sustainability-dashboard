@@ -140,21 +140,34 @@ function addSearchTerm() {
     
         let [type, value] = currentValue.split(":").map(str => str.trim());
 
-        switch (type) {
-            case "sdg": 
-            case "person":
-                break;
-            case "dept":
-            case "department":
-                type = "department";
-                break;
-            default: 
-                type = "term";
-                value = currentValue; 
-                break;
+        if (value === undefined) {
+            // if no colon is in the current value, the query is definitely a term.
+            type = "term";
+            value = currentValue;   
+        }  
+        else {
+            switch (type) {
+                case "sdg": 
+                case "person":
+                    break;
+                case "dept":
+                case "department":
+                    type = "department";
+                    break;
+                default: 
+                    // if a colon is in the term, but the type is invalid, then the colon is 
+                    // part of the term.
+                    type = "term";
+                    value = currentValue; 
+                    break;
+            }
         }
 
-        QueryModel.events.queryAddItem(type, value);
+        // only add a term to the search if there is something to add
+        // This can happen when a user enters a keyword and colon but enters otherwise nothing
+        if (value.length) {
+            QueryModel.events.queryAddItem(type, value);
+        }
 
         evt.preventDefault();
     }
