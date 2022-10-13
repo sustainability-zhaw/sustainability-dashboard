@@ -28,8 +28,8 @@ jobs:
         uses: actions/checkout@v2
       # https://github.com/docker/setup-qemu-action
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-      - uses: actions/setup-node@v1
+        uses: docker/setup-qemu-action@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: 18
       - name: Build site assets
@@ -37,7 +37,7 @@ jobs:
       # https://github.com/docker/setup-buildx-action
       - name: Set up Docker Buildx
         id: buildx
-        uses: docker/setup-buildx-action@v1    
+        uses: docker/setup-buildx-action@v2    
       - name: Login to GHCR
         if: github.event_name != 'pull_request'
         uses: docker/login-action@v1
@@ -48,7 +48,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Docker meta
         id: image_builder # you'll use this in the next step
-        uses: docker/metadata-action@v3
+        uses: docker/metadata-action@v4
         with:
           # list of Docker images to use as base name for tags
           images: |
@@ -61,7 +61,7 @@ jobs:
             type=match,pattern=v(.*)
             type=sha
       - name: Build and push
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           context: .
           platforms: linux/amd64 #,linux/arm/v7,linux/arm64,linux/arm/v6
