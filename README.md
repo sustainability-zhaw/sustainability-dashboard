@@ -23,7 +23,7 @@ docker push ghcr.io/dxiai/sustainability-dashboard:${VERSIONTAG}
 One can test the frontend using the following command. 
 
 ```
-docker run --rm -d -p 8080:80 --name devcaddy multimico/caddyhelper:latest
+docker run --rm -d -p 8080:80 --name devsdg ghcr.io/dxiai/sustainability-dashboard:${VERSIONTAG}
 ```
 
 ## Developoment 
@@ -31,6 +31,6 @@ docker run --rm -d -p 8080:80 --name devcaddy multimico/caddyhelper:latest
 The development environment mounts the frontend code into a caddy container. 
 
 ```
-docker run --rm -d --network proxynetwork --name devcaddy multimico/caddyhelper:latest
-docker exec -it devcaddy /bin/ash
+docker run --rm -d --network proxynetwork --name devsdg ghcr.io/dxiai/sustainability-dashboard:${VERSIONTAG}
+docker exec -it devsdg /bin/ash
 ```
