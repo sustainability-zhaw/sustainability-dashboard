@@ -14,10 +14,10 @@ const RequestController = new AbortController();
 // pull up the System with a basic configuration
 
 async function init() {
-    const response = await fetch("/config.json");
+    const response = await fetch("config.json");
     const Config = await response.json();
 
-    Config.api.baseurl = `${Config.api.host.length ? "https://" : ""}${Config.api.host.length ? Config.api.host : ""}/${Config.api.path}`;
+    Config.api.baseurl = `${Config.api.host.length ? "https://" : ""}${Config.api.host.length ? (Config.api.host + "/"): ""}${Config.api.path}`;
 
     addSearchElement();
     addSearchTerm();
