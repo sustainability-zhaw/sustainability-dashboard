@@ -11,6 +11,11 @@ const DataModel = {
 
 const RequestController = new AbortController();
 
+// sdg filter
+// department filter
+// publication filter 
+// 
+
 // pull up the System with a basic configuration
 
 async function init() {
@@ -86,6 +91,7 @@ function registerModelEvents() {
 
     evAnchor.addEventListener("queryupdate", handleQueryUpdate);
     evAnchor.addEventListener("queryupdate", renderSearchOptions);
+    evAnchor.addEventListener("queryupdate", requestQueryFromServer);
 
     evAnchor.addEventListener("queryupdate.extra", handleQueryExtraUpdate);
     evAnchor.addEventListener("queryadd", handleQueryAdd);
@@ -264,7 +270,6 @@ function handleQueryAdd(ev) {
     }
 
     QueryModel.qterms.push({type, value});
-
     
     QueryModel.events.queryUpdate();
 }
@@ -463,4 +468,185 @@ function updaterPersons() {
         targetsection.innerHTML = "";
         targetsection.dataset.resulttype = "people"
     }
+}
+
+function prefixAndQuote(value, prefix) {
+    if (prefix) {
+        value = prefix + value;
+    }
+    else {
+        value = JSON.stringify(value);
+    }
+    return value;
+}
+
+function collectType(qterms, type) {
+    const prefix = ["department", "sdg"].includes(type) ? type + "_" : "";
+    
+    return qterms
+        .filter(i => i.type === type)
+        .map(i => i.value)
+        .map((val) => prefixAndQuote(val, prefix));
+}
+
+function collectQueryTerms(query) {
+    return {
+        sdgs:        collectType(query, "sdg"),
+        departments: collectType(query, "department"),
+        persons:     collectType(query, "person"),
+        terms:       collectType(query, "term"),
+    };
+}
+
+function subQuery(element, filter, querySelector) {
+    if (!filter.length) { 
+        return `${ element } { ${ querySelector.join(" ") } }`
+    }
+
+    return `${ element }( filter: ${ filter } ) { ${ querySelector.join(" ") } }` 
+}
+
+function requestQueryFromServer(ev) {
+
+    const queryTerms     = collectQueryTerms(QueryModel.qterms);
+    const categoryFilter = GQLFilter().add("name", "in", [ JSON.stringify("Publication") ]);
+    const personFilter = GQLFilter();
+    const mainFilter = GQLFilter();
+
+    if (queryTerms.persons.length) {
+        personFilter.add("initials", "in", queryTerms.persons);
+    }
+    else {
+        personFilter.has("department");
+    }
+
+    const theQuery = GQLQuery("queryInfoObject")
+        .addSubQuery("category", categoryFilter, ["name"], true)
+        .addSubQuery(
+            "persons", 
+            personFilter, 
+            [
+                "fullname", "initials", "title", "mail", 
+                "ipphone", "gender", "department", "team { name }"
+            ],
+            queryTerms.persons.length > 0
+        )
+        .addSelector([
+            "title", "year", "abstract", "language", "link", "extras", "department",
+            "authors: persons { fullname } ", "class { id name }", "subtype { name }",
+            "topics: keywords { name }"
+        ]);
+    
+    const subFilter = mainFilter.and();
+
+    if (queryTerms.sdgs.length) {
+        subFilter.add("sdgs", "in", queryTerms.sdgs);
+    }
+
+    if (queryTerms.departments.length) {
+        subFilter.add("department", "in", queryTerms.departments);
+    }
+
+    if (queryTerms.terms.length) {
+        const termFilter = subFilter.or();
+        queryTerms
+            .terms
+            .forEach((term) => { 
+                [ "title", "abstract" ].forEach((fld) => {
+                    termFilter.add(fld, "alloftext", term);
+                });
+            });
+    }
+
+    theQuery.addFilter(mainFilter);
+    
+    console.log(theQuery.stringify());
+}
+
+function GQLQuery(target) {
+    let selector = [];
+    let subqueries = []
+    let filter = [];
+    let cascade = [];
+    
+    function completeCascade() {
+        return `@cascade( fields: [ ${cascade.map(JSON.stringify).join(", ")} ] )`
+    }
+
+    function completeFilter() {
+        const result = filter[0].stringify();
+
+        if (result.length) {
+            return `( filter: ${result} )`;
+        }
+        return "";
+    }
+
+    const self = {
+        addSelector: (sel) => { selector.push(sel); selector = selector.flat(); return self; },
+        addSubQuery: (field, q, sel, bCascade) => { 
+            if (bCascade){
+                cascade.push(field);
+            }
+
+            subqueries.push(subQuery(field, q.stringify(), sel)); 
+            return self; 
+        },
+        addFilter: (filterobject) => filter.push(filterobject),
+
+        stringify: () => `{\n${target}${completeFilter()} ${completeCascade()} {\n${subqueries.join("\n")}\n${selector.join("\n")}\n}\n}`
+    };
+
+    return self;
+}
+
+function GQLFilter(parent, type) {
+    const filters = [];
+
+    function literalHelper(attr, op, cond) {
+        let stringify = () => "";
+
+        if (cond.length) {
+            stringify = () => `${attr}: { ${op}: ${cond} }`;
+        }
+
+        if (Array.isArray(cond)) {
+            stringify = () => `${attr}: { ${op}: [ ${cond.join(", ")} ] }`;  
+        }
+
+        return {
+            stringify
+        };
+    }
+
+    function hasHelper(attr) {
+        return {
+            stringify: () => `has: ${attr} `
+        };
+    }
+
+    function typewrap(filter) {
+        filter = filter.map(f => f.stringify());
+
+        if (type && type.length) {
+            if (filter.length === 1) {
+                return `${type}: { ${filter.join(" ")} }`;
+            }
+            else if (filter.length > 1) {
+                return `${type}: [ ${filter.map(f => `{ ${f} }`).join(", ")} ]`;
+            }
+        }
+        return `{ ${filter.join(" ")} }`;
+    }    
+
+    const self = {
+        has: (field) => { filters.push(hasHelper(field)); return self;  },
+        add: ( field, op, cond ) => { filters.push(literalHelper(field, op, cond)); return self; },
+        or: () => { orop = GQLFilter(self, "or"); filters.push(orop); return orop; },
+        and: () => { andop = GQLFilter(self, "and"); filters.push(andop); return andop; },
+        not: () => { notop = GQLFilter(self, "not"); filters.push(notop); return notop; },
+        parent: () => parent,
+        stringify: () => `${filters.length ? typewrap(filters) : ""}`,
+    };
+    return self;
 }
