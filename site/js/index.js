@@ -11,10 +11,7 @@ const DataModel = {
 
 const RequestController = new AbortController();
 
-// sdg filter
-// department filter
-// publication filter 
-// 
+import { gql_query, gql_filter } from "./gql.mjs";
 
 // pull up the System with a basic configuration
 
@@ -42,7 +39,7 @@ init().then(() => QueryModel.events.queryUpdate());
 // stub for Bootstrap Tooltips
 
 const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+const tooltipList = [...tooltipTriggerList].map((tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl));
 
 // function definitions
 
@@ -92,6 +89,7 @@ function registerModelEvents() {
     evAnchor.addEventListener("queryupdate", handleQueryUpdate);
     evAnchor.addEventListener("queryupdate", renderSearchOptions);
     evAnchor.addEventListener("queryupdate", requestQueryFromServer);
+    evAnchor.addEventListener("queryupdate", requestQueryStats);
 
     evAnchor.addEventListener("queryupdate.extra", handleQueryExtraUpdate);
     evAnchor.addEventListener("queryadd", handleQueryAdd);
@@ -498,155 +496,66 @@ function collectQueryTerms(query) {
     };
 }
 
-function subQuery(element, filter, querySelector) {
-    if (!filter.length) { 
-        return `${ element } { ${ querySelector.join(" ") } }`
-    }
-
-    return `${ element }( filter: ${ filter } ) { ${ querySelector.join(" ") } }` 
-}
-
 function requestQueryFromServer(ev) {
+    const queryTerms = collectQueryTerms(QueryModel.qterms);
 
-    const queryTerms     = collectQueryTerms(QueryModel.qterms);
-    const categoryFilter = GQLFilter().add("name", "in", [ JSON.stringify("Publication") ]);
-    const personFilter = GQLFilter();
-    const mainFilter = GQLFilter();
+    const theQuery = gql_query("queryInfoObject");
+    
+    theQuery.subSelector("category", true)
+            .selector("name")
+            .filter()
+            .attribute("name").in().condition("Publication");
+    
+    const pquery = theQuery.subSelector("persons", queryTerms.persons.length > 0)
+    .selector([
+        "fullname", "initials", "title", "mail", 
+        "ipphone", "gender", "team { name }"
+    ]);
+
+    pquery.subSelector("department").selector("id");
+
+    const personFilter = pquery.filter();
 
     if (queryTerms.persons.length) {
-        personFilter.add("initials", "in", queryTerms.persons);
+        personFilter.attribute("initials").in().condition(queryTerms.persons);
     }
     else {
         personFilter.has("department");
     }
 
-    const theQuery = GQLQuery("queryInfoObject")
-        .addSubQuery("category", categoryFilter, ["name"], true)
-        .addSubQuery(
-            "persons", 
-            personFilter, 
-            [
-                "fullname", "initials", "title", "mail", 
-                "ipphone", "gender", "department", "team { name }"
-            ],
-            queryTerms.persons.length > 0
-        )
-        .addSelector([
-            "title", "year", "abstract", "language", "link", "extras", "department",
-            "authors: persons { fullname } ", "class { id name }", "subtype { name }",
-            "topics: keywords { name }"
+    theQuery
+        .selector([
+            "title", "year", "abstract", "language", "link", "extras"
         ]);
-    
-    const subFilter = mainFilter.and();
 
+    theQuery.subSelector("persons").alias("authors").selector("fullname");
+    theQuery.subSelector("sdgs").alias("sdg").selector("id");
+    theQuery.subSelector("departments").alias("dept").selector("id");
+
+    theQuery.subSelector("class").selector([ "id", "name" ]);
+    theQuery.subSelector("subtype").selector([ "name" ]);
+    theQuery.subSelector("keywords").selector([ "name" ]);
+    
     if (queryTerms.sdgs.length) {
-        subFilter.add("sdgs", "in", queryTerms.sdgs);
+        theQuery.subSelector("sdgs", true).selector("id").filter().attribute("id").in().condition(queryTerms.sdgs);
     }
 
     if (queryTerms.departments.length) {
-        subFilter.add("department", "in", queryTerms.departments);
+        theQuery.subSelector("departments", true).selector("id").filter().attribute("id").in().condition(queryTerms.sdgs);
     }
 
     if (queryTerms.terms.length) {
-        const termFilter = subFilter.or();
-        queryTerms
-            .terms
-            .forEach((term) => { 
-                [ "title", "abstract" ].forEach((fld) => {
-                    termFilter.add(fld, "alloftext", term);
-                });
-            });
+        const termFilter = theQuery.filter().or();
+        [ "title", "abstract" ].forEach((fld) => {
+            termFilter.attribute(fld).alloftext().condition(queryTerms.terms);
+        });
     }
 
-    theQuery.addFilter(mainFilter);
-    
-    console.log(theQuery.stringify());
+    const queryString = `{ ${theQuery.stringify()} }`;
+
+    console.log(queryString);
 }
 
-function GQLQuery(target) {
-    let selector = [];
-    let subqueries = []
-    let filter = [];
-    let cascade = [];
-    
-    function completeCascade() {
-        return `@cascade( fields: [ ${cascade.map(JSON.stringify).join(", ")} ] )`
-    }
-
-    function completeFilter() {
-        const result = filter[0].stringify();
-
-        if (result.length) {
-            return `( filter: ${result} )`;
-        }
-        return "";
-    }
-
-    const self = {
-        addSelector: (sel) => { selector.push(sel); selector = selector.flat(); return self; },
-        addSubQuery: (field, q, sel, bCascade) => { 
-            if (bCascade){
-                cascade.push(field);
-            }
-
-            subqueries.push(subQuery(field, q.stringify(), sel)); 
-            return self; 
-        },
-        addFilter: (filterobject) => filter.push(filterobject),
-
-        stringify: () => `{\n${target}${completeFilter()} ${completeCascade()} {\n${subqueries.join("\n")}\n${selector.join("\n")}\n}\n}`
-    };
-
-    return self;
-}
-
-function GQLFilter(parent, type) {
-    const filters = [];
-
-    function literalHelper(attr, op, cond) {
-        let stringify = () => "";
-
-        if (cond.length) {
-            stringify = () => `${attr}: { ${op}: ${cond} }`;
-        }
-
-        if (Array.isArray(cond)) {
-            stringify = () => `${attr}: { ${op}: [ ${cond.join(", ")} ] }`;  
-        }
-
-        return {
-            stringify
-        };
-    }
-
-    function hasHelper(attr) {
-        return {
-            stringify: () => `has: ${attr} `
-        };
-    }
-
-    function typewrap(filter) {
-        filter = filter.map(f => f.stringify());
-
-        if (type && type.length) {
-            if (filter.length === 1) {
-                return `${type}: { ${filter.join(" ")} }`;
-            }
-            else if (filter.length > 1) {
-                return `${type}: [ ${filter.map(f => `{ ${f} }`).join(", ")} ]`;
-            }
-        }
-        return `{ ${filter.join(" ")} }`;
-    }    
-
-    const self = {
-        has: (field) => { filters.push(hasHelper(field)); return self;  },
-        add: ( field, op, cond ) => { filters.push(literalHelper(field, op, cond)); return self; },
-        or: () => { orop = GQLFilter(self, "or"); filters.push(orop); return orop; },
-        and: () => { andop = GQLFilter(self, "and"); filters.push(andop); return andop; },
-        not: () => { notop = GQLFilter(self, "not"); filters.push(notop); return notop; },
-        parent: () => parent,
-        stringify: () => `${filters.length ? typewrap(filters) : ""}`,
-    };
-    return self;
+function requestQueryStats(ev) {
+    const queryTerms = collectQueryTerms(QueryModel.qterms);
 }
