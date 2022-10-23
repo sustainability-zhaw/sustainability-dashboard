@@ -1,6 +1,8 @@
 # JSON Notation for Graphql
 
-Because compiling GraphQL in code is hard, a JSON inspired notation is preferred. 
+This file provides a reference to the [GQL Module](../site/js/gql.mjs). While the module exports three functions, its primary interface is the function `json_to_gql()`. The function accepts a JSON object as input and tries to render it as a graphql Query for Dgraph.
+
+Because compiling GraphQL in code is hard, a JSON notation is preferred, because JavaScript Objects can be easily created and manipulated in code. 
 
 This is also important to avoid code injection attacks. 
 
