@@ -26,7 +26,7 @@ Die folgende Abfrage liefert alle Publikationen zum `sdg_3`, an denen Personen a
 15      fullname
 16  }
 17  year 
-18  sdgs
+18  sdgs { id }
 19  link
 20      } 
 21}

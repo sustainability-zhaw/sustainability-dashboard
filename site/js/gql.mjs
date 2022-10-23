@@ -1,7 +1,7 @@
 function cascadeFields() {
     const cascade = [];
     return {
-        addField: (field) => { 
+        field: (field) => { 
             if (!Array.isArray(field)) {
                 field = [ field ];
             }
@@ -15,6 +15,37 @@ function cascadeFields() {
     }
 }
 
+function orderLiteral() {
+    let orderItem = "";
+    return {
+        asc: (field) => orderItem = `asc: ${field}`,
+        desc: (field) => orderItem = `desc: ${field}`,
+        stringify: () => orderItem
+    };
+}
+
+function orderList() {
+    const orders = [];
+    return {
+        add: () => {
+            const ol = orderLiteral(); 
+            orders.push(ol)
+            return ol;
+        },
+        stringify: () => {
+            if (orders.length > 1) {
+                orders.push("");
+                return "order: " + orders.reverse()
+                    .reduce((acc, order) => acc.length ? `{ ${order.stringify()}, then: ${acc} }` : `{ ${order.stringify()} }`);
+            }
+            if (orders.length) {
+                return `order: { ${orders[0].stringify()} }`
+            }
+            return "";
+        } 
+    };
+}
+
 function selectionLiteral(lit) {
     return {
         stringify: () => lit
@@ -23,69 +54,119 @@ function selectionLiteral(lit) {
 
 export function gql_query(target) {
     const selector = [];
-    const filter = [];
+    
+    const order = orderList();
+    const filter = filterList();
+    const pagination = [];
+
+    const caching = {
+        stringify: () => {
+            if (caching.maxage > 0) {
+                return `@cacheControl(maxAge: ${caching.maxage})`
+            }
+            return "";
+        }
+    };
+
     let cascade;
-    let alias;
+    const alias = {
+        stringify: () => {
+            if (alias.label && alias.label.length > 0) {
+                return alias.label;
+            }
+            return "";
+        }
+    };
+
     const targetObj = {
         stringify: () => target
     };
 
     const self = {
         alias: (newalias) => { 
-            alias = { stringify: () => `${newalias}:` } ;
+            alias.label = newalias;
             return self;
         },
         cascade: () => { 
             cascade = cascadeFields(); 
+            return cascade;
+        },
+        caching: (seconds) => {
+            caching.maxage = seconds;
             return self;
         },
-        filter: () => {
-            const filterobject = gql_filter();
-            filter.push(filterobject);
-            return filterobject;
+
+        offset: (itemid) => {
+            pagination.push({ stringify: () => `offset: ${itemid}` });
+            return self;
         },
-        selector: (sel, bCascade) => {
-            if (!Array.isArray(sel)) {
-                sel = [ sel ];
-            }
+
+        limit: (nitems) => {
+            pagination.push({ stringify: () => `first: ${nitems}` });
+            return self;
+        },
+
+        filter: () => filter.add(),
+        order: () => order.add(), 
+
+        field: (sel, bCascade) => {
             if (bCascade) {
                 if (!cascade) {
                     self.cascade();
                 }
-                cascade.addField(sel);
+                cascade.field(sel);
             }
-            
-            sel = sel.map(selectionLiteral);
-            selector.push(...sel);
-            return self;
-        },
-        subSelector: (sel, bCascade) => {
+
+            if (Array.isArray(sel)) {
+                sel = sel.map(selectionLiteral);
+                selector.push(...sel);
+                return self;
+            }
+
             const q = gql_query(sel);
-
             selector.push(q);
-
-            if (bCascade) {
-                if (!cascade) {
-                    self.cascade();
-                }
-                cascade.addField(sel);
-            }
-
+           
             return q;
         },
         stringify: () => { 
-            const field = [alias, targetObj, filter, cascade]
-                .flat()
-                .filter((t) => t !== undefined)
-                .map((t) => t.stringify())
-                .join(" ");
+            const label = [alias, targetObj]
+                .filter(t => t != null).map(t => t.stringify()).filter(t => t.length).join(": ");
+            const parameters= [filter, order, ...pagination]
+                .filter(t => t != null).map(t => t.stringify()).filter(t => t.length).join(", ");
+            const directives = [cascade, caching]
+                .filter(t => t != null).map(t => t.stringify()).filter(t => t.length).join(" ");;
+
+            const preamble = [
+                label, 
+                parameters.length ? `( ${parameters} )`: parameters,
+                directives
+            ].filter(t => t.length).join(" ");
 
             const sel = selector.map((t) => t.stringify()).join(" ");
 
-            return `${field} { ${sel} }`;
+            if (sel.length) {
+                return `${preamble} { ${sel} }`;
+            }
+            return preamble;
         }
     };
     return self;
+}
+
+function filterList() {
+    const filter = gql_filter();
+    return {
+        add: () => {
+            return filter;
+        },
+        stringify: () => {
+            const strFilter = filter.stringify();
+            if (strFilter.length) {
+                return `filter: ${strFilter}`;
+            }
+            return "";
+        }
+    }
 }
 
 function filter_operator(op) {
@@ -129,6 +210,8 @@ function filter_field(name) {
     }
 
     const handler = {
+        op: operate,
+
         stringify: () => {
             if (ops.length) {
                 return  `${name}: { ${ ops[0].stringify() } }`;
@@ -167,26 +250,144 @@ export function gql_filter(filtertype) {
         and: () => combiner("and"),
         not: () => combiner("not"),
         stringify: () => {
-            const operations = filters.filter((f) => f !== undefined)
-                .map(f => `{ ${f.stringify()} } `);
-
-            let result = ""
+            const operations = filters.filter((f) => f != null)
+                .map(f => `{ ${f.stringify()} } `)
+                .filter(f => f.length);
 
             if (operations.length) {
                 if (filtertype && operations.length > 1) {
-                    result = `${filtertype}: [ ${ operations.join(", ") } ]`;
+                    return `${filtertype}: [ ${ operations.join(", ") } ]`;
                 }
-                else if (filtertype) {
-                    result = `${ operations.join(" ") }`;
-                }
-                else {
-                    result = `( filter: ${ operations.join(" ") } )`;
-                }
+                return `${ operations.join(", ") }`;
             }
 
-            return result;
+            return "";
         }
     };
 
     return self;
 }
+
+const jsonhandlers = {
+    options: (p, val) => {
+        Object.entries(val)
+            .filter(([option]) => Object.hasOwn(jsonhandlers, option))
+            .forEach( ([option, value]) => jsonhandlers[option](p, value) );
+    },
+
+    filter: (p, val) => handleFilterCondition(p.filter(), val),
+
+    order: (p, val) => {
+        if (!Array.isArray(val)) {
+            val = [val];
+        }
+        val.filter(ord => ord != null && typeof(ord) === "object")
+            .map((ord) => {
+                return Object.entries(ord).shift();
+            })
+            .filter(([dir]) => ["asc", "desc"].includes(dir))
+            .forEach( ([dir, value]) => p.order()[dir](value) );
+    },
+
+    offset: (p, val) => p.offset(val),
+
+    limit: (p, val) => p.limit(val),
+
+    directives: (p,val) => {
+        Object
+            .entries(val)
+            .filter(([dir]) => Object.hasOwn(jsonhandlers, dir))
+            .forEach(([dir, value]) => {
+                jsonhandlers[dir](p, value);
+        });
+    },
+
+    caching: (p, val) => p.caching(val),
+
+    cascade: (p, val) => {
+        const cas = p.cascade();
+        if (val && val.length) {
+            if (!Array.isArray(val)) {
+                val = [ val ];
+            }
+           cas.field(val);
+        }
+    }
+};
+
+function handleFilterCondition(p, val) {
+    Object.entries(val).forEach(([key, value]) => {
+        if(["and", "or", "not"].includes(key)) {
+            const handler = p[key]();
+            if (!Array.isArray(value)) {
+                value = [value];
+            }
+            value.forEach((value) => handleFilterCondition(handler, value));
+        }
+        else if (key === "has") {
+            p.has(value);  // stupid special case.
+        }
+        else if ([ "in", "alloftext", "anyoftext", "allofterms", "anyofterms"].includes(key)) {
+            if (!Array.isArray(value)) {
+                value = [value];
+            }
+
+            p[key]().condition(value);
+        }
+        else {
+            console.log(`${key} ${value}`);
+            handleFilterCondition(p.attribute(key), value);
+        }
+    });
+}
+
+function json_handle_selector(parent, json) {
+    const singletons = Object.entries(json)
+        .filter(([name, value]) => (name.at(0) != "@" && (value == null || !Object.keys(value).length)))
+        .map(([n]) => n);
+    const complexitons = Object.entries(json)
+        .filter(([name, value]) => (name.at(0) != "@" && value != null && Object.keys(value).length));
+    const directives = Object.entries(json)
+        .filter(([name]) => (name.at(0) === "@"))
+        .map(([name, value]) => { 
+            name = name.slice(1).toLowerCase(); 
+            return [name, value];
+        })
+        .filter(([dir]) => Object.hasOwn(jsonhandlers, dir));
+
+    parent.field(singletons);
+    
+    complexitons.forEach(([name, value]) => {
+        if (value && value["@alias"]) {
+            const handler = parent.field(value["@alias"], value && value["@required"]);
+            handler.alias(name);
+
+            json_handle_selector(handler, value);
+        }
+        else {
+            json_handle_selector(parent.field(name, value && value["@required"]), value);
+        }
+    });
+
+    directives.forEach(([dir, val]) => {
+        jsonhandlers[dir](parent, val);
+    });
+}
+
+export function json_to_gql(json) {
+    if (json && Object.keys(json).length) {
+        const querystring = Object.entries(json)
+            .filter(([name]) => (name.at(0) != "@")) // at top level no at is allowed
+            .map(([name, value]) => {
+                const q = gql_query(name);
+                json_handle_selector(q, value);
+                return q;
+            })
+            .map(entity => entity.stringify())
+            .join("\n");
+            
+        return `{ ${querystring} }`;
+    }
+
+    return "";
+} 

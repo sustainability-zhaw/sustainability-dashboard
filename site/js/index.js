@@ -11,7 +11,7 @@ const DataModel = {
 
 const RequestController = new AbortController();
 
-import { gql_query, gql_filter } from "./gql.mjs";
+import { json_to_gql } from "./gql.mjs";
 
 // pull up the System with a basic configuration
 
@@ -499,61 +499,108 @@ function collectQueryTerms(query) {
 function requestQueryFromServer(ev) {
     const queryTerms = collectQueryTerms(QueryModel.qterms);
 
-    const theQuery = gql_query("queryInfoObject");
-    
-    theQuery.subSelector("category", true)
-            .selector("name")
-            .filter()
-            .attribute("name").in().condition("Publication");
-    
-    const pquery = theQuery.subSelector("persons", queryTerms.persons.length > 0)
-    .selector([
-        "fullname", "initials", "title", "mail", 
-        "ipphone", "gender", "team { name }"
-    ]);
-
-    pquery.subSelector("department").selector("id");
-
-    const personFilter = pquery.filter();
+    const queryInfoObject  = {
+        "@options": {
+            order: [{asc: "year"}, {asc: "title"}],
+            limit: 20
+        },
+        title: null,
+        abstract: null,
+        year: null, 
+        language: null,
+        link: null,
+        extras: null,
+        authors: {
+            "@alias": "persons",
+            fullname: null
+        },
+        class: {
+            id: null,
+            name: null
+        },
+        subtype: {
+            name: null
+        },
+        keywords: {
+            name: null
+        },
+        sdg: {
+            id: null,
+            "@alias": "sdgs"
+        },
+        persons: {
+            "fullname": null, 
+            "initials": null, 
+            "title": null, 
+            "mail": null, 
+            "ipphone": null, 
+            "gender": null, 
+            "department": null,
+            "team": { 
+                name: null 
+            },
+            "@options": {
+                filter: {}
+            }
+        }
+    };
 
     if (queryTerms.persons.length) {
-        personFilter.attribute("initials").in().condition(queryTerms.persons);
+        queryInfoObject.persons["@options"].filter.initials = {
+            in: queryTerms.persons
+        };
+        queryInfoObject.persons["@required"] = true;
     }
     else {
-        personFilter.has("department");
+        queryInfoObject.persons["@options"].filter.has = "department";       
     }
 
-    theQuery
-        .selector([
-            "title", "year", "abstract", "language", "link", "extras"
-        ]);
-
-    theQuery.subSelector("persons").alias("authors").selector("fullname");
-    theQuery.subSelector("sdgs").alias("sdg").selector("id");
-    theQuery.subSelector("departments").alias("dept").selector("id");
-
-    theQuery.subSelector("class").selector([ "id", "name" ]);
-    theQuery.subSelector("subtype").selector([ "name" ]);
-    theQuery.subSelector("keywords").selector([ "name" ]);
-    
     if (queryTerms.sdgs.length) {
-        theQuery.subSelector("sdgs", true).selector("id").filter().attribute("id").in().condition(queryTerms.sdgs);
+        queryInfoObject.sdgs = {
+            id: null,
+            "@required": true,
+            "@options": {
+                filter: {
+                    id: {
+                        in: queryTerms.sdgs
+                    }
+                }
+            }
+        };
     }
 
     if (queryTerms.departments.length) {
-        theQuery.subSelector("departments", true).selector("id").filter().attribute("id").in().condition(queryTerms.sdgs);
+        queryInfoObject.departments = {
+            id: null,
+            "@required": true,
+            "@options": {
+                filter: {
+                    id: {
+                        in: queryTerms.departments
+                    }
+                }
+            }
+        };
     }
 
     if (queryTerms.terms.length) {
-        const termFilter = theQuery.filter().or();
-        [ "title", "abstract" ].forEach((fld) => {
-            termFilter.attribute(fld).alloftext().condition(queryTerms.terms);
+        const termFilter = [ "title", "abstract" ].map((fld) => {
+            const res = {};
+            res[fld] = {
+                alloftext: queryTerms.terms
+            };
+            return res;
         });
+
+        queryInfoObject["@options"].filter = {
+            or: termFilter
+        };
     }
 
-    const queryString = `{ ${theQuery.stringify()} }`;
+    const str = json_to_gql({queryInfoObject});
 
-    console.log(queryString);
+    console.log(str);
+    // now we can fetch the data
 }
 
 function requestQueryStats(ev) {
