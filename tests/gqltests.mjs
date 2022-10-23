@@ -19,10 +19,6 @@ function a() {
                 offset: 5
             },
             title: null,
-            people: { 
-                name: null, 
-                "@required": 1
-            },
             authors: {
                 fullname: null,
                 "@alias": "people"
@@ -35,7 +31,7 @@ function b() {
     console.log(json_to_gql({queryInfoObject: {}}));
 }
 
-function c() {
+function e() {
     console.log(json_to_gql({
         queryInfoObject: {
             sdgs: {
@@ -51,4 +47,53 @@ function c() {
     }));
 }
 
-c();
+
+function c() {
+    console.log(json_to_gql({
+        "queryInfoObject": {
+            "sdgs": {
+                "@required": true,
+                "id": null
+            },
+            "title": null,
+            "year": null,
+            "authors": {
+                "fullname": null,
+                "@alias": "persons"
+            }
+        }
+    }));
+}
+
+
+
+function d() {
+    console.log(json_to_gql({
+        "queryInfoObject": {
+            "sdgs": {
+                "@required": true,
+                "id": null,
+                "@options": {
+                    "filter": {
+                        "id": {
+                            "in": ["sdg_4", "sdg_7"]
+                        }
+                    }
+                }
+            },
+            "title": null,
+            "year": null,
+            "persons": {
+                "fullname": null,
+                "@required": true,
+                "@options": {
+                    "filter": {
+                        "has": "department"
+                    }
+                }
+            }
+        }
+    }));
+}
+
+d();
