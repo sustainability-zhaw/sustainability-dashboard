@@ -79,7 +79,7 @@ export async function loadData(type, queryObj) {
         const objects = gqlSearchQuery(type, queryTerms);
 
         try {
-            Model[type] = await executeQuery({objects}, RequestController, Config.debug);
+            Model[type] = await executeQuery(objects, RequestController, Config.debug);
         }
         catch (err) {
             Model[type] = [];
@@ -102,8 +102,8 @@ async function loadStatic() {
     return processModel(result);
 }
 
-async function executeQuery(query, { signal }, pretty) {  
-    let body  = json_to_gql({query});
+async function executeQuery(objects, { signal }, pretty) {  
+    let body  = json_to_gql({objects});
    
     if (pretty) {
         body = pretty_gql(body);
