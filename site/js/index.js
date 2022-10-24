@@ -349,7 +349,7 @@ function handleDataUpdate() {
             if (Object.hasOwn(object.persons, author.fullname)) {
                 // authorTag.querySelector(".counter").innerText = "0";
 
-                authorTag.querySelector(".mark").classList.add(`cat-${object.persons[author.fullname].department.id }`);
+                authorTag.querySelector(".mark").classList.add(`cat-${object.persons[author.fullname].department }`);
                 authorTag.querySelector(".affiliation").classList.remove("d-none");
             }
             authorlist.appendChild(authorTag);    
