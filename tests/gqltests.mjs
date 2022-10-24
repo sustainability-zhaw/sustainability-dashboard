@@ -1,4 +1,4 @@
-import { json_to_gql } from "../site/js/gql.mjs";
+import { json_to_gql, pretty_gql } from "../site/js/gql.mjs";
 
 function a() {
     console.log(json_to_gql({
@@ -68,7 +68,7 @@ function c() {
 
 
 function d() {
-    console.log(json_to_gql({
+    return json_to_gql({
         "queryInfoObject": {
             "sdgs": {
                 "@required": true,
@@ -93,7 +93,8 @@ function d() {
                 }
             }
         }
-    }));
+    });
 }
 
-d();
+console.log(d());
+console.log(pretty_gql(d()));

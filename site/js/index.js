@@ -1,3 +1,5 @@
+import { json_to_gql, pretty_gql } from "./gql.mjs";
+
 const QueryModel = {
     qterms: [],
     extra: "",
@@ -10,8 +12,6 @@ const DataModel = {
 }
 
 const RequestController = new AbortController();
-
-import { json_to_gql } from "./gql.mjs";
 
 // pull up the System with a basic configuration
 
@@ -535,7 +535,9 @@ function requestQueryFromServer(ev) {
             "mail": null, 
             "ipphone": null, 
             "gender": null, 
-            "department": null,
+            "department": {
+                id: null
+            },
             "team": { 
                 name: null 
             },
@@ -552,7 +554,7 @@ function requestQueryFromServer(ev) {
         queryInfoObject.persons["@required"] = true;
     }
     else {
-        queryInfoObject.persons["@options"].filter.has = "department";       
+        queryInfoObject.persons["@options"].filter.has = "department";
     }
 
     if (queryTerms.sdgs.length) {
@@ -599,7 +601,7 @@ function requestQueryFromServer(ev) {
 
     const str = json_to_gql({queryInfoObject});
 
-    console.log(str);
+    console.log(pretty_gql(str));
     // now we can fetch the data
 }
 

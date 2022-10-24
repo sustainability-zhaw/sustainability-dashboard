@@ -1,55 +1,117 @@
-function cascadeFields() {
-    const cascade = [];
-    return {
-        field: (field) => { 
-            if (!Array.isArray(field)) {
-                field = [ field ];
-            }
-            field = field.map(JSON.stringify);
-            cascade.push(...field);
-        },
-        stringify: () => { 
-            const fields = cascade.length ? `( fields: [ ${cascade.join(", ")} ] )` : "";
-            return `@cascade${fields}`
-        }
+/**
+ * Transforms a JSON Object into a GraphQL query statement. 
+ * 
+ * @param {Object} json 
+ * @returns 
+ */
+ export function json_to_gql(json) {
+    if (json && Object.keys(json).length) {
+        const querystring = Object.entries(json)
+            .filter(([name]) => (name.at(0) != "@")) // at top level no at is allowed
+            .map(([name, value]) => {
+                const q = gql_query(name);
+                json_handle_selector(q, value);
+                return q;
+            })
+            .map(entity => entity.stringify())
+            .join(" ");
+            
+        return `{ ${querystring} }`;
     }
+
+    return "";
+} 
+
+
+/**
+ * GraphQL PrettyPrinter
+ * 
+ * This handy function prettyprints GraphQL Queries. This is useful for debugging.
+ * 
+ * @param {String} gqlstring 
+ * @param {String} indent (default: "  ")
+ * @returns 
+ */
+export function pretty_gql(gqlstring, indent) {
+    if (!indent) {
+        indent = "  ";
+    }
+
+    const tokenopen = ["{", "[", "("],
+          tokenclse = ["}", "]", ")"],
+          nobreak = tokenopen;
+    let level = 0;
+    let pushnext = "";
+
+    return gqlstring.split( " " ).filter(t=> t.length).map((token) => {
+        const breaktoken =  (tokenopen.includes(token.at(-1))) - (tokenclse.includes(token.at(0)));
+        
+        if (breaktoken) {
+            level += breaktoken;
+            if (level < 0) {
+                level = 0;
+            }
+        }
+
+        let breakprev = "\n";
+        let nextindent = indent.repeat(level) + pushnext;
+        pushnext = "";
+
+        if (nobreak.includes(token.at(-1))) {
+            nextindent = " ";
+            breakprev = "";
+        }
+
+        if (breaktoken > 0 && level === 1) {
+            nextindent = "";
+        }
+
+        if (token.at(-1) === ":") {
+            pushnext = indent;
+        }
+
+        return `${breakprev}${nextindent}${token}`;
+    }).join("")
 }
 
-function orderLiteral() {
-    let orderItem = "";
-    return {
-        asc: (field) => orderItem = `asc: ${field}`,
-        desc: (field) => orderItem = `desc: ${field}`,
-        stringify: () => orderItem
+export function gql_filter(filtertype) {
+    const filters = [];
+    
+    function combiner(cname) {
+        const combop = gql_filter(cname); 
+        filters.push(combop); 
+        return combop; 
     };
-}
 
-function orderList() {
-    const orders = [];
-    return {
-        add: () => {
-            const ol = orderLiteral(); 
-            orders.push(ol)
-            return ol;
+    const self = {
+        has: (field) => { 
+            filters.push(filter_operator("has").condition(field)); 
         },
+        attribute: ( field ) => { 
+            const fieldOp = filter_field(field);
+            filters.push(fieldOp); 
+            return fieldOp; 
+        },
+        or: () => combiner("or"),
+        and: () => combiner("and"),
+        not: () => combiner("not"),
         stringify: () => {
-            if (orders.length > 1) {
-                orders.push("");
-                return "order: " + orders.reverse()
-                    .reduce((acc, order) => acc.length ? `{ ${order.stringify()}, then: ${acc} }` : `{ ${order.stringify()} }`);
-            }
-            if (orders.length) {
-                return `order: { ${orders[0].stringify()} }`
-            }
-            return "";
-        } 
-    };
-}
+            const operations = filters.filter((f) => f != null)
+                .map(f => `{ ${f.stringify()} } `)
+                .filter(f => f.length);
 
-function selectionLiteral(lit) {
-    return {
-        stringify: () => lit
+            if (operations.length) {
+                if (filtertype && operations.length > 1) {
+                    return `${filtertype}: [ ${ operations.join(", ") } ]`;
+                }
+                return `${ operations.join(", ") }`;
+            }
+
+            return "";
+        }
     };
+
+    return self;
 }
 
 export function gql_query(target) {
@@ -153,6 +215,62 @@ export function gql_query(target) {
     return self;
 }
 
+// *** HELPER FUNCTIONS ***
+
+function cascadeFields() {
+    const cascade = [];
+    return {
+        field: (field) => { 
+            if (!Array.isArray(field)) {
+                field = [ field ];
+            }
+            field = field.map(JSON.stringify);
+            cascade.push(...field);
+        },
+        stringify: () => { 
+            const fields = cascade.length ? `( fields: [ ${cascade.join(", ")} ] )` : "";
+            return `@cascade${fields}`
+        }
+    }
+}
+
+function orderLiteral() {
+    let orderItem = "";
+    return {
+        asc: (field) => orderItem = `asc: ${field}`,
+        desc: (field) => orderItem = `desc: ${field}`,
+        stringify: () => orderItem
+    };
+}
+
+function orderList() {
+    const orders = [];
+    return {
+        add: () => {
+            const ol = orderLiteral(); 
+            orders.push(ol)
+            return ol;
+        },
+        stringify: () => {
+            if (orders.length > 1) {
+                orders.push("");
+                return "order: " + orders.reverse()
+                    .reduce((acc, order) => acc.length ? `{ ${order.stringify()}, then: ${acc} }` : `{ ${order.stringify()} }`);
+            }
+            if (orders.length) {
+                return `order: { ${orders[0].stringify()} }`
+            }
+            return "";
+        } 
+    };
+}
+
+function selectionLiteral(lit) {
+    return {
+        stringify: () => lit
+    };
+}
+
 function filterList() {
     const filter = gql_filter();
     return {
@@ -228,46 +346,6 @@ function filter_field(name) {
     return handler;
 }
 
-export function gql_filter(filtertype) {
-    const filters = [];
-    
-    function combiner(cname) {
-        const combop = gql_filter(cname); 
-        filters.push(combop); 
-        return combop; 
-    };
-
-    const self = {
-        has: (field) => { 
-            filters.push(filter_operator("has").condition(field)); 
-        },
-        attribute: ( field ) => { 
-            const fieldOp = filter_field(field);
-            filters.push(fieldOp); 
-            return fieldOp; 
-        },
-        or: () => combiner("or"),
-        and: () => combiner("and"),
-        not: () => combiner("not"),
-        stringify: () => {
-            const operations = filters.filter((f) => f != null)
-                .map(f => `{ ${f.stringify()} } `)
-                .filter(f => f.length);
-
-            if (operations.length) {
-                if (filtertype && operations.length > 1) {
-                    return `${filtertype}: [ ${ operations.join(", ") } ]`;
-                }
-                return `${ operations.join(", ") }`;
-            }
-
-            return "";
-        }
-    };
-
-    return self;
-}
-
 const jsonhandlers = {
     options: (p, val) => {
         Object.entries(val)
@@ -335,7 +413,6 @@ function handleFilterCondition(p, val) {
             p[key]().condition(value);
         }
         else {
-            console.log(`${key} ${value}`);
             handleFilterCondition(p.attribute(key), value);
         }
     });
@@ -373,21 +450,3 @@ function json_handle_selector(parent, json) {
         jsonhandlers[dir](parent, val);
     });
 }
-
-export function json_to_gql(json) {
-    if (json && Object.keys(json).length) {
-        const querystring = Object.entries(json)
-            .filter(([name]) => (name.at(0) != "@")) // at top level no at is allowed
-            .map(([name, value]) => {
-                const q = gql_query(name);
-                json_handle_selector(q, value);
-                return q;
-            })
-            .map(entity => entity.stringify())
-            .join("\n");
-            
-        return `{ ${querystring} }`;
-    }
-
-    return "";
-} 
