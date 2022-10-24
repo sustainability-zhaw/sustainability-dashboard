@@ -131,7 +131,7 @@ async function executeQuery(query, { signal }, pretty) {
 }
 
 function processModel(feed) {
-    console.log(`fetched ${feed.data.objects.length} objects`)
+    console.log(`fetched ${feed.data.objects.length} objects \n ${JSON.stringify(feed, null, "  ")}`)
 
     const upfeed = feed.data.objects.map((record) => {
         record.sdg = record.sdg.map(sdg => sdg.id.split("_").pop()).map((sdg) => `${Number(sdg)< 10 ? "0": ""}${sdg}`);
@@ -282,9 +282,9 @@ function prefixAndQuote(value, prefix) {
     if (prefix) {
         value = prefix + value;
     }
-    else {
+    // else {
         value = JSON.stringify(value);
-    }
+    // }
     return value;
 }
 
