@@ -42,13 +42,13 @@ export function init(cfg) {
     Config.static  = Object.hasOwn(cfg, "static")  ? cfg.static  : Config.static;
     Config.debug   = Object.hasOwn(cfg, "debug")   ? cfg.debug   : Config.debug;
 
-    console.log(JSON.stringify(Config));
+    // console.log(JSON.stringify(Config));
 }
 
 export function feed(type) {
     if (Object.hasOwn(Model, type)) {
-        console.log(`have model ${type}`);
-        console.log(`model has data ${Model[type].length}`);
+        // console.log(`have model ${type}`);
+        // console.log(`model has data ${Model[type].length}`);
 
         return Model[type];
     }
@@ -73,7 +73,7 @@ export async function loadData(type, queryObj) {
         }
     }
     else {
-        console.log("load from real API");
+        // console.log("load from real API");
 
         const queryTerms = collectQueryTerms(queryObj);
         const objects = gqlSearchQuery(type, queryTerms);
@@ -92,7 +92,7 @@ export async function loadData(type, queryObj) {
 async function loadStatic() {
     const url = Config.baseuri;
 
-    console.log(`fetch update from ${url}`);
+    // console.log(`fetch update from ${url}`);
 
     const {signal} = RequestController;
  
@@ -131,7 +131,7 @@ async function executeQuery(query, { signal }, pretty) {
 }
 
 function processModel(feed) {
-    console.log(`fetched ${feed.data.objects.length} objects \n ${JSON.stringify(feed, null, "  ")}`)
+    // console.log(`fetched ${feed.data.objects.length} objects \n ${JSON.stringify(feed, null, "  ")}`)
 
     const upfeed = feed.data.objects.map((record) => {
         record.sdg = record.sdg.map(sdg => sdg.id.split("_").pop()).map((sdg) => `${Number(sdg)< 10 ? "0": ""}${sdg}`);

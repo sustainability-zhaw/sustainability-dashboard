@@ -347,7 +347,7 @@ function handleDataUpdate() {
             const authorTag = authortemplate.content.cloneNode(true);
             authorTag.querySelector(".name").innerText = author.fullname;
             if (Object.hasOwn(object.persons, author.fullname)) {
-                // authorTag.querySelector(".counter").innerText = "0";
+                authorTag.querySelector(".counter").innerText = "_";
 
                 authorTag.querySelector(".mark").classList.add(`cat-${object.persons[author.fullname].department }`);
                 authorTag.querySelector(".affiliation").classList.remove("d-none");
