@@ -151,7 +151,7 @@ function gqlBaseInfoObjectQuery(type) {
     const queryInfoObject  = {
         "@alias": "queryInfoObject",
         "@options": {
-            order: [{asc: "year"}, {asc: "title"}],
+            order: [{desc: "year"}, {asc: "title"}],
             limit: 20
         },
         title: null,
