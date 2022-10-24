@@ -131,7 +131,7 @@ async function executeQuery(query, { signal }, pretty) {
 }
 
 function processModel(feed) {
-    console.log(`fetched ${feed.data.object.length} objects`)
+    console.log(`fetched ${feed.data.objects.length} objects`)
 
     const upfeed = feed.data.objects.map((record) => {
         record.sdg = record.sdg.map(sdg => sdg.id.split("_").pop()).map((sdg) => `${Number(sdg)< 10 ? "0": ""}${sdg}`);
