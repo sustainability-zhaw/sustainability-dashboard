@@ -76,10 +76,10 @@ export async function loadData(type, queryObj) {
         console.log("load from real API");
 
         const queryTerms = collectQueryTerms(queryObj);
-        const query = gqlSearchQuery(type, queryTerms);
+        const objects = gqlSearchQuery(type, queryTerms);
 
         try {
-            Model[type] = await executeQuery(query, RequestController, Config.debug);
+            Model[type] = await executeQuery({objects}, RequestController, Config.debug);
         }
         catch (err) {
             Model[type] = [];
@@ -107,7 +107,7 @@ async function executeQuery(query, { signal }, pretty) {
    
     if (pretty) {
         body = pretty_gql(body);
-        console.log(pretty);
+        console.log(body);
     }
 
     const response = await fetch(Config.baseuri, {
@@ -133,7 +133,7 @@ async function executeQuery(query, { signal }, pretty) {
 function processModel(feed) {
     console.log(`fetched ${feed.data.object.length} objects`)
 
-    const upfeed = feed.data.object.map((record) => {
+    const upfeed = feed.data.objects.map((record) => {
         record.sdg = record.sdg.map(sdg => sdg.id.split("_").pop()).map((sdg) => `${Number(sdg)< 10 ? "0": ""}${sdg}`);
         record.dept = record.dept.map(d => d.id.split("_").pop());
         return record;
