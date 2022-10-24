@@ -69,7 +69,8 @@ function c() {
 
 function d() {
     return json_to_gql({
-        "queryInfoObject": {
+        "objects": {
+            "@alias": "queryInfoObject",
             "sdgs": {
                 "@required": true,
                 "id": null,

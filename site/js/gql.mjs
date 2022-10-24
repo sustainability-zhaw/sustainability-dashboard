@@ -9,7 +9,16 @@
         const querystring = Object.entries(json)
             .filter(([name]) => (name.at(0) != "@")) // at top level no at is allowed
             .map(([name, value]) => {
+                let alias;
+                if (value && value["@alias"]) {
+                    alias = name; 
+                    name = value["@alias"];
+                }
                 const q = gql_query(name);
+                if (alias) {
+                    q.alias(alias);
+                }
+                
                 json_handle_selector(q, value);
                 return q;
             })

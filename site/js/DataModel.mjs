@@ -76,10 +76,10 @@ export async function loadData(type, queryObj) {
         console.log("load from real API");
 
         const queryTerms = collectQueryTerms(queryObj);
-        const queryInfoObject = gqlSearchQuery(type, queryTerms);
+        const objects = gqlSearchQuery(type, queryTerms);
 
         try {
-            Model[type] = await executeQuery({query: queryInfoObject}, RequestController, Config.debug);
+            Model[type] = await executeQuery({objects}, RequestController, Config.debug);
         }
         catch (err) {
             Model[type] = [];
@@ -144,7 +144,7 @@ function processModel(feed) {
 
 function gqlBaseInfoObjectQuery(type) {
     const queryInfoObject  = {
-        //  "@alias": "queryInfoObject",
+        "@alias": "queryInfoObject",
         "@options": {
             order: [{asc: "year"}, {asc: "title"}],
             limit: 20
@@ -273,7 +273,7 @@ export function gqlSearchQuery(type, queryTerms) {
         };
     }
 
-    return {objects: queryInfoObject};
+    return queryInfoObject;
 }
 
 // helper functions for preparing the GQL queries
