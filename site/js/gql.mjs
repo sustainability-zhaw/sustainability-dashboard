@@ -22,7 +22,6 @@
     return "";
 } 
 
-
 /**
  * GraphQL PrettyPrinter
  * 
@@ -74,6 +73,14 @@ export function pretty_gql(gqlstring, indent) {
     }).join("")
 }
 
+/**
+ * Helper Function for building GraphQL Filters
+ * 
+ * This function is rarely used directly but accessed via gql_query().
+ * 
+ * @param {String} filtertype 
+ * @returns 
+ */
 export function gql_filter(filtertype) {
     const filters = [];
     
@@ -114,6 +121,14 @@ export function gql_filter(filtertype) {
     return self;
 }
 
+/**
+ * Main Query Builder Interface 
+ * 
+ * This is a helper function for json_to_gql(). It allows to create GraphQL queries programmatically. 
+ * 
+ * @param {String}} target 
+ * @returns 
+ */
 export function gql_query(target) {
     const selector = [];
     
