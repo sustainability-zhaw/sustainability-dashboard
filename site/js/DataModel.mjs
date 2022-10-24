@@ -136,6 +136,7 @@ function processModel(feed) {
     const upfeed = feed.data.objects.map((record) => {
         record.sdg = record.sdg.map(sdg => sdg.id.split("_").pop()).map((sdg) => `${Number(sdg)< 10 ? "0": ""}${sdg}`);
         record.dept = record.dept.map(d => d.id.split("_").pop());
+        record.persons = record.persons.reduce((akk, val) => {akk[val.fullname] = val; return akk;}, {});
         return record;
     });
 

@@ -346,11 +346,12 @@ function handleDataUpdate() {
         object.authors.forEach(author => {
             const authorTag = authortemplate.content.cloneNode(true);
             authorTag.querySelector(".name").innerText = author.fullname;
-            // authorTag.querySelector(".counter").innerText = "0";
+            if (Object.hasOwn(object.persons, author.fullname)) {
+                // authorTag.querySelector(".counter").innerText = "0";
 
-            // // FIXME The following line should do a lookup into the peoples list
-            // authorTag.querySelector(".mark").classList.add(`cat-${publication.department[0]}`);
-
+                authorTag.querySelector(".mark").classList.add(`cat-${object.persons[author.fullname].department.id }`);
+                authorTag.querySelector(".affiliation").classList.remove("d-none");
+            }
             authorlist.appendChild(authorTag);    
         });
 
