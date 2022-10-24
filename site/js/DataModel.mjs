@@ -32,13 +32,6 @@ const Config = {
     debug: false
 };
 
-const CateogryMap = {
-    publications: "Publication",
-    projects: "Project",
-    modules: "Module",
-    people: "Person",
-};
-
 const RequestController = new AbortController();
 
 export function init(cfg) {
@@ -83,7 +76,7 @@ export async function loadData(type, queryObj) {
         console.log("load from real API");
 
         const queryTerms = collectQueryTerms(queryObj);
-        const query = gqlSearchQuery(CateogryMap[type], queryTerms);
+        const query = gqlSearchQuery(type, queryTerms);
 
         try {
             Model[type] = await executeQuery(query, RequestController, Config.debug);
