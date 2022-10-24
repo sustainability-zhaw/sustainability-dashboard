@@ -1,7 +1,9 @@
 {
     "api": {
         "host": "",
-        "path": "mock/api"
+        "path": "mock/api/feed.json",
+        "static": 1,
+        "debug": 1
     },
     "departments": [
         "A", 

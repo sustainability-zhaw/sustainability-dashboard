@@ -1,4 +1,4 @@
-import { json_to_gql, pretty_gql } from "./gql.mjs";
+import * as DataModel from "./DataModel.mjs";
 
 const QueryModel = {
     qterms: [],
@@ -6,20 +6,11 @@ const QueryModel = {
     config: {}
 }
 
-const DataModel = {
-    feed: {},
-    message: ""
-}
-
-const RequestController = new AbortController();
-
 // pull up the System with a basic configuration
 
 async function init() {
     const response = await fetch("config.json");
     const Config = await response.json();
-
-    Config.api.baseurl = `${Config.api.host.length ? "https://" : ""}${Config.api.host.length ? (Config.api.host + "/"): ""}${Config.api.path}`;
 
     addSearchElement();
     addSearchTerm();
@@ -30,6 +21,9 @@ async function init() {
 
     registerModelEvents();
 
+    // new data model
+    DataModel.init(Config.api);
+
     QueryModel.config = Config;
     QueryModel.events = initEventTrigger();
 }
@@ -37,7 +31,7 @@ async function init() {
 init().then(() => QueryModel.events.queryUpdate());
 
 // stub for Bootstrap Tooltips
-
+    
 const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
 const tooltipList = [...tooltipTriggerList].map((tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl));
 
@@ -88,18 +82,18 @@ function registerModelEvents() {
 
     evAnchor.addEventListener("queryupdate", handleQueryUpdate);
     evAnchor.addEventListener("queryupdate", renderSearchOptions);
-    evAnchor.addEventListener("queryupdate", requestQueryFromServer);
+    // evAnchor.addEventListener("queryupdate", requestQueryFromServer);
     evAnchor.addEventListener("queryupdate", requestQueryStats);
 
     evAnchor.addEventListener("queryupdate.extra", handleQueryExtraUpdate);
     evAnchor.addEventListener("queryadd", handleQueryAdd);
     
     evAnchor.addEventListener("dataupdate", handleDataUpdate);
-    evAnchor.addEventListener("dataupdate", updaterEdu);
-    evAnchor.addEventListener("dataupdate", updaterProj);
-    evAnchor.addEventListener("dataupdate", updaterPubs);
-    evAnchor.addEventListener("dataupdate", updaterStat);
-    evAnchor.addEventListener("dataupdate", updaterPersons);
+    // evAnchor.addEventListener("dataupdate", updaterEdu);
+    // evAnchor.addEventListener("dataupdate", updaterProj);
+    // evAnchor.addEventListener("dataupdate", updaterPubs);
+    // evAnchor.addEventListener("dataupdate", updaterStat);
+    // evAnchor.addEventListener("dataupdate", updaterPersons);
 
     evAnchor.addEventListener("dataupdate.bookmark", () => {});
 }
@@ -218,7 +212,7 @@ function liveQueryInput() {
     const searchTermElement = document.querySelector("#searchterms");
 
     searchTermElement.addEventListener("keyup", function(evt) {
-
+        // TODO Trigger live querying
     });
 } 
 
@@ -276,34 +270,9 @@ function handleQueryAdd(ev) {
 
 function handleQueryUpdate(ev) {
     // trigger search request to the backend
-    console.log("Query Update");
-
-    //RequestController.abort();
-
-    const fetcher = QueryModel.qterms.length || QueryModel.extra.length ? dynamicQueryRequest : staticQueryRequest;
-
-    // cancel _all_ previous requests
-    fetcher().then(() => QueryModel.events.dataUpdate())
-} 
-
-async function dynamicQueryRequest() {
-    await staticQueryRequest();
-}
-
-async function staticQueryRequest() {
-    const { signal } = RequestController;
-    DataModel.message = "";
-
-    console.log(`get ${QueryModel.config.api.baseurl}/feed.json`);
-
-    try {
-        const response = await fetch(`${QueryModel.config.api.baseurl}/feed.json`, {signal});
-        DataModel.feed = await response.json();
-    }
-    catch (err) {
-        DataModel.feed = {};
-        DataModel.message = err.message;
-    }
+    const section = document.querySelector('.nav-link.active');
+    const category = section.parentElement.id.split("-").shift();
+    DataModel.loadData(category, QueryModel.qterms).then(() => QueryModel.events.dataUpdate());
 }
 
 function renderSearchOptions() {
@@ -338,273 +307,61 @@ function renderSearchOptions() {
 
 function handleDataUpdate() {
     console.log("data update");
-    if (DataModel.message.length){
-        console.log(`${DataModel.message}`);
-    }
-}
-
-function updaterStat() {
-    if (!DataModel.feed.stat) {
-        return;
-    }
     
-    [...document.querySelectorAll(".cat.counter")]
-        .forEach(
-            counter => counter.innerText = DataModel.feed.stat[counter.parentNode.dataset.qtype][counter.parentNode.dataset.qvalue]
-        );
-}
-
-function updaterPubs() {
-    if (!DataModel.feed.stat) {
-        return;
-    }
-
-    const counter = document.querySelector('#publication-counter');
-    counter.innerText = DataModel.feed.stat.publications;
-
-    if (!counter.parentNode.classList.contains("active")) {
-        return
-    }
-
     const targetsection = document.querySelector('.results');
 
-    if (!DataModel.feed.page || targetsection.dataset.resulttype !== "publication") {
-        // when we get the first results of a fresh search, reset the results section
-        targetsection.innerHTML = "";
-        targetsection.dataset.resulttype = "publication"
+    const section = document.querySelector('.nav-link.active');
+    const category = section.parentElement.id.split("-").shift();
+   
+    if (!["publications", "projects", "modules", "people"].includes(category)) {
+        console.log( "not in a data category. nothing to render");
+        return;
     }
-    
+
+    // set the result type
+
+    // when we get the first results of a fresh search, reset the results section
+    // TODO Pagination
+    targetsection.innerHTML = "";
+    targetsection.dataset.resulttype = category;
+   
     const template = document.querySelector('#resultcontainer');
     const authortemplate = document.querySelector('#resourceauthor');
 
-    DataModel.feed.publications.forEach(publication => {
+    console.log(`update ${ category }`);
+
+    DataModel.feed(category).forEach((object) => {
         const result = template.content.cloneNode(true);
-        result.querySelector(".pubtitle").innerText = publication.title;
-        result.querySelector(".year").innerText = publication.year;
-        result.querySelector(".tool.bi-download").href = publication.link;
-        result.querySelector(".categories").innerHTML = publication.sdg.map(sdg => `<span class="mark cat-${Number(sdg) < 10 ? "0": ""}${sdg}"></span>`).join(" ");
-        result.querySelector(".extra.abstract").innerText= publication.abstract;
-        result.querySelector(".extra.pubtype").innerText= publication.type;
-        result.querySelector(".extra.keywords").innerText= publication.keywords.join(", ");
-        result.querySelector(".extra.classification").innerText= Object.getOwnPropertyNames(publication.class).map(id => `${id}: ${publication.class[id]}`).join(", ");
+        result.querySelector(".pubtitle").innerText = object.title;
+        result.querySelector(".year").innerText = object.year;
+        result.querySelector(".tool.bi-download").href = object.link;
+        result.querySelector(".categories").innerHTML = object.sdg.map(sdg => `<span class="mark cat-${sdg}"></span>`).join(" ");
+        result.querySelector(".extra.abstract").innerText= object.abstract;
+        result.querySelector(".extra.pubtype").innerText= object.subtype.name;
+        result.querySelector(".extra.keywords").innerText= object.keywords.map(k => k.name).join(", ");
+        result.querySelector(".extra.classification").innerText= Object.getOwnPropertyNames(object.class).map(id => `${id}: ${object.class[id]}`).join(", ");
 
         const authorlist = result.querySelector(".authors");
 
-        publication.authors.forEach(author => {
+        object.authors.forEach(author => {
             const authorTag = authortemplate.content.cloneNode(true);
-            authorTag.querySelector(".name").innerText = author;
-            authorTag.querySelector(".counter").innerText = "0";
+            authorTag.querySelector(".name").innerText = author.fullname;
+            // authorTag.querySelector(".counter").innerText = "0";
 
-            // FIXME The following line should do a lookup into the peoples list
-            authorTag.querySelector(".mark").classList.add(`cat-${publication.department[0]}`);
+            // // FIXME The following line should do a lookup into the peoples list
+            // authorTag.querySelector(".mark").classList.add(`cat-${publication.department[0]}`);
 
             authorlist.appendChild(authorTag);    
-        })
+        });
 
         targetsection.appendChild(result);
     });
-}
+}   
 
-function updaterEdu() {
-    if (!DataModel.feed.stat) {
-        return;
-    }
-    
-    const counter = document.querySelector('#education-counter');
-    counter.innerText = DataModel.feed.stat.education;
-
-    if (!counter.parentNode.classList.contains("active")) {
-        return
-    } 
-
-    const targetsection = document.querySelector('.results');
-
-    if (!DataModel.feed.page || targetsection.dataset.resulttype !== "education") {
-        // when we get the first results of a fresh search, reset the results section
-        targetsection.innerHTML = "";
-        targetsection.dataset.resulttype = "education"
-    }
-}
-
-function updaterProj() {
-    if (!DataModel.feed.stat) {
-        return;
-    }
-    
-    const counter = document.querySelector('#project-counter');
-    counter.innerText = DataModel.feed.stat.projects;
-
-    if (!counter.parentNode.classList.contains("active")) {
-        return
-    }
-
-    const targetsection = document.querySelector('.results');
-
-    if (!DataModel.feed.page || targetsection.dataset.resulttype !== "projects") {
-        // when we get the first results of a fresh search, reset the results section
-        targetsection.innerHTML = "";
-        targetsection.dataset.resulttype = "projects"
-    }
-}
-
-function updaterPersons() {
-    if (!DataModel.feed.stat) {
-        return;
-    }
-    
-    const counter = document.querySelector('#people-counter');
-    counter.innerText = DataModel.feed.stat.people;
-
-    if (!counter.parentNode.classList.contains("active")) {
-        return
-    }
-
-    const targetsection = document.querySelector('.results');
-
-    if (!DataModel.feed.page || targetsection.dataset.resulttype !== "people") {
-        // when we get the first results of a fresh search, reset the results section
-        targetsection.innerHTML = "";
-        targetsection.dataset.resulttype = "people"
-    }
-}
-
-function prefixAndQuote(value, prefix) {
-    if (prefix) {
-        value = prefix + value;
-    }
-    else {
-        value = JSON.stringify(value);
-    }
-    return value;
-}
-
-function collectType(qterms, type) {
-    const prefix = ["department", "sdg"].includes(type) ? type + "_" : "";
-    
-    return qterms
-        .filter(i => i.type === type)
-        .map(i => i.value)
-        .map((val) => prefixAndQuote(val, prefix));
-}
-
-function collectQueryTerms(query) {
-    return {
-        sdgs:        collectType(query, "sdg"),
-        departments: collectType(query, "department"),
-        persons:     collectType(query, "person"),
-        terms:       collectType(query, "term"),
-    };
-}
-
-function requestQueryFromServer(ev) {
-    const queryTerms = collectQueryTerms(QueryModel.qterms);
-
-    const queryInfoObject  = {
-        "@options": {
-            order: [{asc: "year"}, {asc: "title"}],
-            limit: 20
-        },
-        title: null,
-        abstract: null,
-        year: null, 
-        language: null,
-        link: null,
-        extras: null,
-        authors: {
-            "@alias": "persons",
-            fullname: null
-        },
-        class: {
-            id: null,
-            name: null
-        },
-        subtype: {
-            name: null
-        },
-        keywords: {
-            name: null
-        },
-        sdg: {
-            id: null,
-            "@alias": "sdgs"
-        },
-        persons: {
-            "fullname": null, 
-            "initials": null, 
-            "title": null, 
-            "mail": null, 
-            "ipphone": null, 
-            "gender": null, 
-            "department": {
-                id: null
-            },
-            "team": { 
-                name: null 
-            },
-            "@options": {
-                filter: {}
-            }
-        }
-    };
-
-    if (queryTerms.persons.length) {
-        queryInfoObject.persons["@options"].filter.initials = {
-            in: queryTerms.persons
-        };
-        queryInfoObject.persons["@required"] = true;
-    }
-    else {
-        queryInfoObject.persons["@options"].filter.has = "department";
-    }
-
-    if (queryTerms.sdgs.length) {
-        queryInfoObject.sdgs = {
-            id: null,
-            "@required": true,
-            "@options": {
-                filter: {
-                    id: {
-                        in: queryTerms.sdgs
-                    }
-                }
-            }
-        };
-    }
-
-    if (queryTerms.departments.length) {
-        queryInfoObject.departments = {
-            id: null,
-            "@required": true,
-            "@options": {
-                filter: {
-                    id: {
-                        in: queryTerms.departments
-                    }
-                }
-            }
-        };
-    }
-
-    if (queryTerms.terms.length) {
-        const termFilter = [ "title", "abstract" ].map((fld) => {
-            const res = {};
-            res[fld] = {
-                alloftext: queryTerms.terms
-            };
-            return res;
-        });
-
-        queryInfoObject["@options"].filter = {
-            or: termFilter
-        };
-    }
-
-    const str = json_to_gql({queryInfoObject});
-
-    console.log(pretty_gql(str));
-    // now we can fetch the data
+function updaterStat() {
+    // display numbers
 }
 
 function requestQueryStats(ev) {
-    const queryTerms = collectQueryTerms(QueryModel.qterms);
+    // download numbers
 }

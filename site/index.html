@@ -13,15 +13,15 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
               <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item" id="publication-list">
+                <li class="nav-item" id="publications-list">
                     <a class="nav-link active" aria-current="page" href="#"><i class="bi-journal-richtext" role="img"></i> Publications (<span id="publication-counter">123</span>)</a>
                 </li>
 
-                <li class="nav-item" id="project-list">
+                <li class="nav-item" id="projects-list">
                     <a class="nav-link" aria-current="page" href="#"><i class="bi-kanban" role="img"></i> Projects (<span id="project-counter">321</span>)</a>
                 </li>
 
-                <li class="nav-item" id="education-list">
+                <li class="nav-item" id="modules-list">
                     <a class="nav-link" aria-current="page" href="#"><i class="bi-person-video3" role="img"></i> Modules (<span id="education-counter">123</span>)</a>
                 </li>
 
@@ -438,7 +438,7 @@
     </template>
     <template id="resourceauthor">
         <span class="author">
-            <span class="name"></span><span class="mark"></span><span class="counter"></span>
+            <span class="name"></span><span id="internal" class="d-none"><span class="mark"></span><span class="counter"></span></span>
         </span>
     </template>
     <template id="searchoption">
