@@ -173,7 +173,7 @@ function gqlBaseInfoObjectQuery(type) {
             "@options": {
                 filter: {
                     name: {
-                        in: type
+                        in: JSON.stringify(type)
                     }
                 }
             },
