@@ -48,38 +48,45 @@ export function pretty_gql(gqlstring, indent) {
     const tokenopen = ["{", "[", "("],
           tokenclse = ["}", "]", ")"],
           nobreak = tokenopen;
-    let level = 0;
-    let pushnext = "";
+    const level = 0;
+    const pushnext = "";
+    const result = "";
 
-    return gqlstring.split( " " ).filter(t=> t.length).map((token) => {
+    return gqlstring.split( " " ).filter(t=> t.length).reduce((acc, token) => {
         const breaktoken =  (tokenopen.includes(token.at(-1))) - (tokenclse.includes(token.at(0)));
         
         if (breaktoken) {
-            level += breaktoken;
-            if (level < 0) {
-                level = 0;
+            acc.level += breaktoken;
+            if (acc.level < 0) {
+                acc.level = 0;
             }
         }
 
         let breakprev = "\n";
-        let nextindent = indent.repeat(level) + pushnext;
-        pushnext = "";
+        let nextindent = indent.repeat(acc.level) + acc.pushnext;
+        acc.pushnext = "";
 
         if (nobreak.includes(token.at(-1))) {
             nextindent = " ";
             breakprev = "";
         }
 
-        if (breaktoken > 0 && level === 1) {
+        if (breaktoken > 0 && acc.level === 1) {
             nextindent = "";
         }
 
         if (token.at(-1) === ":") {
-            pushnext = indent;
+            acc.pushnext = indent;
         }
 
-        return `${breakprev}${nextindent}${token}`;
-    }).join("")
+        acc.result = `${acc.result}${breakprev}${nextindent}${token}`;
+
+        return acc;
+    }, {
+        level,
+        pushnext,
+        result
+    }).result;
 }
 
 /**
