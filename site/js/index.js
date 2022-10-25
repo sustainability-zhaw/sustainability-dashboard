@@ -343,7 +343,7 @@ function handleDataUpdate() {
         result.querySelector(".extra.abstract").innerText= object.abstract;
         result.querySelector(".extra.pubtype").innerText= object.subtype.name;
         result.querySelector(".extra.keywords").innerText= object.keywords.map(k => k.name).join(", ");
-        result.querySelector(".extra.classification").innerText= Object.getOwnPropertyNames(object.class).map(id => `${id}: ${object.class[id]}`).join(", ");
+        result.querySelector(".extra.classification").innerText= object.class.map(cls => `${cls.id}: ${cls.name}`).join(", ");
 
         const authorlist = result.querySelector(".authors");
 
