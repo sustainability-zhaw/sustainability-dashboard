@@ -116,7 +116,7 @@ async function executeQuery(query) {
         Logger.debug(body);
     }
 
-    if (!query.length) {
+    if (!body.length) {
         Logger.debug("no query to fetch");
         return [];
     }
