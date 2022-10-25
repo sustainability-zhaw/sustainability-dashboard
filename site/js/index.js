@@ -1,4 +1,6 @@
 import * as DataModel from "./DataModel.mjs";
+import * as Config from "./ConfigModel.mjs";
+import * as Logger from "./Logger.mjs";
 
 const QueryModel = {
     qterms: [],
@@ -9,8 +11,13 @@ const QueryModel = {
 // pull up the System with a basic configuration
 
 async function init() {
-    const response = await fetch("config.json");
-    const Config = await response.json();
+    await Config.init("config.json", {
+        "proto": "",
+        "host": "",
+        "path": "mock/api/feed.json",
+        "static": 1,
+        "debug": 2
+    });
 
     addSearchElement();
     addSearchTerm();
@@ -20,9 +27,6 @@ async function init() {
     dropSearchElement();
 
     registerModelEvents();
-
-    // new data model
-    DataModel.init(Config.api);
 
     QueryModel.config = Config;
     QueryModel.events = initEventTrigger();
@@ -247,17 +251,17 @@ function handleQueryAdd(ev) {
     const nValue = Number(value);
 
     if (QueryModel.qterms.filter(obj => obj.type === type && obj.value === value).length) {
-        console.log("item exists");
+        Logger.debug("item exists");
         return; // item already exists
     }
 
     if (type === "sdg" && !(nValue >= 1 && nValue <= 16)) {
-        console.log("sdg out of bounds");
+        Logger.debug("sdg out of bounds");
         return; // value out of bounds
     }
 
     if (type === "depatment" && !QueryModel.config.departments.includes(value)) {
-        console.log("dept out of bounds");
+        Logger.debug("dept out of bounds");
         return; // value out of bounds
     }
 
@@ -306,7 +310,7 @@ function renderSearchOptions() {
 }
 
 function handleDataUpdate() {
-    console.log("data update");
+    Logger.debug("data update");
     
     const targetsection = document.querySelector('.results');
 
@@ -314,7 +318,7 @@ function handleDataUpdate() {
     const category = section.parentElement.id.split("-").shift();
    
     if (!["publications", "projects", "modules", "people"].includes(category)) {
-        console.log( "not in a data category. nothing to render");
+        Logger.debug( "not in a data category. nothing to render");
         return;
     }
 
@@ -328,7 +332,7 @@ function handleDataUpdate() {
     const template = document.querySelector('#resultcontainer');
     const authortemplate = document.querySelector('#resourceauthor');
 
-    console.log(`update ${ category }`);
+    Logger.debug(`update ${ category }`);
 
     DataModel.feed(category).forEach((object) => {
         const result = template.content.cloneNode(true);
