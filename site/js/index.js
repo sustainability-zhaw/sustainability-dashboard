@@ -220,7 +220,14 @@ function dropSearchElement() {
             var targetParent = evt.target.parentNode;
 
             const type = targetParent.dataset.qtype;
-            const value = targetParent.dataset.qvalue;
+            let value = targetParent.dataset.qvalue;
+
+            if (type === "sdg") {
+                value = Number(value);
+            }
+
+            console.log(`${type} :: ${value}`);
+            console.log(QueryModel.qterms.map((term) => `${term.type} <-> ${term.value}`).join("; "));
 
             QueryModel.qterms = QueryModel.qterms.filter(term => !(term.type === type && term.value === value));
 
