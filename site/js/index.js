@@ -125,7 +125,7 @@ function foldResults(evt) {
 
 
 function addQType(evt) {
-    console.log("click");
+    // console.log("click");
     if (evt.target.classList.contains("cat") || 
         evt.target.classList.contains("mark") ||
         evt.target.dataset.qtype.length) {
@@ -135,11 +135,16 @@ function addQType(evt) {
             target = target.parentNode;
         }
         const type = target.dataset.qtype;
-        const value = target.dataset.qvalue;
+        let value = target.dataset.qvalue;
 
-        console.log(`${type} -> ${value} `);
+        // console.log(`${type} -> ${value} `);
          
-        QueryModel.events.queryAddItem(type, value);            
+        if (type && value) {
+            if (type === "sdg") {
+                value = Number(value);
+            }
+            QueryModel.events.queryAddItem(type, value);            
+        }
     }
 }
 
@@ -308,7 +313,7 @@ function renderSearchOptions() {
             case "department":
             case "sdg":
                 datafield.classList.add("marker");
-                datafield.classList.add(`cat-${(Number(term.value) < 10) & term.value.at(0) !== "0" ? "0" : ""}${term.value}`);
+                datafield.classList.add(`cat-${Number(term.value) < 10 ? "0" : ""}${term.value}`);
                 break;
             case "person": 
                 datafield.classList.add("bi-person-circle");
