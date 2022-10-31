@@ -108,6 +108,7 @@
                     text-align: center;
                     height: 1.5em;
                     line-height: 1.5em;
+                    cursor: pointer;
 
                     &.bi-x-lg::before,
                     &.bi-x::before {
@@ -199,6 +200,7 @@
             grid-template-columns: 2em auto;
             gap: 0px;
             color: var(--bs-white);
+            cursor: pointer;
         }
     }
 }

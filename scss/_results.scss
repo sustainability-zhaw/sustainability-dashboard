@@ -83,6 +83,7 @@
             .mark {
                 margin-left: 0.5em;
                 width: $font-size-base* 2;
+                
             }
 
             &::after {
@@ -94,6 +95,12 @@
             }
         }
     }
+
+    .mark[data-qvalue],
+    .name[data-qvalue] {
+        cursor: pointer;
+    }
+
     .year {
         grid-row: 1;
         text-align: center;
