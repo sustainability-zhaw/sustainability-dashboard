@@ -104,27 +104,50 @@ function registerModelEvents() {
 
 // UI Usability functions 
 
+function foldResults(evt) {
+    const targetParent = evt.target.parentNode.parentNode;
+
+    if (evt.target.classList.contains("resultfold")) {
+        const toggleElements = targetParent.querySelectorAll(".extra");
+
+        evt.target.classList.toggle("bi-layer-backward");
+        evt.target.classList.toggle("bi-layer-forward");
+        [...toggleElements].map(togglable => togglable.hidden = !togglable.hidden);
+
+        if (evt.target.classList.contains("bi-layer-backward")) {
+            evt.target.setAttribute("data-bs-original-title", "Show Details");
+        }
+        else {
+            evt.target.setAttribute("data-bs-original-title", "Hide Details");
+        }
+    }
+}
+
+
+function addQType(evt) {
+    console.log("click");
+    if (evt.target.classList.contains("cat") || 
+        evt.target.classList.contains("mark") ||
+        evt.target.dataset.qtype.length) {
+        console.log("got qtype");
+        let target = evt.target;
+        if (!(target.dataset.qtype && target.dataset.qtype.length)) {
+            target = target.parentNode;
+        }
+        const type = target.dataset.qtype;
+        const value = target.dataset.qvalue;
+
+        console.log(`${type} -> ${value} `);
+         
+        QueryModel.events.queryAddItem(type, value);            
+    }
+}
+
 function toggleResultDetails() {
     const e = document.querySelector('.results'); 
 
-    e.addEventListener("click", function (evt) {
-        const targetParent = evt.target.parentNode.parentNode;
-
-        if (evt.target.classList.contains("resultfold")) {
-            const toggleElements = targetParent.querySelectorAll(".extra");
-
-            evt.target.classList.toggle("bi-layer-backward");
-            evt.target.classList.toggle("bi-layer-forward");
-            [...toggleElements].map(togglable => togglable.hidden = !togglable.hidden);
-
-            if (evt.target.classList.contains("bi-layer-backward")) {
-                evt.target.setAttribute("data-bs-original-title", "Show Details");
-            }
-            else {
-                evt.target.setAttribute("data-bs-original-title", "Hide Details");
-            }
-        }
-    });
+    e.addEventListener("click", foldResults);
+    e.addEventListener("click", addQType);
 } 
 
 // search query functions 
@@ -181,18 +204,7 @@ function addSearchTerm() {
 function addSearchElement() {
     const sidebarelement = document.querySelector(".sidebar")
     
-    sidebarelement.addEventListener("click", function(evt) {
-        if (evt.target.classList.contains("cat")) {
-            let target = evt.target;
-            if (!(target.dataset.qtype && target.dataset.qtype.length)) {
-                target = target.parentNode;
-            }
-            const type = target.dataset.qtype;
-            const value = target.dataset.qvalue;
-
-            QueryModel.events.queryAddItem(type, value);            
-        }
-    });
+    sidebarelement.addEventListener("click", addQType);
 }
 
 function dropSearchElement() {
@@ -296,7 +308,7 @@ function renderSearchOptions() {
             case "department":
             case "sdg":
                 datafield.classList.add("marker");
-                datafield.classList.add(`cat-${Number(term.value) < 10 ? "0" : ""}${term.value}`);
+                datafield.classList.add(`cat-${(Number(term.value) < 10) & term.value.at(0) !== "0" ? "0" : ""}${term.value}`);
                 break;
             case "person": 
                 datafield.classList.add("bi-person-circle");
@@ -339,7 +351,7 @@ function handleDataUpdate() {
         result.querySelector(".pubtitle").innerText = object.title;
         result.querySelector(".year").innerText = object.year;
         result.querySelector(".tool.bi-download").href = object.link;
-        result.querySelector(".categories").innerHTML = object.sdg.map(sdg => `<span class="mark cat-${sdg}"></span>`).join(" ");
+        result.querySelector(".categories").innerHTML = object.sdg.map(sdg => `<span class="mark cat-${sdg}" data-qtype="sdg" data-qvalue="${sdg}"></span>`).join(" ");
         result.querySelector(".extra.abstract").innerText= object.abstract;
         result.querySelector(".extra.pubtype").innerText= object.subtype.name;
         result.querySelector(".extra.keywords").innerText= object.keywords.map(k => k.name).join(", ");
@@ -349,11 +361,19 @@ function handleDataUpdate() {
 
         object.authors.forEach(author => {
             const authorTag = authortemplate.content.cloneNode(true);
-            authorTag.querySelector(".name").innerText = author.fullname;
+            const personname = authorTag.querySelector(".name");
+            personname.innerText = author.fullname;
             if (Object.hasOwn(object.persons, author.fullname)) {
-                authorTag.querySelector(".counter").innerText = "_";
+                const person = object.persons[author.fullname];
+                const dept  = person.department;
+                const dmark = authorTag.querySelector(".mark");
 
-                authorTag.querySelector(".mark").classList.add(`cat-${object.persons[author.fullname].department }`);
+                personname.dataset.qvalue = person.initials;
+                
+                dmark.classList.add(`cat-${ dept }`);
+                dmark.dataset.qvalue = dept;
+
+                authorTag.querySelector(".counter").innerText = "_";
                 authorTag.querySelector(".affiliation").classList.remove("d-none");
             }
             authorlist.appendChild(authorTag);    
