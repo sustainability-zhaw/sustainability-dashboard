@@ -2,7 +2,6 @@
   "name": "sustainability-dashboard",
   "version": "1.0.0",
   "description": "Fronend for The ZHAW Database Indexer",
-
   "repository": {
     "type": "git",
     "url": "git+https://github.com/dxiai/sustainability-dashboard.git"
@@ -13,7 +12,6 @@
     "url": "https://github.com/dxiai/sustainability-dashboard/issues"
   },
   "homepage": "https://github.com/dxiai/sustainability-dashboard#readme",
-
   "scripts": {
     "build": "npm run css",
     "css-compile": "sass --load-path node_modules --style compressed --source-map scss:site/assets/css/",
@@ -23,7 +21,7 @@
     "all": "npm-run-all css-compile css-prefix js-move icon-font",
     "js-move": "mkdir -p site/assets/js && cp node_modules/@popperjs/core/dist/umd/popper.* node_modules/bootstrap/dist/js/bootstrap.min.js* site/assets/js/",
     "icon-font": "cp -r node_modules/bootstrap-icons/font/fonts site/assets/css/",
-    "clean": "rm -rf site/assets", 
+    "clean": "rm -rf site/assets",
     "test": "npm run css-lint && npm run css"
   },
   "keywords": [
@@ -33,16 +31,16 @@
     "javascript"
   ],
   "dependencies": {
-    "bootstrap": "^5.1.3",
-    "bootstrap-icons": "^1.8.3",
-    "@popperjs/core": "^2.11.5"
+    "@popperjs/core": "^2.11.5",
+    "bootstrap": "^5.2.2",
+    "bootstrap-icons": "^1.9.1"
   },
   "devDependencies": {
-    "autoprefixer": "^10.4.7",
-    "sass": "^1.52.2",
+    "autoprefixer": "^10.4.13",
     "npm-run-all": "^4.1.5",
-    "postcss": "^8.2.10",
+    "postcss": "^8.4.18",
     "postcss-cli": "^8.3.1",
-    "purgecss": "^4.1.3"
+    "purgecss": "^4.1.3",
+    "sass": "^1.55.0"
   }
 }
