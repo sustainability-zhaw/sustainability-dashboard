@@ -1,6 +1,7 @@
 {
     "host": "",
     "path": "mock/api/feed.json",
+    "stats": "mock/api/stats.json",
     "static": 1,
     "debug": 2,
 
