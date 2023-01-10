@@ -1,0 +1,35 @@
+services:
+  # app:
+  #   build:
+  #     context: ./
+  #   restart: 'no'
+  
+  db:
+    # hostname: dgraph_standalone # Hardcoded in db_init entrypoint.sh
+    image: dgraph/standalone:v22.0.2
+    restart: 'no'
+    networks:
+      - dgraphnet
+    ports:
+      - '8080:8080'
+      - '9080:9080'
+
+  db_init:
+    image: ghcr.io/sustainability-zhaw/dgraph-schema:sha-e3c06cf
+    restart: 'no'
+    networks:
+      - dgraphnet
+    environment:
+      DGRAPH_SERVER: http://sustainability-dashboard-db-1:8080
+      SAMPLE_DATA: pubs_and_persons
+
+  db_browser:
+    image: dgraph/ratel:v21.12.0
+    restart: 'no'
+    networks:
+      - dgraphnet
+    ports:
+      - '8000:8000'
+
+networks:
+  dgraphnet:
