@@ -408,17 +408,33 @@ function handleStats() {
     // display numbers
     const stats = StatsModel.getStats();
 
+    // Logger.debug(`stats are: ${JSON.stringify(stats, null, "  ")}`)
+
     document.querySelector("#publication-counter").textContent =  stats.publications;
     document.querySelector("#project-counter").textContent = stats.projects;
     document.querySelector("#education-counter").textContent = stats.modules;
     document.querySelector("#people-counter").textContent = stats.people;
 
     stats.section.sdg
-        .map(e => e.id = e.id.replace("sdg_", "cat-"))
-        .forEach((e) => document.querySelector(`.cat.counter.${ e.id < 10 ? "0" + e.id : e.id }`).textContent = e.n);
-        
+        .map(e => { 
+            e.id = e.id.replace("sdg_", "cat-");
+            return e;
+        })
+        .filter(e => e.id != "cat-17")
+        .map(e => {
+            e.id = e.id.replace(/-(\d)$/, "-0$1");
+            return e;
+        })
+        .forEach((e) => {
+            document.querySelector(`.cat.counter.${ e.id }`).textContent = e.n;
+        });
+
     stats.section.department
-        .map(e => e.id = e.id.replace("department_", "cat-"))
+        .map(e => {
+            e.id = e.id.replace("department_", "cat-"); 
+            return e;
+        })
+        .filter(e => !( ["cat-R", "cat-V"].includes(e.id) ))
         .forEach((e) => document.querySelector(`.cat.counter.${ e.id }`).textContent = e.n);
 }
 

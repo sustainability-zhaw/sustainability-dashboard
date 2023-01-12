@@ -5,25 +5,27 @@ const StatsObject = {
     stats: {}
 };
 
+const RequestController = new AbortController();
+
 function initBaseStatsUri() {
-    const buri = Config.get("baseuri");
+    const buri = Config.get("staturi");
+
     if (buri && buri.length) {
         Logger.debug("got baseuri");
         return buri;
     }
 
-    Logger.debug("prepare baseuri");
+    // Logger.debug("STATS prepare baseuri");
 
     const proto = Config.get("proto") || "https://",
           host  = Config.get("host") || "",
           path  = Config.get("stats") || "";
 
-
     const baseuri = `${host.length ? proto : ""}${host}${(host.length && host.at(-1) !== "/") ? "/" : ""}${path}`
 
-    Logger.debug("set baseuri to " + baseuri);
+    // Logger.debug("STATS set stats baseuri to " + baseuri);
 
-    Config.set("baseuri", baseuri);
+    Config.set("staturi", baseuri);
 
     return baseuri;
 }
@@ -45,23 +47,27 @@ export async function loadData(category, queryObj) {
 
     const cache = "no-store";
 
-    const statHeaders = {
+    const headers = {
         'Content-Type': 'application/dql'
     };
 
-    Logger.debug(`fetch stats from ${url}`);
+    // Logger.debug(`fetch stats from ${url}`);
+    // Logger.debug(body);
 
     const response = await fetch(url, {
         signal,
         method,
-        headers: statHeaders,
+        headers,
         cache,
         body
     });
 
     const result = await response.json();
+    StatsObject.stats =  {};
 
-    if (Object.hasOwn(result, "data")) {
+    if (Object.hasOwn(result, "data") && result.data) {
+        // Logger.info(`response data: \n ${ JSON.stringify(result.data, null, "  ") }`);
+
         const data = result.data
 
         StatsObject.stats = {
@@ -71,20 +77,20 @@ export async function loadData(category, queryObj) {
                 department: data.department,
                 person: data.person
             }
-
         }; 
         data.infoobjecttype.forEach((o) => StatsObject.stats[o.id] = o.n);
-    }
-    
-    Logger.info(`error response: \n ${ JSON.stringify(result, null, "  ") }`);
 
-    StatsObject.stats =  {};
+        // Logger.info(`stats are : \n ${ JSON.stringify(StatsObject, null, "  ") }`);
+    }
+    else {
+        Logger.info(`error response: \n ${ JSON.stringify(result, null, "  ") }`);
+    }
 }
 
 function buildQueryString(category, queryObj) {
     const items = []
         .concat(buildFilter(queryObj))
-        .concat(buildTypeFilter(category))
+        .concat(buildObjectTypeFilter(category))
         .concat(buildNavCounts())
         .concat(buildCatCounts("Sdg"))
         .concat(buildCatCounts("Department"))
@@ -136,6 +142,10 @@ function queryHelperText(theType, initials) {
 function buildFilterHelpers(queryObj) {
     let retval = [];
 
+    if (!queryObj) {
+        return retval;
+    }
+
     if (queryObj.sdgs && queryObj.sdgs.length) {
         retval = retval.concat(
             queryObj.sdgs.map(
@@ -182,11 +192,15 @@ function filterHelper(tp, tpattr) {
         tpattr = `${tp.toLowerCase()}s`;
     }
 
-    return (t, i) => `uid_in(InfoObject.${ tpattr }s, qh${ tp }_${i}))`;
+    return (t, i) => `uid_in(InfoObject.${ tpattr }, uid(qh${ tp }_${i}))`;
 }
 
 function buildHelperFilter(queryObj) {
     let retval = [];
+
+    if (!queryObj) {
+        return retval;
+    }
 
     if (queryObj.sdgs && queryObj.sdgs.length) {
         retval = retval.concat(
@@ -235,7 +249,7 @@ function buildHelperFilter(queryObj) {
 }
 
 function buildTermFilter(queryObj) {
-    if (!(terms && terms.length)) {
+    if (!(queryObj && queryObj.terms && queryObj.terms.length)) {
         return [];
     }
 
@@ -253,6 +267,10 @@ function buildTermFilter(queryObj) {
 function buildMainFilter(queryObj) {
     const conditions = []; 
 
+    if (!queryObj) {
+        return [];
+    }
+
     conditions.push(...buildHelperFilter(queryObj));
     conditions.push(...buildTermFilter(queryObj));
 
@@ -260,16 +278,16 @@ function buildMainFilter(queryObj) {
         return [];
     }
 
-    return [ `@filter(${ conditions.join(" and ") })` ];
+    return [ `@filter( ${ conditions.join(" and ") } )` ];
 }
 
-function buildTypeFilter(cat) {
+function buildObjectTypeFilter(cat) {
     return `vObjectType as var(func: eq(InfoObjectType.name, "${ cat }")) { uid }`;
 }
 
 function buildNavCounts() {
     return [
-        buildCatCounts("InfoObjectType"),
+        ...buildCatCounts("InfoObjectType", null, "name"),
         "vPersons as var(func: type(Person)) @cascade { uid Person.objects @filter(uid(vFilter)) { uid } }",
         "people(func: uid(vPersons)) { n: count(uid) }"  
     ];
@@ -283,13 +301,13 @@ function buildCatCounts(cat, dqlFunc, cid) {
     if (!(cid && cid.length)) {
         cid = "id"
     }
-    // FIXME - Info object type will fail here due du io.category
-    const cname = `${ cat.toLowerCase() }s`;
+    
+    // const cname = cat == "InfoObjectType" ? "category" : `${ cat.toLowerCase() }s`;
 
     return [
         `${ cat.toLowerCase() }(func: ${ dqlFunc }) {`,
         `id: ${ cat }.${ cid }`,
-        `n: count(${ cat }.objects @filter(uid_in(InfoObject.${cname}, uid(vObjectType)) and uid(vFilter)))`,
+        `n: count(${ cat }.objects @filter(uid_in(InfoObject.category, uid(vObjectType)) and uid(vFilter)))`,
         "}"
     ];
 }
