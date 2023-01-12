@@ -83,7 +83,7 @@ export async function loadData(type, queryObj) {
     else {
         Logger.debug("load from real API");
 
-        const queryTerms = collectQueryTerms(queryObj);
+        const queryTerms = queryObj;
         const objects = gqlSearchQuery(type, queryTerms);
 
         try {
@@ -139,6 +139,7 @@ async function executeQuery(query) {
     const result = await response.json();
 
     if (Object.hasOwn(result, "data")) {
+        // Logger.info(`response: \n ${ JSON.stringify(result, null, "  ") }`);
         return processModel(result);
     }
     else {
@@ -154,8 +155,10 @@ function processModel(feed) {
     const upfeed = feed.data.objects.map((record) => {
         record.sdg = record.sdg.map(sdg => sdg.id.split("_").pop()).map((sdg) => `${Number(sdg)< 10 ? "0": ""}${sdg}`);
         record.dept = record.dept.map(d => d.id.split("_").pop());
-        record.persons = record.persons.reduce((akk, val) => {
-            val.department = val.department.id.split("_").pop();
+        record.persons = record.authors.reduce((akk, val) => {
+            if(val.person) {
+                val.department = val.person.department.id.split("_").pop();
+            }
             akk[val.fullname] = val; 
             return akk;
         }, {});
@@ -244,58 +247,59 @@ export function gqlRootQuery(type) {
 export function gqlSearchQuery(type, queryTerms) {
     const queryInfoObject = gqlBaseInfoObjectQuery(type);
 
-    if (queryTerms.persons.length) {
-        queryInfoObject.authors.person["@options"].filter.initials = {
-            in: queryTerms.persons
-        };
-        queryInfoObject.authors.person["@required"] = true;
-    }
-    else {
-        queryInfoObject.authors.person["@options"].filter.has = "department";
-    }
-
-    if (queryTerms.sdgs.length) {
-        queryInfoObject.sdgs = {
-            id: null,
-            "@required": true,
-            "@options": {
-                filter: {
-                    id: {
-                        in: queryTerms.sdgs
-                    }
-                }
-            }
-        };
-    }
-
-    if (queryTerms.departments.length) {
-        queryInfoObject.departments = {
-            id: null,
-            "@required": true,
-            "@options": {
-                filter: {
-                    id: {
-                        in: queryTerms.departments
-                    }
-                }
-            }
-        };
-    }
-
-    if (queryTerms.terms.length) {
-        const termFilter = [ "title", "abstract" ].map((fld) => {
-            const res = {};
-            res[fld] = {
-                alloftext: queryTerms.terms
+    if (queryTerms) {
+        if (queryTerms.persons && queryTerms.persons.length) {
+            queryInfoObject.authors.person["@options"].filter.initials = {
+                in: queryTerms.persons
             };
-            
-            return res;
-        });
+            queryInfoObject.authors.person["@required"] = true;
+        }
+        else {
+            queryInfoObject.authors.person["@options"].filter.has = "department";
+        }
 
-        queryInfoObject["@options"].filter = {
-            and: termFilter
-        };
+        if (queryTerms.sdgs && queryTerms.sdgs.length) {
+            queryInfoObject.sdgs = {
+                id: null,
+                "@required": true,
+                "@options": {
+                    filter: {
+                        id: {
+                            in: queryTerms.sdgs
+                        }
+                    }
+                }
+            };
+        }
+
+        if (queryTerms.departments && queryTerms.departments.length) {
+            queryInfoObject.departments = {
+                id: null,
+                "@required": true,
+                "@options": {
+                    filter: {
+                        id: {
+                            in: queryTerms.departments
+                        }
+                    }
+                }
+            };
+        }
+
+        if (queryTerms.terms && queryTerms.terms.length) {
+            const termFilter = [ "title", "abstract" ].map((fld) => {
+                const res = {};
+                res[fld] = {
+                    alloftext: queryTerms.terms
+                };
+                
+                return res;
+            });
+
+            queryInfoObject["@options"].filter = {
+                and: termFilter
+            };
+        }
     }
-
     return queryInfoObject;
 }

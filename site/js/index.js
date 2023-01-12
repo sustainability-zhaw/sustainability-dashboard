@@ -381,12 +381,13 @@ function handleDataUpdate() {
         const authorlist = result.querySelector(".authors");
 
         object.authors.forEach(author => {
+            Logger.debug(JSON.stringify(author, null, "  "));
             const authorTag = authortemplate.content.cloneNode(true);
             const personname = authorTag.querySelector(".name");
             personname.innerText = author.fullname;
-            if (Object.hasOwn(object.persons, author.fullname)) {
-                const person = object.persons[author.fullname];
-                const dept  = person.department;
+            if (Object.hasOwn(author, "person") && author.person) {
+                const person = author.person;
+                const dept  = author.department;
                 const dmark = authorTag.querySelector(".mark");
 
                 personname.dataset.qvalue = person.initials;
