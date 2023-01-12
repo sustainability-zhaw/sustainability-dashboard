@@ -1,9 +1,27 @@
 services:
-  # app:
-  #   build:
-  #     context: ./
-  #   restart: 'no'
+  app:
+     image: caddy:2.6.2
+     restart: 'no'
+     networks:
+      - dgraphnet
+     configs:
+      - source: sdconfig
+        target: /usr/share/caddy/config.json
+     volumes: 
+      - ./site:/usr/share/caddy
   
+  caddy:
+    image: caddy:2.6.2
+    restart: 'no'
+    configs:
+      - source: caddyfile
+        target: /etc/caddy/Caddyfile
+    networks:
+      - dgraphnet
+    ports: 
+      - target: 80
+        published: 8081
+
   db:
     # hostname: dgraph_standalone # Hardcoded in db_init entrypoint.sh
     image: dgraph/standalone:v22.0.2
@@ -33,3 +51,9 @@ services:
 
 networks:
   dgraphnet:
+
+configs:
+  caddyfile:
+    file: ./contrib/Caddyfile
+  sdconfig:
+    file: ./contrib/dashboard_config.json

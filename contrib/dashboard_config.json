@@ -1,0 +1,19 @@
+{
+    "proto": "http://",
+    "host": "localhost:8081",
+    "path": "api/",
+    "stats": "stats/",
+    "static": 0,
+    "debug": 2,
+
+    "departments": [
+        "A", 
+        "G", 
+        "L", 
+        "N", 
+        "P", 
+        "S", 
+        "T", 
+        "W"
+    ]
+}

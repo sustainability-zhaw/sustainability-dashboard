@@ -1,0 +1,28 @@
+{
+    # Email used for letsencypt or zerossl
+    email foo@bar.com
+
+    # expose api admin on the network
+    # admin  :2019
+    admin off
+}
+
+
+:80 {
+    redir / /dashboard/
+
+    rewrite /api/* /api/graphql
+    rewrite /stats/* /stats/query
+
+    handle_path /dashboard/* {
+        reverse_proxy sustainability-dashboard-app-1:80
+    }
+
+    handle_path /api/* {
+        reverse_proxy sustainability-dashboard-db-1:8080
+    }
+
+    handle_path /stats/* {
+        reverse_proxy sustainability-dashboard-db-1:8080
+    }
+}
