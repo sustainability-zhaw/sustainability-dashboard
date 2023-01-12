@@ -29,7 +29,7 @@ async function init() {
 
     registerModelEvents();
 
-    QueryModel.config = Config;
+    QueryModel.config.departments = Config.get("departments");
     QueryModel.events = initEventTrigger();
 }
 
@@ -135,7 +135,7 @@ function addQType(evt) {
     // console.log("click");
     if (evt.target.classList.contains("cat") || 
         evt.target.classList.contains("mark") ||
-        evt.target.dataset.qtype.length) {
+        evt.target.dataset.qtype) {
         console.log("got qtype");
         let target = evt.target;
         if (!(target.dataset.qtype && target.dataset.qtype.length)) {
