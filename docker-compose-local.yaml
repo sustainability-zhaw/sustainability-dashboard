@@ -15,7 +15,7 @@ services:
       - '9080:9080'
 
   db_init:
-    image: ghcr.io/sustainability-zhaw/dgraph-schema:sha-e3c06cf
+    image: ghcr.io/sustainability-zhaw/dgraph-schema:sha-807b46d
     restart: 'no'
     networks:
       - dgraphnet

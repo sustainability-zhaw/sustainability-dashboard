@@ -1,6 +1,10 @@
 import * as Config from "./ConfigModel.mjs";
 import * as Logger from "./Logger.mjs";
 
+const StatsObject = {
+    stats: {}
+};
+
 function initBaseStatsUri() {
     const buri = Config.get("baseuri");
     if (buri && buri.length) {
@@ -22,6 +26,14 @@ function initBaseStatsUri() {
     Config.set("baseuri", baseuri);
 
     return baseuri;
+}
+
+export function getStats() {
+    return StatsObject.stats;
+}
+
+export function getPersonStats(initials) {
+    return "x";
 }
 
 export async function loadData(category, queryObj) {
@@ -50,11 +62,23 @@ export async function loadData(category, queryObj) {
     const result = await response.json();
 
     if (Object.hasOwn(result, "data")) {
-        return result.data
+        const data = result.data
+
+        StatsObject.stats = {
+            people: data.people[0].n,
+            section: {
+                sdg: data.sdg,
+                department: data.department,
+                person: data.person
+            }
+
+        }; 
+        data.infoobjecttype.forEach((o) => StatsObject.stats[o.id] = o.n);
     }
     
     Logger.info(`error response: \n ${ JSON.stringify(result, null, "  ") }`);
-    return {};
+
+    StatsObject.stats =  {};
 }
 
 function buildQueryString(category, queryObj) {
@@ -66,7 +90,7 @@ function buildQueryString(category, queryObj) {
         .concat(buildCatCounts("Department"))
         .concat(buildCatCounts("Person", "uid(vPersons)", "LDAPDN"));
 
-    return `{ ${items.join(" ")} }`;
+    return `{ ${items.join("\n")} }`;
 }
 
 function buildFilter(queryObj) {
@@ -75,9 +99,11 @@ function buildFilter(queryObj) {
         .concat(buildFilterHelpers(queryObj))
         .concat("vFilter as var(func: type(InfoObject))")
         .concat(buildMainFilter(queryObj))
-        .concat("@cascade { uid ")
-        .concat(buildTermCascade("Keyword", "keywords", queryObj.terms))
-        .concat(buildTermCascade("PublicationClass", "class", queryObj.terms))
+        // .concat("@cascade")
+        .concat("{")
+        .concat(" uid ")
+        // .concat(buildTermCascade("Keyword", "keywords", queryObj.terms))
+        // .concat(buildTermCascade("PublicationClass", "class", queryObj.terms))
         .concat("}");
 }
 
@@ -98,6 +124,13 @@ function queryHelper(theType, initials) {
         initials = "id";
     }
     return (t, i) => `qh${ theType }_${ i } as var(func: type(${ theType })) @filter(eq(${ theType }.${ initials }, ${ t })) { uid }`;
+}
+
+function queryHelperText(theType, initials) {
+    if (!(initials && initials.length)) {
+        initials = "name";
+    }
+    return (t, i) => `qh${ theType }_${ i } as var(func: type(${ theType })) @filter(anyofterms(${ theType }.${ initials }, ${ t })) { uid }`;
 }
 
 function buildFilterHelpers(queryObj) {
@@ -127,11 +160,29 @@ function buildFilterHelpers(queryObj) {
         );
     }
 
+    if (queryObj.terms && queryObj.terms.length) {
+        retval = retval.concat(
+            queryObj.terms.map(
+                queryHelperText("Keyword")
+            )
+        );
+
+        retval = retval.concat(
+            queryObj.terms.map(
+                queryHelperText("PublicationClass")
+            )
+        );
+    }
+
     return retval;
 }
 
-function filterHelper(tp) {
-    return (t, i) => `uid_in(InfoObject.${ tp.toLowerCase() }s, qh${ tp }_${i}))`;
+function filterHelper(tp, tpattr) {
+    if (!(tpattr && tpattr.length)) {
+        tpattr = `${tp.toLowerCase()}s`;
+    }
+
+    return (t, i) => `uid_in(InfoObject.${ tpattr }s, qh${ tp }_${i}))`;
 }
 
 function buildHelperFilter(queryObj) {
@@ -155,10 +206,29 @@ function buildHelperFilter(queryObj) {
 
     if (queryObj.persons && queryObj.persons.length) {
         retval = retval.concat(
-            queryObj.departments.map(
+            queryObj.persons.map(
                 filterHelper("Person")
             ).join(" and ")
         );
+    }
+
+    if (queryObj.terms && queryObj.terms.length) {
+        let hlp = [];
+        hlp.concat(
+            queryObj.terms.map(
+                filterHelper("Keyword")
+            ).join(" and ")
+        );
+
+        hlp.concat(
+            queryObj.terms.map(
+                filterHelper("PublicationClass", "class")
+            ).join(" and ")
+        );
+
+        retval = retval.concat(
+            `( ${ hlp.join(" or ") } )`
+        )
     }
 
     return retval.map((t) => `( ${ t } )`);
@@ -193,16 +263,6 @@ function buildMainFilter(queryObj) {
     return [ `@filter(${ conditions.join(" and ") })` ];
 }
 
-function buildTermCascade(obj, attr, terms) {
-    if (!(terms && terms.length)) {
-        return [];
-    }
-
-    terms = terms.map((t) => t.substring(1,t.length - 1)).join(" ");
-    
-    return `InfoObject.${attr} @filter(anyofterms(${obj}.name, "${terms}")) { uid }`;
-}
-
 function buildTypeFilter(cat) {
     return `vObjectType as var(func: eq(InfoObjectType.name, "${ cat }")) { uid }`;
 }
@@ -211,7 +271,7 @@ function buildNavCounts() {
     return [
         buildCatCounts("InfoObjectType"),
         "vPersons as var(func: type(Person)) @cascade { uid Person.objects @filter(uid(vFilter)) { uid } }",
-        "persons(func: uid(vPersons)) { n: count(uid) }"  
+        "people(func: uid(vPersons)) { n: count(uid) }"  
     ];
 }
 
@@ -223,11 +283,13 @@ function buildCatCounts(cat, dqlFunc, cid) {
     if (!(cid && cid.length)) {
         cid = "id"
     }
+    // FIXME - Info object type will fail here due du io.category
+    const cname = `${ cat.toLowerCase() }s`;
 
     return [
         `${ cat.toLowerCase() }(func: ${ dqlFunc }) {`,
         `id: ${ cat }.${ cid }`,
-        `n: count(${ cat }.objects @filter(uid_in(InfoObject.category, uid(vObjectType)) and uid(vFilter)))`,
+        `n: count(${ cat }.objects @filter(uid_in(InfoObject.${cname}, uid(vObjectType)) and uid(vFilter)))`,
         "}"
     ];
 }

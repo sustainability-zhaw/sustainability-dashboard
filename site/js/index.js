@@ -1,4 +1,5 @@
 import * as DataModel from "./DataModel.mjs";
+import * as StatsModel from "./StatsModel.mjs";
 import * as Config from "./ConfigModel.mjs";
 import * as Logger from "./Logger.mjs";
 
@@ -63,13 +64,17 @@ function initEventTrigger() {
         queryAddItem: (type, value) => evAnchor.dispatchEvent(new CustomEvent("queryadd", {detail: {type, value}})),
 
         dataUpdate: () => evAnchor.dispatchEvent(dataUpdate),
-        
         statUpdate: () => evAnchor.dispatchEvent(dataUpdateStat),
+
+        // special queries
+        personUpdate: () => evAnchor.dispatchEvent(dataUpdatePerson),
+        // Future function
+        bookmarkUpdate: () => evAnchor.dispatchEvent(dataUpdateBookmark),
+
+        // possibly obsolete
         pubUpdate: () => evAnchor.dispatchEvent(dataUpdatePub),
         projectUpdate: () => evAnchor.dispatchEvent(dataUpdatePrj),
-        eduUpdate: () => evAnchor.dispatchEvent(dataUpdateEdu),
-        personUpdate: () => evAnchor.dispatchEvent(dataUpdatePerson),
-        bookmarkUpdate: () => evAnchor.dispatchEvent(dataUpdateBookmark)
+        eduUpdate: () => evAnchor.dispatchEvent(dataUpdateEdu)
     };
     
     // prevent from accidental dynamic changes
@@ -93,6 +98,8 @@ function registerModelEvents() {
     evAnchor.addEventListener("queryadd", handleQueryAdd);
     
     evAnchor.addEventListener("dataupdate", handleDataUpdate);
+    evAnchor.addEventListener("dataupdate.stat", handleStats);
+   
     // evAnchor.addEventListener("dataupdate", updaterEdu);
     // evAnchor.addEventListener("dataupdate", updaterProj);
     // evAnchor.addEventListener("dataupdate", updaterPubs);
@@ -284,12 +291,14 @@ function handleQueryAdd(ev) {
         return; // value out of bounds
     }
 
-    if (type === "depatment" && !QueryModel.config.departments.includes(value)) {
+    if (type === "department" && !QueryModel.config.departments.includes(value)) {
         Logger.debug("dept out of bounds");
         return; // value out of bounds
     }
 
     QueryModel.qterms.push({type, value});
+
+    QueryModel.query = collectQueryTerms(QueryModel.qterms);
     
     QueryModel.events.queryUpdate();
 }
@@ -300,7 +309,7 @@ function handleQueryUpdate(ev) {
     // trigger search request to the backend
     const section = document.querySelector('.nav-link.active');
     const category = section.parentElement.id.split("-").shift();
-    DataModel.loadData(category, QueryModel.qterms).then(() => QueryModel.events.dataUpdate());
+    DataModel.loadData(category, QueryModel.query).then(() => QueryModel.events.dataUpdate());
 }
 
 function renderSearchOptions() {
@@ -395,10 +404,58 @@ function handleDataUpdate() {
     });
 }   
 
-function updaterStat() {
+function handleStats() {
     // display numbers
+    const stats = StatsModel.getStats();
+
+    document.querySelector("#publication-counter").textContent =  stats.publications;
+    document.querySelector("#project-counter").textContent = stats.projects;
+    document.querySelector("#education-counter").textContent = stats.modules;
+    document.querySelector("#people-counter").textContent = stats.people;
+
+    stats.section.sdg
+        .map(e => e.id = e.id.replace("sdg_", "cat-"))
+        .forEach((e) => document.querySelector(`.cat.counter.${ e.id < 10 ? "0" + e.id : e.id }`).textContent = e.n);
+        
+    stats.section.department
+        .map(e => e.id = e.id.replace("department_", "cat-"))
+        .forEach((e) => document.querySelector(`.cat.counter.${ e.id }`).textContent = e.n);
 }
 
 function requestQueryStats(ev) {
     // download numbers
+    const section = document.querySelector('.nav-link.active');
+    const category = section.parentElement.id.split("-").shift();
+    StatsModel.loadData(category, QueryModel.query)
+        .then(() => QueryModel.events.statUpdate())
+}
+
+// Query Model helper functions for preparing the GQL queries
+
+function prefixAndQuote(value, prefix) {
+    if (prefix) {
+        value = prefix + value;
+    }
+    // else {
+        value = JSON.stringify(value);
+    // }
+    return value;
+}
+
+function collectType(qterms, type) {
+    const prefix = ["department", "sdg"].includes(type) ? type + "_" : "";
+    
+    return qterms
+        .filter(i => i.type === type)
+        .map(i => i.value)
+        .map((val) => prefixAndQuote(val, prefix));
+}
+
+function collectQueryTerms(query) {
+    return {
+        sdgs:        collectType(query, "sdg"),
+        departments: collectType(query, "department"),
+        persons:     collectType(query, "person"),
+        terms:       collectType(query, "term"),
+    };
 }
