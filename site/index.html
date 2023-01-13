@@ -129,10 +129,10 @@
                 </div>
 
             <h3>People (<span id="peoplecountvalue">12</span>)</h3>
-            <div class="peoplelist">
+            <div class="peoplelist" id="contributors">
                 <ul class="peopleinner">
                     <li class="person">
-                        <span class="name">Chrisitan Glahn</span><span class="mark cat-N"></span><span class="counter">0</span>
+                        <span class="name">Chrisitan Glahn</span>(<span class="name">glah</span>)<span class="mark cat-N"></span><span class="counter">0</span>
                     </li>
                 </ul>
             </div>
@@ -184,6 +184,12 @@
                 <span class="optionclose bi-x"></span>
             </div>
         </div>
+    </template>
+
+    <template id="contributorlistitem">
+        <li class="person">
+            <span class="name" data-qtype="person">Chrisitan Glahn</span> (<span class="initials" data-qtype="person">glah</span>) <span class="mark cat-none" data-qtype="department" data-qvalue=""></span><span class="counter">0</span>
+        </li>
     </template>
     </body>
 </html>

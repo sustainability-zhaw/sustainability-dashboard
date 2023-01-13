@@ -372,6 +372,47 @@ function handleStats() {
         })
         .filter(e => !( ["cat-R", "cat-V"].includes(e.id) ))
         .forEach((e) => document.querySelector(`.cat.counter.${ e.id }`).textContent = e.n);
+
+    // contributor list per section
+
+    const template = document.querySelector("#contributorlistitem");
+    const target = document.querySelector("#contributors .peopleinner");
+
+    target.innerHTML = "";
+
+    stats.section.person
+        .map((p) => {
+            p.department = p.department.id.replace("department_", "");
+            return p;
+        })
+        .sort((a, b) => { 
+            let c = b.n - a.n;
+            if (c === 0) {
+               c = a.fullname.toLowerCase().localeCompare(b.fullname.toLowerCase(), "de");
+            }
+            return c;
+        })
+        .forEach((p) => {
+            const result = template.content.cloneNode(true);
+
+            // result.querySelector(".person").dataset.qvalue = p.initials;
+            const name = result.querySelector(".person .name");
+            name.textContent = p.fullname;
+            name.dataset.qvalue = p.initials;
+            const initials = result.querySelector(".person .initials");
+            initials.textContent = p.initials;
+            initials.dataset.qvalue = p.initials;
+            
+            result.querySelector(".person .counter").textContent = p.n;
+            
+            const dnode = result.querySelector(".person .mark");
+
+            dnode.classList.remove("cat-none");
+            dnode.classList.add(`cat-${p.department}`);
+            dnode.dataset.qvalue = p.department;
+            
+            target.appendChild(result);
+        });
 }
 
 function requestQueryStats(ev) {
