@@ -38,4 +38,3 @@ export function init(evAnchor) {
     // prevent accidental dynamic changes
     trigger = Object.freeze(trigger);
 }
-

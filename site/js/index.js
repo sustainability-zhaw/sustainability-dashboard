@@ -379,4 +379,3 @@ function requestQueryStats(ev) {
     StatsModel.loadData(category, QueryModel.query())
         .then(() => Events.trigger.statUpdate())
 }
-
