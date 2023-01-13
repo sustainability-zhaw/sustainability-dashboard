@@ -298,13 +298,17 @@ function handleDataUpdate() {
     Logger.debug(`update ${ category }`);
 
     DataModel.feed(category).forEach((object) => {
+        Logger.debug(JSON.stringify(object, null, "  "));
+
         const result = template.content.cloneNode(true);
+
         result.querySelector(".pubtitle").innerText = object.title;
         result.querySelector(".year").innerText = object.year;
         result.querySelector(".tool.bi-download").href = object.link;
         result.querySelector(".categories").innerHTML = object.sdg.map(sdg => `<span class="mark cat-${sdg}" data-qtype="sdg" data-qvalue="${sdg}"></span>`).join(" ");
         result.querySelector(".extra.abstract").innerText= object.abstract;
         result.querySelector(".extra.pubtype").innerText= object.subtype.name;
+        
         result.querySelector(".extra.keywords").innerText= object.keywords.map(k => k.name).join(", ");
         result.querySelector(".extra.classification").innerText= object.class.map(cls => `${cls.id}: ${cls.name}`).join(", ");
 
