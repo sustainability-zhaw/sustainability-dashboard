@@ -134,7 +134,7 @@ function buildQueryString(category, queryObj) {
         .concat(buildCatCounts("Sdg"))
         .concat(buildCatCounts("Department"))
         .concat(buildAuthorCount())
-        .concat(buildCatCounts("Person", "uid(vPersons)", "LDAPDN"));
+        .concat(buildPersonCounts("Person", "LDAPDN"));
 
     return `{ ${items.join("\n")} }`;
 }
@@ -167,6 +167,26 @@ function buildCatCounts(cat, dqlFunc, cid) {
     return [
         `${ cat.toLowerCase() }(func: ${ dqlFunc }) {`,
         `id: ${ cat }.${ cid }`,
+        `n: count(${ cat }.objects @filter(uid_in(InfoObject.category, uid(vObjectType)) and uid(vFilter)))`,
+        "}"
+    ];
+}
+
+function buildPersonCounts(cat, cid) {
+    return [
+        `${ cat.toLowerCase() }(func: uid(vPersons)) {`,
+        `id: ${ cat }.${ cid }`,
+        ...Filter.selectorAlias([
+                "fullname",
+                "title", 
+                "initials",
+                "mail",
+                "retired",
+                "ipphone"
+            ],
+             "Person"
+        ),
+        "department: Person.department { id: Department.id } ",
         `n: count(${ cat }.objects @filter(uid_in(InfoObject.category, uid(vObjectType)) and uid(vFilter)))`,
         "}"
     ];

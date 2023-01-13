@@ -359,7 +359,7 @@ function buildSelector() {
     return [
         "objects (func: uid(vFilter), orderdesc: InfoObject.year, orderdesc: InfoObject.link) @filter(uid_in(InfoObject.category, uid(vObjectType)))",
         "{",
-        ...selectorAlias([
+        ...Filter.selectorAlias([
             "title",
             "abstract",
             "year",
@@ -369,7 +369,7 @@ function buildSelector() {
         "authors: InfoObject.authors {",
         "fullname: Author.fullname",
         "person: Author.person {",
-        ...selectorAlias(["fullname", "initials", "title", "mail", "ipphone", "gender"],"Person"),
+        ...Filter.selectorAlias(["fullname", "initials", "title", "mail", "ipphone", "gender"],"Person"),
         "department: Person.department {",
         "id: Department.id",
         "}",
@@ -382,8 +382,4 @@ function buildSelector() {
         "class: InfoObject.class { id: PublicationClass.id name: PublicationClass.name }",
         "}"
     ];
-}
-
-function selectorAlias(selectors, type) {
-    return selectors.map(s => `${s}: ${type}.${s}`);
 }

@@ -29,6 +29,14 @@ export function buildTypeFilter(obj, attr, terms) {
     ];
 }
 
+export function selectorAlias(selectors, type) {
+    if (!Array.isArray(selectors)) {
+        selectors = [selectors];
+    }
+    
+    return selectors.map(s => `${s}: ${type}.${s}`);
+}
+
 function mapHelperQuery(theType, initials) {
     if (!(initials && initials.length)) {
         initials = "id";
