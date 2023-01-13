@@ -2,27 +2,8 @@ import * as DataModel from "./DataModel.mjs";
 import * as StatsModel from "./StatsModel.mjs";
 import * as Config from "./ConfigModel.mjs";
 import * as Logger from "./Logger.mjs";
-
-const QueryModel = {
-    qterms: [],
-    extra: "",
-    config: {},
-    add: (term) => {
-        QueryModel.qterms.push(term);
-        QueryModel.query = collectQueryTerms(QueryModel.qterms);
-        QueryModel.events.queryUpdate();
-    },
-    clear: () => {
-        QueryModel.qterms = [];
-        QueryModel.query = collectQueryTerms(QueryModel.qterms);
-        QueryModel.events.queryUpdate();
-    },
-    drop: (term) => {
-        QueryModel.qterms = QueryModel.qterms.filter(t => !(term.type === t.type && term.value === t.value));
-        QueryModel.query = collectQueryTerms(QueryModel.qterms);        
-        QueryModel.events.queryUpdate();
-    }
-}
+import * as QueryModel from "./QueryModel.mjs";
+import * as Events from "./Events.mjs";
 
 // pull up the System with a basic configuration
 
@@ -35,6 +16,9 @@ async function init() {
         "debug": 2
     });
 
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    [...tooltipTriggerList].map((tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl));    
+
     addSearchElement();
     addSearchTerm();
     toggleResultDetails();
@@ -42,67 +26,18 @@ async function init() {
     clearSearch();
     dropSearchElement();
 
-    registerModelEvents();
-
-    QueryModel.config.departments = Config.get("departments");
-    QueryModel.events = initEventTrigger();
+    initEvents();
 }
 
-init().then(() => QueryModel.events.queryUpdate());
-
-// stub for Bootstrap Tooltips
-    
-const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-const tooltipList = [...tooltipTriggerList].map((tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl));
+init().then(() => Events.trigger.queryUpdate());
 
 // function definitions
 
 // Signal helpers
-function initEventTrigger() {
+function initEvents() {
     const evAnchor = document.querySelector("#zhaw-about");
 
-    const queryUpdate        = new CustomEvent("queryupdate", {});
-    const queryExtraUpdate   = new CustomEvent("queryupdate.extra", {});
-
-    const dataUpdate         = new CustomEvent("dataupdate", {});
-    const dataUpdateStat     = new CustomEvent("dataupdate.stat", {});
-    const dataUpdatePerson   = new CustomEvent("dataupdate.person", {});
-    const dataUpdatePub      = new CustomEvent("dataupdate.publication", {});
-    const dataUpdateEdu      = new CustomEvent("dataupdate.education", {});
-    const dataUpdatePrj      = new CustomEvent("dataupdate.project", {});
-    const dataUpdateBookmark = new CustomEvent("dataupdate.bookmark", {});
-
-    const triggers = {
-        queryUpdate: () => evAnchor.dispatchEvent(queryUpdate),
-        queryExtra: () => evAnchor.dispatchEvent(queryExtraUpdate),
-
-        queryAddItem: (type, value) => evAnchor.dispatchEvent(new CustomEvent("queryadd", {detail: {type, value}})),
-
-        dataUpdate: () => evAnchor.dispatchEvent(dataUpdate),
-        statUpdate: () => evAnchor.dispatchEvent(dataUpdateStat),
-
-        // special queries
-        personUpdate: () => evAnchor.dispatchEvent(dataUpdatePerson),
-        // Future function
-        bookmarkUpdate: () => evAnchor.dispatchEvent(dataUpdateBookmark),
-
-        // possibly obsolete
-        pubUpdate: () => evAnchor.dispatchEvent(dataUpdatePub),
-        projectUpdate: () => evAnchor.dispatchEvent(dataUpdatePrj),
-        eduUpdate: () => evAnchor.dispatchEvent(dataUpdateEdu)
-    };
-    
-    // prevent from accidental dynamic changes
-    return Object.freeze(triggers);
-}
-
-function addModelHandler(event, handler) {
-    const evAnchor = document.querySelector("#zhaw-about");
-    evAnchor.addEventListener(event, handler);
-}
-
-function registerModelEvents() {
-    const evAnchor = document.querySelector("#zhaw-about");
+    Events.init(evAnchor);
 
     evAnchor.addEventListener("queryupdate", handleQueryUpdate);
     evAnchor.addEventListener("queryupdate", renderSearchOptions);
@@ -165,7 +100,7 @@ function addQType(evt) {
             if (type === "sdg") {
                 value = Number(value);
             }
-            QueryModel.events.queryAddItem(type, value);            
+            Events.trigger.queryAddItem({type, value});            
         }
     }
 }
@@ -220,7 +155,7 @@ function addSearchTerm() {
         // only add a term to the search if there is something to add
         // This can happen when a user enters a keyword and colon but enters otherwise nothing
         if (value.length) {
-            QueryModel.events.queryAddItem(type, value);
+            Events.trigger.queryAddItem({type, value});
         }
 
         evt.preventDefault();
@@ -251,9 +186,6 @@ function dropSearchElement() {
             if (type === "sdg") {
                 value = Number(value);
             }
-
-            // console.log(`${type} :: ${value}`);
-            // console.log(QueryModel.qterms.map((term) => `${term.type} <-> ${term.value}`).join("; "));
 
             QueryModel.drop({type, value});
         }
@@ -287,32 +219,16 @@ function handleQueryExtraUpdate(ev) {
     const searchterms = document.querySelector('#searchterms');
 
     if (searchterms.value.length) {
-        QueryModel.extra = searchterms.value.trim();
+        extraterm = searchterms.value.trim();
     }
 
-    QueryModel.events.queryUpdate();
+    Events.trigger.queryUpdate();
 } 
 
 function handleQueryAdd(ev) {
     const type = ev.detail.type;
     const value = ev.detail.value;
-    const nValue = Number(value);
-
-    if (QueryModel.qterms.filter(obj => obj.type === type && obj.value === value).length) {
-        Logger.debug("item exists");
-        return; // item already exists
-    }
-
-    if (type === "sdg" && !(nValue >= 1 && nValue <= 16)) {
-        Logger.debug("sdg out of bounds");
-        return; // value out of bounds
-    }
-
-    if (type === "department" && !QueryModel.config.departments.includes(value)) {
-        Logger.debug("dept out of bounds");
-        return; // value out of bounds
-    }
-
+    
     QueryModel.add({type, value});
 }
 
@@ -323,7 +239,7 @@ function handleQueryUpdate(ev) {
     const section = document.querySelector('.nav-link.active');
     const category = section.dataset.category;
 
-    DataModel.loadData(category, QueryModel.query).then(() => QueryModel.events.dataUpdate());
+    DataModel.loadData(category, QueryModel.query()).then(() => Events.trigger.dataUpdate());
 }
 
 function renderSearchOptions() {
@@ -332,7 +248,7 @@ function renderSearchOptions() {
 
     searchoptions.innerHTML = ""; // delete all contents
 
-    QueryModel.qterms.forEach(term => {
+    QueryModel.queryterms().forEach(term => {
         const result = template.content.cloneNode(true);
         const datafield = result.querySelector(".searchoption");
 
@@ -343,7 +259,7 @@ function renderSearchOptions() {
             case "department":
             case "sdg":
                 datafield.classList.add("marker");
-                datafield.classList.add(`cat-${Number(term.value) < 10 ? "0" : ""}${term.value}`);
+                datafield.classList.add(`cat-${term.value < 10 ? "0" : ""}${term.value}`);
                 break;
             case "person": 
                 datafield.classList.add("bi-person-circle");
@@ -457,39 +373,10 @@ function requestQueryStats(ev) {
     // download numbers
     const section = document.querySelector('.nav-link.active');
     const category = section.dataset.category;
+
     Logger.debug(`active category: ${category}`);
-    Logger.debug(`queryModel: ${JSON.stringify(QueryModel.query)}`)
 
-    StatsModel.loadData(category, QueryModel.query)
-        .then(() => QueryModel.events.statUpdate())
+    StatsModel.loadData(category, QueryModel.query())
+        .then(() => Events.trigger.statUpdate())
 }
 
-// Query Model helper functions for preparing the GQL queries
-
-function prefixAndQuote(value, prefix) {
-    if (prefix) {
-        value = prefix + value;
-    }
-    // else {
-        value = JSON.stringify(value);
-    // }
-    return value;
-}
-
-function collectType(qterms, type) {
-    const prefix = ["department", "sdg"].includes(type) ? type + "_" : "";
-    
-    return qterms
-        .filter(i => i.type === type)
-        .map(i => i.value)
-        .map((val) => prefixAndQuote(val, prefix));
-}
-
-function collectQueryTerms(query) {
-    return {
-        sdgs:        collectType(query, "sdg"),
-        departments: collectType(query, "department"),
-        persons:     collectType(query, "person"),
-        terms:       collectType(query, "term"),
-    };
-}
