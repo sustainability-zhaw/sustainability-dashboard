@@ -6,7 +6,22 @@ import * as Logger from "./Logger.mjs";
 const QueryModel = {
     qterms: [],
     extra: "",
-    config: {}
+    config: {},
+    add: (term) => {
+        QueryModel.qterms.push(term);
+        QueryModel.query = collectQueryTerms(QueryModel.qterms);
+        QueryModel.events.queryUpdate();
+    },
+    clear: () => {
+        QueryModel.qterms = [];
+        QueryModel.query = collectQueryTerms(QueryModel.qterms);
+        QueryModel.events.queryUpdate();
+    },
+    drop: (term) => {
+        QueryModel.qterms = QueryModel.qterms.filter(t => !(term.type === t.type && term.value === t.value));
+        QueryModel.query = collectQueryTerms(QueryModel.qterms);        
+        QueryModel.events.queryUpdate();
+    }
 }
 
 // pull up the System with a basic configuration
@@ -174,6 +189,8 @@ function addSearchTerm() {
     function handleSubmit(evt) {
         var currentValue = searchTermElement.value.trim();
         searchTermElement.value = "";
+
+        Logger.debug(`click on ${evt.target.id}`);
     
         let [type, value] = currentValue.split(":").map(str => str.trim());
 
@@ -220,8 +237,10 @@ function addSearchElement() {
 }
 
 function dropSearchElement() {
+    Logger.debug("drop search element");
     const searchoptions = document.querySelector("#searchcontainer .searchoptions");
 
+    // should not reset the click handler
     searchoptions.addEventListener("click", function (evt) {
         if (evt.target.classList.contains("optionclose"))  {
             var targetParent = evt.target.parentNode;
@@ -233,12 +252,10 @@ function dropSearchElement() {
                 value = Number(value);
             }
 
-            console.log(`${type} :: ${value}`);
-            console.log(QueryModel.qterms.map((term) => `${term.type} <-> ${term.value}`).join("; "));
+            // console.log(`${type} :: ${value}`);
+            // console.log(QueryModel.qterms.map((term) => `${term.type} <-> ${term.value}`).join("; "));
 
-            QueryModel.qterms = QueryModel.qterms.filter(term => !(term.type === type && term.value === value));
-
-            QueryModel.events.queryUpdate();
+            QueryModel.drop({type, value});
         }
     });
 } 
@@ -257,10 +274,10 @@ function clearSearch() {
     const searchEntries = document.querySelector(".searchoptions");
 
     newsearch.addEventListener("click", function (evt) {
-        searchoptions.innerHTML = "";
-        QueryModel.qterms = [];
+        Logger.debug("clearSearch");
 
-        QueryModel.events.queryUpdate();
+        searchoptions.innerHTML = "";
+        QueryModel.clear();
     });
 } 
 
@@ -296,11 +313,7 @@ function handleQueryAdd(ev) {
         return; // value out of bounds
     }
 
-    QueryModel.qterms.push({type, value});
-
-    QueryModel.query = collectQueryTerms(QueryModel.qterms);
-    
-    QueryModel.events.queryUpdate();
+    QueryModel.add({type, value});
 }
 
 // QueryModel Support functions
@@ -308,7 +321,8 @@ function handleQueryAdd(ev) {
 function handleQueryUpdate(ev) {
     // trigger search request to the backend
     const section = document.querySelector('.nav-link.active');
-    const category = section.parentElement.id.split("-").shift();
+    const category = section.dataset.category;
+
     DataModel.loadData(category, QueryModel.query).then(() => QueryModel.events.dataUpdate());
 }
 
@@ -381,7 +395,7 @@ function handleDataUpdate() {
         const authorlist = result.querySelector(".authors");
 
         object.authors.forEach(author => {
-            Logger.debug(JSON.stringify(author, null, "  "));
+            // Logger.debug(JSON.stringify(author, null, "  "));
             const authorTag = authortemplate.content.cloneNode(true);
             const personname = authorTag.querySelector(".name");
             personname.innerText = author.fullname;
@@ -442,7 +456,10 @@ function handleStats() {
 function requestQueryStats(ev) {
     // download numbers
     const section = document.querySelector('.nav-link.active');
-    const category = section.parentElement.id.split("-").shift();
+    const category = section.dataset.category;
+    Logger.debug(`active category: ${category}`);
+    Logger.debug(`queryModel: ${JSON.stringify(QueryModel.query)}`)
+
     StatsModel.loadData(category, QueryModel.query)
         .then(() => QueryModel.events.statUpdate())
 }

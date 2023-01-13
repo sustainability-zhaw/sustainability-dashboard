@@ -52,7 +52,7 @@ export async function loadData(category, queryObj) {
     };
 
     // Logger.debug(`fetch stats from ${url}`);
-    // Logger.debug(body);
+    Logger.debug(body);
 
     const response = await fetch(url, {
         signal,
@@ -63,7 +63,44 @@ export async function loadData(category, queryObj) {
     });
 
     const result = await response.json();
-    StatsObject.stats =  {};
+
+    StatsObject.stats =  {
+        people: 0,
+        publications: 0,
+        modules: 0,
+        projects: 0,
+        section: {
+            sdg: [
+                { id: "sdg_1", n: 0 },
+                { id: "sdg_2", n: 0 },
+                { id: "sdg_3", n: 0 },
+                { id: "sdg_4", n: 0 },
+                { id: "sdg_5", n: 0 },
+                { id: "sdg_6", n: 0 },
+                { id: "sdg_7", n: 0 },
+                { id: "sdg_8", n: 0 },
+                { id: "sdg_9", n: 0 },
+                { id: "sdg_10", n: 0 },
+                { id: "sdg_11", n: 0 },
+                { id: "sdg_12", n: 0 },
+                { id: "sdg_13", n: 0 },
+                { id: "sdg_14", n: 0 },
+                { id: "sdg_15", n: 0 },
+                { id: "sdg_16", n: 0 }
+            ],
+            department: [
+                { id: "department_A", n: 0 },
+                { id: "department_G", n: 0 },
+                { id: "department_L", n: 0 },
+                { id: "department_N", n: 0 },
+                { id: "department_P", n: 0 },
+                { id: "department_S", n: 0 },
+                { id: "department_T", n: 0 },
+                { id: "department_W", n: 0 }
+            ],
+            person: 0
+        }
+    };
 
     if (Object.hasOwn(result, "data") && result.data) {
         // Logger.info(`response data: \n ${ JSON.stringify(result.data, null, "  ") }`);
