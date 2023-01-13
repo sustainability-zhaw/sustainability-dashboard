@@ -96,10 +96,10 @@ export async function loadData(type, queryObj) {
 
     const dqlQuery = buildDQLQueryString(type, queryObj);
 
-    Logger.debug("DQL Follows");
-    Logger.debug("------------------------------");
-    Logger.debug(dqlQuery);
-    Logger.debug("------------------------------");
+    // Logger.debug("DQL Follows");
+    // Logger.debug("------------------------------");
+    // Logger.debug(dqlQuery);
+    // Logger.debug("------------------------------");
 
     try {
         Model[type] = await executeDQLQuery(dqlQuery);
@@ -131,7 +131,7 @@ async function executeDQLQuery(body) {
     const result = await response.json();
 
     if (Object.hasOwn(result, "data")) {
-        Logger.info(`response: \n ${ JSON.stringify(result, null, "  ") }`);
+        // Logger.info(`response: \n ${ JSON.stringify(result, null, "  ") }`);
         return processModel(result);
     }
     else {

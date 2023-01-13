@@ -53,7 +53,7 @@ export async function loadData(category, queryObj) {
     };
 
     // Logger.debug(`fetch stats from ${url}`);
-    // Logger.debug(body);
+    Logger.debug(body);
 
     const response = await fetch(url, {
         signal,
@@ -113,7 +113,8 @@ export async function loadData(category, queryObj) {
             section: {
                 sdg: data.sdg,
                 department: data.department,
-                person: data.person
+                person: data.person,
+                contributors: data.contributors[0].n
             }
         }; 
         data.infoobjecttype.forEach((o) => StatsObject.stats[o.id] = o.n);
@@ -132,6 +133,7 @@ function buildQueryString(category, queryObj) {
         .concat(buildNavCounts())
         .concat(buildCatCounts("Sdg"))
         .concat(buildCatCounts("Department"))
+        .concat(buildAuthorCount())
         .concat(buildCatCounts("Person", "uid(vPersons)", "LDAPDN"));
 
     return `{ ${items.join("\n")} }`;
@@ -141,7 +143,15 @@ function buildNavCounts() {
     return [
         ...buildCatCounts("InfoObjectType", null, "name"),
         "vPersons as var(func: type(Person)) @cascade { uid Person.objects @filter(uid(vFilter)) { uid } }",
-        "people(func: uid(vPersons)) { n: count(uid) }"  
+        "people(func: uid(vPersons)) { n: count(uid) }"
+    ];
+}
+
+function buildAuthorCount() {
+    return [
+        "contributors(func: type(Person))",
+        " @filter(uid_in(Person.objects, uid(vFilter)))",
+        "{ n: count(uid) }"
     ];
 }
 
