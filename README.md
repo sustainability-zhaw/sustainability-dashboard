@@ -1,4 +1,5 @@
 # sustainability-dashboard
+
 Frontend for the ZHAW Sustainability Dashboard
 
 ## Purpose
@@ -9,28 +10,16 @@ The frontend is provided by a basic caddy-server that listens on port `80`.
 
 The dashboard is embedded into a docker container that is designed to be hosted *behind* a reverse proxy server. That proxy server maintains authentication and SSL-Termination.  
 
-## Production environment
+## Testing and development
 
-The UI is part of a prebuilt Web-Service based on the [Caddy Server](https://caddyserver.com). It is designed to reside behind a TLS terminating reverse proxy of a docker swarm or kubernetes cluster.
-
-```
-docker build -t ghcr.io/dxiai/sustainability-dashboard:${VERSIONTAG} .
-docker push ghcr.io/dxiai/sustainability-dashboard:${VERSIONTAG}
-```
-
-## Testing
-
-One can test the frontend using the following command. 
+For testing and development the package brings a minimal backend deployment. This allows to test against the same configuration as it would run in production. 
 
 ```
-docker run --rm -d -p 8080:80 --name devsdg ghcr.io/dxiai/sustainability-dashboard:${VERSIONTAG}
+docker compose -f docker-compose-local.yaml up --force-recreate --remove-orphans
 ```
 
-## Developoment 
+The setup takes about 30-40 seconds to fully start, because of database initialisation.
 
-The development environment mounts the frontend code into a caddy container. 
+Afterwards the dev-system is linked to a dev container, so editing takes direct effect. The dev environment is available via http://localhost:8081/. 
 
-```
-docker run --rm -d --network proxynetwork --name devsdg ghcr.io/dxiai/sustainability-dashboard:${VERSIONTAG}
-docker exec -it devsdg /bin/ash
-```
+The dev environment has no authentication layer. 
