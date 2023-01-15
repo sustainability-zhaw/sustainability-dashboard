@@ -19,7 +19,7 @@
 .searchbar {
 
     &.sticky-top {
-        top: 3.5em;
+        top: 4.2em;
         padding-top: .8em;
         padding-bottom: .8em;
         @extend .shadow-sm; 
@@ -166,22 +166,45 @@
 }
 
 .sidebar {
+
     grid-column: 2;
     grid-row: 1;
     // width: 340px;
 
     .sticky-top {
-        top: 3.5em;
-        padding-top: .8em;
+        // position: fixed;
+        top: 5.2em;
+        // max-height: 100vh;
+        // display: grid;
+        // grid-template-rows: 4.2em 174px 93px 1fr;
+        // gap: 1em;
+        // // top: 5.2em;
+        // padding-top: .8em;
+
+        // .sdg {
+        //     grid-row: 2;
+        // }
+        // .department {
+        //     grid-row: 3;
+        // }
+        // .people {
+        //     grid-row: 4;
+        //     overflow: hidden;
+
+        //     .peoplelist {
+        //         max-height: 100%;
+        //         overflow: scroll;
+        //     }
+        // }
     }
 
     h3 {
 
-        &:first-of-type {
+        // &:first-of-type {
             margin-top: 1em;
-        }
+        // }
 
-        margin-top: $font-size-base * 1.8;
+        // margin-top: $font-size-base * 1.8;
         font-size: medium;
         font-weight: normal;
         color: $zhawlogo;
@@ -190,7 +213,7 @@
 
     .listgrid {
         display: grid;
-        grid-template-columns: auto auto auto auto;
+        grid-template-columns: 80.5px 80.5px 80.5px 80.5px;
         gap: 6px;
 
         .cat.box {
@@ -202,6 +225,10 @@
             color: var(--bs-white);
             cursor: pointer;
         }
+    }
+
+    .peoplelist {
+        overflow: scroll;
     }
 }
 
