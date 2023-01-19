@@ -166,7 +166,7 @@ function addSearchTerm() {
 }
 
 function addSearchElement() {
-    const sidebarelement = document.querySelector(".sidebar")
+    const sidebarelement = document.querySelector(".widgets");
     
     sidebarelement.addEventListener("click", addQType);
 }

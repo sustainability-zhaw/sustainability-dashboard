@@ -1,29 +1,138 @@
+.widgets {
+    position: fixed;
+    top: 0;
+    left: 0;
 
-#mainarea {
-    top: 5em;
+    margin: 0;
+    margin-right: 2em;
+    padding: 0;    
+    height: 100vh;
+    width: 100vw;
+
     display: grid;
-    gap: 20px;
-    grid-template-columns: auto 340px;
-    margin-top: 10px;
+    grid-template-columns: 2fr 1fr 1fr 360px;
+    // grid-template-rows: 68px 110px 76px 120px 1fr 68px;
+    grid-template-rows: 68px 110px 76px 120px 1fr 10px;
+    // grid-gap: 5px;
 
-    .corecontent {
-        grid-column: 1;
+    grid-template-areas: 
+    "menul menul menur menur"
+    "srch srch srch sdgs"
+    "content content content sdgs"
+    "content content content dept"
+    "content content content pple"
+    "content content content fcts"
+    ;
+
+    .navbar-nav {
+        margin-left: 2em;
+        margin-right: 2em;
+        flex-direction: row;
+    }
+
+    .navbar-right,
+    .navbar-left {
+        background-color: $white;
+
+        li {
+            margin-right: .5em;
+            margin-left: .5em;
+        }
+    }
+
+    .navbar-right {
+        grid-area: menur;
+        text-align: right;
+    }
+
+    .navbar-left {
+        text-align: left;
+        grid-area: menul;
+    }
+
+    .sdg,
+    .department,
+    .people {
+        padding-left: 0.5em;
+        background-color: $white;
+    }
+
+    .sdg {
+        grid-area: sdgs;
+    }
+
+    .department {
+        grid-area: dept;
+    }
+
+    .people {
+        grid-area: pple;
+        overflow: hidden;
+        display: grid;
+        grid-template-rows: 2em auto;
+
+        h3 {
+            grid-row: 1;
+        }
+    }
+
+    h3 {
+        margin-top: 5px;
+        
+        // margin-top: $font-size-base * 1.8;
+        font-size: medium;
+        font-weight: normal;
+        color: $zhawlogo;
+    }
+
+    .peoplelist { 
+        margin-right: 1em;
+        grid-row: 2;
+        overflow: scroll;
+        box-shadow: $box-shadow-inset;
+    }
+
+    .listgrid {
+        display: grid;
+        grid-template-columns: 80.5px 80.5px 80.5px 80.5px;
+        gap: 6px;
+
+        .cat.box {
+            // @extend .border; 
+            // @extend .container-fluid;
+            display: grid;
+            grid-template-columns: 2em auto;
+            gap: 0px;
+            color: var(--bs-white);
+            cursor: pointer;
+        }
     }
 }
 
-// .sidebar, 
-// .searchbar {
-//     @extend .border;
-// }
+#mainarea {
+    grid-area: content;
+    margin-right: 1em;
+    padding-right: 1em;
+    margin-left: 2em;
+    overflow: scroll;
+}
 
 .searchbar {
 
-    &.sticky-top {
-        top: 4.2em;
-        padding-top: .8em;
-        padding-bottom: .8em;
-        @extend .shadow-sm; 
-    }
+    padding-top: .4em;
+    padding-left: 2em;
+    padding-right: 2em;
+
+    grid-area: srch;
+
+    @extend .shadow-sm; 
+
+    // &.sticky-top {
+    //     top: 4.2em;
+    //     padding-top: .8em;
+    //     padding-bottom: .8em;
+    //     
+    // }
 
 
     background-color: $white;
@@ -198,38 +307,11 @@
         // }
     }
 
-    h3 {
+   
 
-        // &:first-of-type {
-            margin-top: 1em;
-        // }
+    
 
-        // margin-top: $font-size-base * 1.8;
-        font-size: medium;
-        font-weight: normal;
-        color: $zhawlogo;
-    }
-
-
-    .listgrid {
-        display: grid;
-        grid-template-columns: 80.5px 80.5px 80.5px 80.5px;
-        gap: 6px;
-
-        .cat.box {
-            // @extend .border; 
-            // @extend .container-fluid;
-            display: grid;
-            grid-template-columns: 2em auto;
-            gap: 0px;
-            color: var(--bs-white);
-            cursor: pointer;
-        }
-    }
-
-    .peoplelist {
-        overflow: scroll;
-    }
+   
 }
 
 

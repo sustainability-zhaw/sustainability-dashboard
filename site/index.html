@@ -7,33 +7,28 @@
         <script type="module" src="js/index.js" defer></script>
     </head>
     <body>
-        <nav class="navbar sticky-top navbar-expand-sm navbar-light bg-light">
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item" id="publications-list">
-                    <a class="nav-link active" aria-current="page" data-category="publications" href="#"><i class="bi-journal-richtext" role="img"></i> Publications (<span id="publication-counter"></span>)</a>
-                </li>
+        <div class="widgets">
+            <nav class="navbar-left navbar">    
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item" id="publications-list">
+                        <a class="nav-link active" aria-current="page" data-category="publications" href="#"><i class="bi-journal-richtext" role="img"></i> Publications (<span id="publication-counter"></span>)</a>
+                    </li>
 
-                <li class="nav-item" id="projects-list">
-                    <a class="nav-link" aria-current="page" data-category="projects" href="#"><i class="bi-kanban" role="img"></i> Projects (<span id="project-counter"></span>)</a>
-                </li>
+                    <li class="nav-item" id="projects-list">
+                        <a class="nav-link" aria-current="page" data-category="projects" href="#"><i class="bi-kanban" role="img"></i> Projects (<span id="project-counter"></span>)</a>
+                    </li>
 
-                <li class="nav-item" id="modules-list">
-                    <a class="nav-link" aria-current="page" data-category="modules" href="#"><i class="bi-person-video3" role="img"></i> Modules (<span id="education-counter"></span>)</a>
-                </li>
+                    <li class="nav-item" id="modules-list">
+                        <a class="nav-link" aria-current="page" data-category="modules" href="#"><i class="bi-person-video3" role="img"></i> Modules (<span id="education-counter"></span>)</a>
+                    </li>
 
-                <li class="nav-item" id="people-list">
-                    <a class="nav-link" aria-current="page"  data-category="people" href="#"><i class="bi-person-lines-fill " role="img"></i> People (<span id="people-counter"></span>)</a>
-                </li>
-
+                    <li class="nav-item" id="people-list">
+                        <a class="nav-link" aria-current="page"  data-category="people" href="#"><i class="bi-person-lines-fill " role="img"></i> People (<span id="people-counter"></span>)</a>
+                    </li>
               </ul>
-            </div>
-          
-            <ul class="navbar-nav ms-auto me-2 me-lg-0 align-middle">
-                
+            </nav>
+            <nav class="navbar-right navbar">    
+            <ul class="navbar-nav">
                 <li class="nav-item" id="download">
                     <a class="nav-link disabled" aria-current="page" href="#"><i class="bi-download " role="img"></i> Download Results</a>
                 </li>
@@ -64,40 +59,32 @@
                 <a class="navbar-brand align-middle ls-4" disabled href="#"><i class="zhaw-logo"></i></a>
               </li>
             </ul>
-          </div>
         </nav>
-        <div id="mainarea">
-            <div class="corecontent">
-            <div class="searchbar sticky-top">
-                    <div class="searchform">
-                        <form id="liveinput">
-                            <div class="input-group">
-                                <input type="text" class="form-control" id="searchterms">
-                                <span class="input-group-text" id="basic-addon2">Press Return to add</span>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="searchcontainer" id="searchcontainer">
-                        <div class="searchoptions">
-                        </div>
-                        <div class="searchtools">
-                            <div class="tool-item" id="newsearch">
-                                <span class="btn btn-outline-secondary btn-sm"  data-bs-toggle="tooltip" title="New Search" data-bs-placement="bottom" href="#"><i class="bi-eraser-fill" role="img"></i></span>
-                            </div>
-                            <div class="tool-item" id="bookmark">
-                                <span class="btn btn-outline-secondary btn-sm disable" data-bs-toggle="tooltip" title="Bookmark Search" data-bs-placement="bottom"  href="#"><i class="bi-search-heart " role="img"></i></span>
-                            </div>
-                        </div>
-                    </div>
-            </div>
 
-            <div class="results">
-                
+        <div class="searchbar">
+            <div class="searchform">
+                <form id="liveinput">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="searchterms">
+                        <span class="input-group-text" id="basic-addon2">Press Return to add</span>
+                    </div>
+                </form>
             </div>
-        </div>
-        <header class="sidebar" id="sidebar">
-            <div class="sticky-top">
-            <div class="sdg">
+            <div class="searchcontainer" id="searchcontainer">
+                <div class="searchoptions">
+                </div>
+                <div class="searchtools">
+                    <div class="tool-item" id="newsearch">
+                        <span class="btn btn-outline-secondary btn-sm"  data-bs-toggle="tooltip" title="New Search" data-bs-placement="bottom" href="#"><i class="bi-eraser-fill" role="img"></i></span>
+                    </div>
+                    <div class="tool-item" id="bookmark">
+                        <span class="btn btn-outline-secondary btn-sm disable" data-bs-toggle="tooltip" title="Bookmark Search" data-bs-placement="bottom"  href="#"><i class="bi-search-heart " role="img"></i></span>
+                    </div>
+                </div>
+            </div>
+        </div>  
+
+        <div class="sdg">
             <h3>Sustainable Development Goals</h3>
                 <div class="listgrid">
                     <div class="cat box cat-01" data-qtype="sdg" data-qvalue="1"><span class="cat marker cat-01"></span><span class="cat counter cat-01"></span></div>
@@ -118,6 +105,7 @@
                     <div class="cat box cat-16" data-qtype="sdg" data-qvalue="16"><span class="cat marker cat-16"></span><span class="cat counter cat-16"></span></div>
                 </div>
             </div>
+
             <div class="department">
                 <h3>Departments</h3>
                 <div class="listgrid">
@@ -131,6 +119,7 @@
                     <div class="cat box cat-W" data-qtype="department" data-qvalue="W"><span class="cat marker cat-W"></span><span class="cat counter cat-W"></span></div>
                 </div>
             </div>
+
             <div class="people">
                 <h3>People (<span id="peoplecountvalue">12</span>)</h3>
                 <div class="peoplelist" id="contributors">
@@ -141,9 +130,12 @@
                     </ul>
                 </div>
             </div>
+
+            <div id="mainarea" class="results">
+                
+            </div>
         </div>
-        </header>
-    </div>
+    
     <template id="resultcontainer">
         <div class="resultcontainer">
             <div class="pubtitle">
