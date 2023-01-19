@@ -140,24 +140,30 @@ function buildHelperFilter(queryObj) {
 
     if (queryObj.terms && queryObj.terms.length) {
         let hlp = [];
-        hlp.concat(
+        hlp = hlp.concat(
             queryObj.terms.map(
                 mapHelperVFilter("Keyword")
             ).join(" and ")
         );
 
-        hlp.concat(
+        hlp = hlp.concat(
             queryObj.terms.map(
                 mapHelperVFilter("PublicationClass", "class")
             ).join(" and ")
         );
 
-        retval = retval.concat(
-            `( ${ hlp.join(" or ") } )`
-        )
+        if (hlp.length) {
+            retval = retval.concat(
+                `( ${ hlp.join(" or ") } )`
+            );
+        }
     }
 
-    return retval.map((t) => `( ${ t } )`);
+    if (retval.length) {
+        return retval.map((t) => `( ${ t } )`);
+    }
+
+    return [];
 }
 
 function buildTermFilter(queryObj) {
@@ -165,7 +171,7 @@ function buildTermFilter(queryObj) {
         return [];
     }
 
-    terms = queryObj.terms.map((t) => t.substring(1,t.length - 1)).join(" ");
+    const terms = queryObj.terms.map((t) => t.substring(1,t.length - 1)).join(" ");
 
     const f = [
         `alloftext(InfoObject.title, "${terms}")`,
