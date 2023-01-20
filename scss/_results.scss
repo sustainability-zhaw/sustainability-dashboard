@@ -1,7 +1,24 @@
 .resultcontainer {
     display: grid;
     grid-template-columns: 1em 8em auto 5em;
-    // gap: .3em;
+    grid-template-areas: 
+        "title title title year"
+        ". authors authors tools"
+        ". categories categories ."
+    ;
+
+    &:has(.bi-layer-forward) {
+        grid-template-areas: 
+            "title title title year"
+            ". authors authors tools"
+            
+            ". absttl abs abs"
+            ". kwttl kw kw"
+            ". clsfttl clsf clsf"
+            ". tpttl tp tp"
+            ". categories categories extratools"
+        ;
+    }
 
     margin-top: 1em;
     margin-bottom: 1em;
@@ -9,12 +26,11 @@
     @extend .border;
 
     .authors,
-    .categories {
+    .categories,
+    .year,
+    .tools {
         @extend .border;
-        grid-column: 2 / span 3;
     }
-
-    
 
     .type,
     .abstract, 
@@ -24,20 +40,12 @@
         @extend .border;
         padding-left: .5em;
         padding-right: .5em;
-        grid-column: 3 / span 2;
-    }
-
-    .year,
-    .tools {
-        @extend .border;
-        grid-column: 4
     }
 
     .pubtype.title,
     .abstract.title, 
     .keywords.title,
     .classification.title {        
-        grid-column: 2; 
         display: inline-block;
         color: $gray-600;
         padding-right: 1em;
@@ -48,14 +56,15 @@
         @extend .border;
         @extend .fw-bolder;
         
-        grid-column: 1 / span 3;
-        grid-row: 1;
+        grid-area: title;
 
         padding-left: .5em;
         padding-right: .5em;
     }
+
     .authors {
-        grid-row: 2;
+        grid-area: authors;
+
         padding-left: .5em;
         padding-right: .5em;
         white-space: normal;
@@ -102,11 +111,16 @@
     }
 
     .year {
-        grid-row: 1;
+        grid-area: year;
         text-align: center;
     }
     .tools {
-        grid-row: 7;
+        grid-area: tools;
+
+        &.extra {
+            grid-area: extratools;
+        }
+
         text-align: center;
         padding: .3em;
 
@@ -117,7 +131,7 @@
         }
     }
     .categories {
-        grid-row: 7;
+        grid-area: categories;
         padding: .3em;
         padding-left: .5em;
 
@@ -131,28 +145,43 @@
     }
 
     .abstract {
-        grid-row: 3;
+        grid-area: abs;
     }
     .keywords  {
-        grid-row: 4;
+        grid-area: kw;
     }
     .classification  {
-        grid-row: 5;
+        grid-area: clsf;
     }
     .pubtype  {
-        grid-row: 6;
+        grid-area: tp;
     }
 
-    .abstract.title::before {
-        content: "Abstract:";
+    .abstract.title{
+        grid-area: absttl;
+        &::before {
+            content: "Abstract:";
+        }
     }
-    .keywords.title::before  {
-        content: "Keywords:";
+
+    .keywords.title {
+        grid-area: kwttl;
+        &::before  {
+            content: "Keywords:";
+        }
     }
-    .classification.title::before  {
-        content: "Classifiation:";
+
+    .classification.title {
+        grid-area: clsfttl;
+        &::before  {
+            content: "Classifiation:";
+        }
     }
-    .pubtype.title::before  {
-        content: "Type:";
+
+    .pubtype.title { 
+        grid-area: tpttl;
+        &::before  {
+            content: "Type:";
+        }
     }
 }
