@@ -150,7 +150,12 @@ function addSearchTerm() {
                 case "dept":
                 case "department":
                     type = "department";
-                    info = "a department id"
+                    info = "a department id";
+                    break;
+                case "lang":
+                case "language":
+                    type = "lang";
+                    info = "language flag";
                     break;
                 default: 
                     // if a colon is in the term, but the type is invalid, then the colon is 
