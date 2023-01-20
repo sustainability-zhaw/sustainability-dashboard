@@ -319,3 +319,19 @@
         width: $font-size-base* 2;
     }
 }
+
+#warnings {
+    grid-area: content;
+    z-index: 10;
+    display: grid;
+
+    grid-template-areas: "message";
+   
+    align-items: start;
+    
+    .alert {
+        grid-area: message;
+        justify-self: center;
+        margin-top: 2em;
+    }
+}
