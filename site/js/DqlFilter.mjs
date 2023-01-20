@@ -90,20 +90,6 @@ function buildFilterHelpers(queryObj) {
         );
     }
 
-    if (queryObj.terms && queryObj.terms.length) {
-        retval = retval.concat(
-            queryObj.terms.map(
-                mapHelperQueryText("Keyword")
-            )
-        );
-
-        retval = retval.concat(
-            queryObj.terms.map(
-                mapHelperQueryText("PublicationClass")
-            )
-        );
-    }
-
     return retval;
 }
 
@@ -136,27 +122,6 @@ function buildHelperFilter(queryObj) {
                 mapHelperVFilter("Person")
             ).join(" and ")
         );
-    }
-
-    if (queryObj.terms && queryObj.terms.length) {
-        let hlp = [];
-        hlp = hlp.concat(
-            queryObj.terms.map(
-                mapHelperVFilter("Keyword")
-            ).join(" and ")
-        );
-
-        hlp = hlp.concat(
-            queryObj.terms.map(
-                mapHelperVFilter("PublicationClass", "class")
-            ).join(" and ")
-        );
-
-        if (hlp.length) {
-            retval = retval.concat(
-                `( ${ hlp.join(" or ") } )`
-            );
-        }
     }
 
     if (retval.length) {
