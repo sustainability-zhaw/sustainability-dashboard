@@ -1,27 +1,23 @@
 .widgets {
-    position: fixed;
-    top: 0;
-    left: 0;
-
-    margin: 0;
-    margin-right: 2em;
+    margin: 0 2em 0 0;
     padding: 0;    
     height: 100vh;
     width: 100vw;
 
     display: grid;
     grid-template-columns: 2fr 1fr 1fr 360px;
+
+    // the next line prepares for issue 38
     // grid-template-rows: 68px 110px 76px 120px 1fr 68px;
     grid-template-rows: 68px 110px 76px 120px 1fr 10px;
-    // grid-gap: 5px;
 
     grid-template-areas: 
-    "menul menul menur menur"
-    "srch srch srch sdgs"
-    "content content content sdgs"
-    "content content content dept"
-    "content content content pple"
-    "content content content fcts"
+        "menul menul menur menur"
+        "srch srch srch sdgs"
+        "content content content sdgs"
+        "content content content dept"
+        "content content content pple"
+        "content content content fcts"
     ;
 
     .navbar-nav {
@@ -111,8 +107,8 @@
 
 #mainarea {
     grid-area: content;
-    margin-right: 1em;
-    padding-right: 1em;
+    margin-right: .5em;
+    padding-right: 1.5em;
     margin-left: 2em;
     overflow: scroll;
 }
@@ -272,46 +268,6 @@
             }
         }
     }
-}
-
-.sidebar {
-
-    grid-column: 2;
-    grid-row: 1;
-    // width: 340px;
-
-    .sticky-top {
-        // position: fixed;
-        top: 5.2em;
-        // max-height: 100vh;
-        // display: grid;
-        // grid-template-rows: 4.2em 174px 93px 1fr;
-        // gap: 1em;
-        // // top: 5.2em;
-        // padding-top: .8em;
-
-        // .sdg {
-        //     grid-row: 2;
-        // }
-        // .department {
-        //     grid-row: 3;
-        // }
-        // .people {
-        //     grid-row: 4;
-        //     overflow: hidden;
-
-        //     .peoplelist {
-        //         max-height: 100%;
-        //         overflow: scroll;
-        //     }
-        // }
-    }
-
-   
-
-    
-
-   
 }
 
 

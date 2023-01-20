@@ -66,10 +66,14 @@ function foldResults(evt) {
 
     if (evt.target.classList.contains("resultfold")) {
         const toggleElements = targetParent.querySelectorAll(".extra");
+        const toggleTools = targetParent.querySelectorAll(".tool.resultfold");
 
-        evt.target.classList.toggle("bi-layer-backward");
-        evt.target.classList.toggle("bi-layer-forward");
-        [...toggleElements].map(togglable => togglable.hidden = !togglable.hidden);
+        [...toggleTools].forEach(togglable => {
+            togglable.classList.toggle("bi-layer-backward");
+            togglable.classList.toggle("bi-layer-forward");
+        });
+        
+        [...toggleElements].forEach(togglable => togglable.hidden = !togglable.hidden);
 
         if (evt.target.classList.contains("bi-layer-backward")) {
             evt.target.setAttribute("data-bs-original-title", "Show Details");
