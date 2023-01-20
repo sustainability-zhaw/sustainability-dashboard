@@ -13,8 +13,10 @@ export function init(evAnchor) {
     const dataUpdateEdu      = new CustomEvent("dataupdate.education", {});
     const dataUpdatePrj      = new CustomEvent("dataupdate.project", {});
     const dataUpdateBookmark = new CustomEvent("dataupdate.bookmark", {});
-
+    
     trigger = {
+        queryError: (detail) => evAnchor.dispatchEvent(new CustomEvent("query.error", {detail})),
+
         queryUpdate: () => evAnchor.dispatchEvent(queryUpdate),
         queryExtra: () => evAnchor.dispatchEvent(queryExtraUpdate),
 

@@ -125,13 +125,14 @@ function addSearchTerm() {
     const searchFormButton = document.querySelector("#basic-addon2");
     const searchTermElement = document.querySelector("#searchterms");
 
-    function handleSubmit(evt) {
+    async function handleSubmit(evt) {
         var currentValue = searchTermElement.value.trim();
-        searchTermElement.value = "";
-
+        
         Logger.debug(`click on ${evt.target.id}`);
     
         let [type, value] = currentValue.split(":").map(str => str.trim());
+
+        let info = "";
 
         if (value === undefined) {
             // if no colon is in the current value, the query is definitely a term.
@@ -141,11 +142,15 @@ function addSearchTerm() {
         else {
             switch (type) {
                 case "sdg": 
+                    info = "a SDG number";
+                    break;
                 case "person":
+                    info = "a name";
                     break;
                 case "dept":
                 case "department":
                     type = "department";
+                    info = "a department id"
                     break;
                 default: 
                     // if a colon is in the term, but the type is invalid, then the colon is 
@@ -156,17 +161,42 @@ function addSearchTerm() {
             }
         }
 
+        searchTermElement.classList.remove("error");
+        bootstrap.Tooltip.getOrCreateInstance(searchTermElement).dispose();
+
         // only add a term to the search if there is something to add
         // This can happen when a user enters a keyword and colon but enters otherwise nothing
         if (value.length) {
             Events.trigger.queryAddItem({type, value});
+
+            // searchTermElement.value = "";
+        }
+        else if (!searchTermElement.classList.contains("error")) {
+            Events.trigger.queryError({message: `No query term found. Please add ${info}.`});
         }
 
         evt.preventDefault();
     }
 
+    function showQueryError(ev) {
+        searchTermElement.classList.add("error");            
+                
+        // tell the user that something is missing
+        const tooltip = bootstrap.Tooltip.getOrCreateInstance(searchTermElement, {
+           title: ev.detail.message,
+           placement: "bottom",
+           popperConfig: {
+                placement: "bottom-start",                 
+           }
+        });
+    
+        tooltip.show();
+    }
+
     searchFormElement.addEventListener("submit", handleSubmit);
     searchFormButton.addEventListener("click", handleSubmit);
+
+    document.querySelector("#zhaw-about").addEventListener("query.error", showQueryError);
 }
 
 function addSearchElement() {
@@ -243,6 +273,13 @@ function handleQueryUpdate(ev) {
     const section = document.querySelector('.nav-link.active');
     const category = section.dataset.category;
 
+    document.querySelector("#searchterms").value = "";
+
+    document.querySelector("#mainarea").setAttribute("hidden", "hidden");
+    document.querySelector("#warnings").removeAttribute("hidden", "hidden");
+    document.querySelector("#no_data").setAttribute("hidden", "hidden");
+    document.querySelector("#loading_data").removeAttribute("hidden", "hidden");
+    
     DataModel.loadData(category, QueryModel.query()).then(() => Events.trigger.dataUpdate());
 }
 
@@ -341,6 +378,15 @@ function handleDataUpdate() {
 
         targetsection.appendChild(result);
     });
+
+    document.querySelector("#mainarea").removeAttribute("hidden", "hidden");
+    document.querySelector("#warnings").setAttribute("hidden", "hidden");
+    document.querySelector("#loading_data").setAttribute("hidden", "hidden");
+
+    if (!DataModel.feed(category).length) {
+        document.querySelector("#no_data").removeAttribute("hidden", "hidden");
+        document.querySelector("#warnings").removeAttribute("hidden", "hidden");
+    }
 }   
 
 function handleStats() {

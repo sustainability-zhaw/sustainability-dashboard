@@ -11,14 +11,17 @@ const QueryModel = {
 export function add(term) {
     const nValue = Number(term.value);
 
-    if (QueryModel.qterms.filter(obj => obj.type === term.type && obj.value === term.value).length) {
+    if (QueryModel.qterms.filter(obj => obj.type === term.type && (obj.value === term.value || obj.value === nValue)).length) {
         Logger.debug("item exists");
+        Events.trigger.queryError({message: "The query already exists."});
+        // Events.trigger.queryUpdate();
         return; // item already exists
     }
 
     if (term.type === "sdg") {
         if (!(nValue >= 1 && nValue <= 16)) {
             Logger.debug("sdg out of bounds");
+            Events.trigger.queryError({message: "SDG number is not between 1 and 16."});
             return; // value out of bounds
         }
 
@@ -29,9 +32,14 @@ export function add(term) {
         QueryModel.config.departments = Config.get("departments");
     }
 
-    if (term.type === "department" && !QueryModel.config.departments.includes(term.value)) {
-        Logger.debug("dept out of bounds");
-        return; // value out of bounds
+    if (term.type === "department" ) {
+        term.value = term.value.toUpperCase();
+        
+        if (!QueryModel.config.departments.includes(term.value)) {
+            Logger.debug("dept out of bounds");
+            Events.trigger.queryError({message: "Invalid Department ID."});
+            return; // value out of bounds
+        }
     }
 
     QueryModel.qterms.push(term);

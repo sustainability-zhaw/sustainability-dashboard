@@ -148,6 +148,11 @@
             box-shadow: none;
         }
 
+        .form-control.error {
+            background-color: tint-color($danger, 60%);
+            color: black;
+        }
+
         .input-group-text {
             color: var(--bs-gray-600);
             cursor: pointer;
@@ -317,5 +322,21 @@
     .mark {
         margin-left: 0.5em;
         width: $font-size-base* 2;
+    }
+}
+
+#warnings {
+    grid-area: content;
+    z-index: 10;
+    display: grid;
+
+    grid-template-areas: "message";
+   
+    align-items: start;
+    
+    .alert {
+        grid-area: message;
+        justify-self: center;
+        margin-top: 2em;
     }
 }

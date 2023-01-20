@@ -4,7 +4,7 @@
     grid-template-areas: 
         "title title title year"
         ". authors authors tools"
-        ". categories categories ."
+        ". categories categories categories"
     ;
 
     &:has(.bi-layer-forward) {
