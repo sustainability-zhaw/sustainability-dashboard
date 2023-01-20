@@ -244,6 +244,7 @@ function handleQueryUpdate(ev) {
     const category = section.dataset.category;
 
     document.querySelector("#mainarea").setAttribute("hidden", "hidden");
+    document.querySelector("#warnings").removeAttribute("hidden", "hidden");
     document.querySelector("#no_data").setAttribute("hidden", "hidden");
     document.querySelector("#loading_data").removeAttribute("hidden", "hidden");
     
@@ -346,11 +347,16 @@ function handleDataUpdate() {
         targetsection.appendChild(result);
     });
 
+    document.querySelector("#mainarea").removeAttribute("hidden", "hidden");
+    document.querySelector("#warnings").setAttribute("hidden", "hidden");
+    document.querySelector("#loading_data").setAttribute("hidden", "hidden");
+
     if (!DataModel.feed(category).length) {
         document.querySelector("#no_data").removeAttribute("hidden", "hidden");
+        document.querySelector("#warnings").removeAttribute("hidden", "hidden");
     }
-    document.querySelector("#mainarea").removeAttribute("hidden", "hidden");
-    document.querySelector("#loading_data").setAttribute("hidden", "hidden");
+    
+    
 }   
 
 function handleStats() {
