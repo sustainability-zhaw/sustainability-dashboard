@@ -134,6 +134,19 @@
         <div id="mainarea" class="results">
             
         </div>
+
+        <div id="warnings">
+            <div id="loading_data" class="alert secondary" hidden>
+                The results are in transit. Please wait...
+            </div>
+            <div id="no_data" class="alert alert-warning" hidden>
+                Sorry, the query has no results.
+            </div>
+            <div id="request_error" class="alert alert-danger" hidden>
+                <p>The query resulted in an error.</p>
+                <p id="request_error_message"></p>
+            </div>
+        </div>
     </div>
     
     <template id="resultcontainer">
