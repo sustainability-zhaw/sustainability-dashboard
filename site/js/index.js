@@ -262,7 +262,7 @@ function renderSearchOptions() {
                 break;
             case "lang":
                 datafield.classList.add("bi-chat-dots");
-                datafield.innerText = " " + term.value;
+                datafield.innerText = term.value;
                 break;
             case "person": 
                 datafield.classList.add("bi-person-circle");
