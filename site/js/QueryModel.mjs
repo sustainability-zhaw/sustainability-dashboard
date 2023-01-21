@@ -224,5 +224,6 @@ function collectQueryTerms(query) {
         departments: collectType(query, "department"),
         persons:     collectType(query, "person"),
         terms:       collectType(query, "term"),
+        lang:        collectType(query, "lang")
     };
 }

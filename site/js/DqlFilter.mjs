@@ -124,6 +124,14 @@ function buildHelperFilter(queryObj) {
         );
     }
 
+    if (queryObj.lang && queryObj.lang.length) {
+        retval = retval.concat(
+            queryObj.lang.map(
+                (lang) => `eq(InfoObject.language, ${lang.toLowerCase()})`
+            ).join(" or ")
+        );
+    }
+
     if (retval.length) {
         return retval.map((t) => `( ${ t } )`);
     }
