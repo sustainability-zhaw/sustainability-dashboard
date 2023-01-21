@@ -27,6 +27,8 @@ async function init() {
     dropSearchElement();
 
     initEvents();
+
+    QueryModel.init();
 }
 
 init().then(() => Events.trigger.queryUpdate());
@@ -39,24 +41,16 @@ function initEvents() {
 
     Events.init(evAnchor);
 
-    evAnchor.addEventListener("queryupdate", handleQueryUpdate);
-    evAnchor.addEventListener("queryupdate", renderSearchOptions);
-    // evAnchor.addEventListener("queryupdate", requestQueryFromServer);
-    evAnchor.addEventListener("queryupdate", requestQueryStats);
+    Events.listen.queryUpdate(handleQueryUpdate);
+    Events.listen.queryUpdate(renderSearchOptions);
+    Events.listen.queryUpdate(requestQueryStats);
+    Events.listen.queryExtra(handleQueryExtraUpdate);
+    // Events.listen.queryAddItem(handleQueryAdd);
+    Events.listen.dataUpdate(handleDataUpdate);
+    Events.listen.statUpdate(handleStats);
+    Events.listen.bookmarkUpdate(() => {});
 
-    evAnchor.addEventListener("queryupdate.extra", handleQueryExtraUpdate);
-    evAnchor.addEventListener("queryadd", handleQueryAdd);
-    
-    evAnchor.addEventListener("dataupdate", handleDataUpdate);
-    evAnchor.addEventListener("dataupdate.stat", handleStats);
-   
-    // evAnchor.addEventListener("dataupdate", updaterEdu);
-    // evAnchor.addEventListener("dataupdate", updaterProj);
-    // evAnchor.addEventListener("dataupdate", updaterPubs);
-    // evAnchor.addEventListener("dataupdate", updaterStat);
-    // evAnchor.addEventListener("dataupdate", updaterPersons);
-
-    evAnchor.addEventListener("dataupdate.bookmark", () => {});
+    Events.listen.queryError(showQueryError);
 }
 
 // UI Usability functions 
@@ -98,14 +92,8 @@ function addQType(evt) {
         const type = target.dataset.qtype;
         let value = target.dataset.qvalue;
 
-        // console.log(`${type} -> ${value} `);
-         
-        if (type && value) {
-            if (type === "sdg") {
-                value = Number(value);
-            }
-            Events.trigger.queryAddItem({type, value});            
-        }
+        console.log(`${type} -> ${value} `);
+        Events.trigger.queryAddItem({type, value});            
     }
 }
 
@@ -117,6 +105,23 @@ function toggleResultDetails() {
 } 
 
 // search query functions 
+
+function showQueryError(ev) {
+    const searchTermElement = document.querySelector("#searchterms");
+    
+    searchTermElement.classList.add("error");            
+            
+    // tell the user that something is missing
+    const tooltip = bootstrap.Tooltip.getOrCreateInstance(searchTermElement, {
+       title: ev.detail.message,
+       placement: "bottom",
+       popperConfig: {
+            placement: "bottom-start",                 
+       }
+    });
+
+    tooltip.show();
+}
 
 // Self registering UI Events
 
@@ -138,70 +143,18 @@ function addSearchTerm() {
             // if no colon is in the current value, the query is definitely a term.
             type = "term";
             value = currentValue;   
-        }  
-        else {
-            switch (type) {
-                case "sdg": 
-                    info = "a SDG number";
-                    break;
-                case "person":
-                    info = "a name";
-                    break;
-                case "dept":
-                case "department":
-                    type = "department";
-                    info = "a department id";
-                    break;
-                case "lang":
-                case "language":
-                    type = "lang";
-                    info = "language flag";
-                    break;
-                default: 
-                    // if a colon is in the term, but the type is invalid, then the colon is 
-                    // part of the term.
-                    type = "term";
-                    value = currentValue; 
-                    break;
-            }
-        }
+        } 
 
         searchTermElement.classList.remove("error");
         bootstrap.Tooltip.getOrCreateInstance(searchTermElement).dispose();
 
-        // only add a term to the search if there is something to add
-        // This can happen when a user enters a keyword and colon but enters otherwise nothing
-        if (value.length) {
-            Events.trigger.queryAddItem({type, value});
-
-            // searchTermElement.value = "";
-        }
-        else if (!searchTermElement.classList.contains("error")) {
-            Events.trigger.queryError({message: `No query term found. Please add ${info}.`});
-        }
+        Events.trigger.queryAddItem({type, value});
 
         evt.preventDefault();
     }
 
-    function showQueryError(ev) {
-        searchTermElement.classList.add("error");            
-                
-        // tell the user that something is missing
-        const tooltip = bootstrap.Tooltip.getOrCreateInstance(searchTermElement, {
-           title: ev.detail.message,
-           placement: "bottom",
-           popperConfig: {
-                placement: "bottom-start",                 
-           }
-        });
-    
-        tooltip.show();
-    }
-
     searchFormElement.addEventListener("submit", handleSubmit);
     searchFormButton.addEventListener("click", handleSubmit);
-
-    document.querySelector("#zhaw-about").addEventListener("query.error", showQueryError);
 }
 
 function addSearchElement() {
@@ -226,7 +179,7 @@ function dropSearchElement() {
                 value = Number(value);
             }
 
-            QueryModel.drop({type, value});
+            Events.trigger.queryDrop({type, value});
         }
     });
 } 
@@ -248,7 +201,7 @@ function clearSearch() {
         Logger.debug("clearSearch");
 
         searchoptions.innerHTML = "";
-        QueryModel.clear();
+        Events.trigger.queryClear();
     });
 } 
 
@@ -264,12 +217,12 @@ function handleQueryExtraUpdate(ev) {
     Events.trigger.queryUpdate();
 } 
 
-function handleQueryAdd(ev) {
-    const type = ev.detail.type;
-    const value = ev.detail.value;
+// function handleQueryAdd(ev) {
+//     const type = ev.detail.type;
+//     const value = ev.detail.value;
     
-    QueryModel.add({type, value});
-}
+//     QueryModel.add({type, value});
+// }
 
 // QueryModel Support functions
 
@@ -307,8 +260,14 @@ function renderSearchOptions() {
                 datafield.classList.add("marker");
                 datafield.classList.add(`cat-${term.value < 10 ? "0" : ""}${term.value}`);
                 break;
+            case "lang":
+                datafield.classList.add("bi-chat-dots");
+                datafield.innerText = " " + term.value;
+                break;
             case "person": 
                 datafield.classList.add("bi-person-circle");
+                datafield.innerText = term.value;
+                break;
             default:
                 datafield.innerText = term.value;
                 break;
