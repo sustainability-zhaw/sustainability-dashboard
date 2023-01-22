@@ -26,6 +26,8 @@ async function init() {
     clearSearch();
     dropSearchElement();
 
+    initTools();
+
     initEvents();
 
     QueryModel.init();
@@ -51,6 +53,51 @@ function initEvents() {
     Events.listen.bookmarkUpdate(() => {});
 
     Events.listen.queryError(showQueryError);
+}
+
+function initTools() {
+    const evAnchor = document.querySelector(".navbar.navbar-right");
+    const menuAnchor = document.querySelector(".menuoverlay");
+    const menuTitle = menuAnchor.querySelector("#overlaytitle");
+    const menuContent = menuAnchor.querySelector("#overlaycontent");
+
+    evAnchor.addEventListener("click", (ev) => {
+        if (["indexmatcher_menu", "configure", "bookmark_menu"].includes(ev.target.id)) {
+            const title = ev.target.dataset.title;
+            const prevActive = evAnchor.querySelector(".active");
+
+            if (ev.target.parentNode.classList.contains("active")) {
+                // close
+                menuAnchor.setAttribute("hidden", "hidden");
+                menuAnchor.classList.remove("mini");
+
+                ev.target.parentNode.classList.remove("active")
+
+                return;
+            }
+
+            if (prevActive) {
+                prevActive.classList.remove("active");
+                menuAnchor.classList.remove("mini");
+            }
+
+            if (ev.target.id === "indexmatcher_menu") {
+                menuAnchor.classList.add("mini");
+            }
+
+            ev.target.parentNode.classList.add("active");
+
+            menuTitle.textContent = title;
+            menuContent.textContent = "";
+
+            menuAnchor.removeAttribute("hidden");
+
+            // trigger event to load the content
+
+            ev.stopPropagation();
+            ev.preventDefault();
+        }
+    });
 }
 
 // UI Usability functions 

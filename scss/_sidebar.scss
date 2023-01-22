@@ -29,14 +29,43 @@
     .navbar-right,
     .navbar-left {
         li {
-            margin-right: .5em;
-            margin-left: .5em;
+            text-align: center;
+            // padding-right: .5em;
+            // padding-left: .5em;
+            width: 1.8em;
         }
     }
 
     .navbar-right {
         grid-area: menur;
-        text-align: right;
+        padding: 0 0 1em 0;
+        // padding-right: 1em;
+        display: grid;
+        grid-template-columns: auto 60px;
+
+        .navbar-brand {
+            margin-right: 0;
+        }
+
+        .zhawlogo {
+            margin-right: 0;
+            grid-column: 2;
+        }
+
+        .navbar-nav {
+            grid-column: 1;
+
+            .active {
+                color: white;
+                background-color: $zhawlogo;
+                border-bottom-left-radius: 15px;
+                border-bottom-right-radius: 15px;
+
+                a {
+                    color: white;
+                }
+            }
+        }
     }
 
     .navbar-left {
@@ -47,10 +76,10 @@
 
         .active {
             .marker {
-                background-color: #06699E;
+                background-color: $zhawlogo;
             }
             .counter {
-                background-color: tint-color(#06699E, 80%);
+                background-color: tint-color($zhawlogo, 80%);
                 // color: white;
             }
         }
@@ -118,6 +147,49 @@
                 overflow: hidden;
             }
         }
+    }
+}
+
+.menuoverlay {
+    @extend .shadow; 
+
+    z-index: 10;
+
+    grid-column: 4;
+    grid-row-start: 1;
+    grid-row-end: 6;
+
+    margin-top: .4em;
+    margin-right: .7em;
+    margin-left: .5em;
+    padding-left: .5em;
+    padding-right: .5em;
+
+    border-radius: .6em;
+    // border-top-left-radius: .6em;
+    // border-top-right-radius: .6em;
+
+    border-bottom: 3px solid $zhawlogo;
+
+    background-color: tint-color($zhawlogo, 80%);
+
+    display: grid;
+
+    grid-template-rows: 30px auto;
+
+    &.mini {
+        margin-top: 0;
+        grid-row-start: 4;
+    }
+
+    .overlaytitle {
+        grid-row: 1;
+    }
+
+    .overlaycontent {
+        grid-row: 2;
+        overflow: scroll;
+        padding-right: .5em;
     }
 }
 
