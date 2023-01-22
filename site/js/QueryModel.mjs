@@ -32,12 +32,14 @@ const validators = {
     person:     validatePerson,
     dept:       validateDepartment,
     lang:       validateLang,
-    term:       validateTerm
+    term:       validateTerm,
+    notterm:    validateTerm
 };
 
 const queryTypes = {
     department: "dept",
-    language: "lang"
+    language: "lang",
+    not: "notterm"
 };
 
 function validateSDG(query) {
@@ -135,7 +137,9 @@ function validateType(type) {
         "lang",
         "language",
         "person",
-        "term"
+        "term",
+        "notterm",
+        "not"
     ].includes(type)) {
         Logger.debug(message);
         Events.trigger.queryError({message});
@@ -224,6 +228,7 @@ function collectQueryTerms(query) {
         departments: collectType(query, "department"),
         persons:     collectType(query, "person"),
         terms:       collectType(query, "term"),
-        lang:        collectType(query, "lang")
+        lang:        collectType(query, "lang"),
+        notterms:     collectType(query, "notterm")
     };
 }

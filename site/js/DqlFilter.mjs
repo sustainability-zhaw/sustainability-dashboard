@@ -152,8 +152,25 @@ function buildTermFilter(queryObj) {
         `alloftext(InfoObject.extras, "${terms}")`
     ];
 
-    return [ `( ${ f.join(" or ") })` ];
+    return [ `( ${ f.join(" OR ") })` ];
 }
+
+function buildNotTermFilter(queryObj) {
+    if (!(queryObj && queryObj.notterms && queryObj.notterms.length)) {
+        return [];
+    }
+
+    const terms = queryObj.notterms.map((t) => t.substring(1,t.length - 1)).join(" ");
+
+    const f = [
+        `alloftext(InfoObject.title, "${terms}")`,
+        `alloftext(InfoObject.abstract, "${terms}")`,
+        `alloftext(InfoObject.extras, "${terms}")`
+    ];
+
+    return [ `( NOT ( ${ f.join(" OR ") }))` ];
+}
+
 
 function buildMainFilter(queryObj) {
     const conditions = []; 
@@ -164,6 +181,7 @@ function buildMainFilter(queryObj) {
 
     conditions.push(...buildHelperFilter(queryObj));
     conditions.push(...buildTermFilter(queryObj));
+    conditions.push(...buildNotTermFilter(queryObj));
 
     if (! conditions.length ) {
         return [];

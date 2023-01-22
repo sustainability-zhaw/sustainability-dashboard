@@ -200,11 +200,16 @@
                     }
                 }
 
+                .bi-slash-circle::before,
                 .bi-chat-dots::before,
                 .bi-bookmark::before,
                 .bi-person-circle::before {
                     padding-right: .4em;
                     // padding-right: .3em;
+                }
+
+                .bi-slash-circle {
+                    color: $orange-600;
                 }
 
                 // .searchoption.cat {

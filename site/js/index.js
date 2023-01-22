@@ -247,6 +247,12 @@ function renderSearchOptions() {
 
     searchoptions.innerHTML = ""; // delete all contents
 
+    const iconClass = {
+        notterm: "bi-slash-circle",
+        lang: "bi-chat-dots",
+        person: "bi-person-circle",
+    };
+
     QueryModel.queryterms().forEach(term => {
         const result = template.content.cloneNode(true);
         const datafield = result.querySelector(".searchoption");
@@ -260,15 +266,10 @@ function renderSearchOptions() {
                 datafield.classList.add("marker");
                 datafield.classList.add(`cat-${term.value < 10 ? "0" : ""}${term.value}`);
                 break;
-            case "lang":
-                datafield.classList.add("bi-chat-dots");
-                datafield.innerText = term.value;
-                break;
-            case "person": 
-                datafield.classList.add("bi-person-circle");
-                datafield.innerText = term.value;
-                break;
             default:
+                if (Object.hasOwn(iconClass, term.type)) {
+                    datafield.classList.add(iconClass[term.type]);
+                }
                 datafield.innerText = term.value;
                 break;
         }
