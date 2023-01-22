@@ -21,7 +21,6 @@ async function init() {
 
     addSearchElement();
     addSearchTerm();
-    toggleResultDetails();
 
     clearSearch();
     dropSearchElement();
@@ -150,13 +149,6 @@ function addQType(evt) {
     }
 }
 
-function toggleResultDetails() {
-    const e = document.querySelector('.results'); 
-
-    e.addEventListener("click", foldResults);
-    e.addEventListener("click", addQType);
-} 
-
 // search query functions 
 
 function showQueryError(ev) {
@@ -214,6 +206,7 @@ function addSearchElement() {
     const sidebarelement = document.querySelector(".widgets");
     
     sidebarelement.addEventListener("click", addQType);
+    sidebarelement.addEventListener("click", foldResults);
 }
 
 function dropSearchElement() {
