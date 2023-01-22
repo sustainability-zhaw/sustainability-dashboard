@@ -169,17 +169,29 @@ function dropSearchElement() {
 
     // should not reset the click handler
     searchoptions.addEventListener("click", function (evt) {
+        var targetParent = evt.target.parentNode;
+        
+        const type = targetParent.dataset.qtype;
+        let value = targetParent.dataset.qvalue;
+
         if (evt.target.classList.contains("optionclose"))  {
-            var targetParent = evt.target.parentNode;
-
-            const type = targetParent.dataset.qtype;
-            let value = targetParent.dataset.qvalue;
-
             if (type === "sdg") {
                 value = Number(value);
             }
 
             Events.trigger.queryDrop({type, value});
+        }
+        else if (type !== "sdg" || type !== "department") {
+            // remove the element from the query and place the term into the search
+            Events.trigger.queryDrop({type, value});
+            const searchTermElement = document.querySelector("#searchterms");
+
+            if (type === "term") {
+                searchTermElement.value = `${value}`;
+            }
+            else {
+                searchTermElement.value = `${type}:${value}`;
+            }
         }
     });
 } 
