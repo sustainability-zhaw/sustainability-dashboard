@@ -266,6 +266,7 @@ function checkMathingTerm(query) {
         qterms.sdgs > 1 || 
         qterms.lang > 1 ||
         qterms.notterms > 1 || 
+        qterms.terms === 0 ||
         qterms.terms > 2
     ) {
         Events.trigger.invalidMatchingTerm();
