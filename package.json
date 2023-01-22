@@ -31,9 +31,9 @@
     "javascript"
   ],
   "dependencies": {
-    "@popperjs/core": "^2.11.5",
-    "bootstrap": "^5.2.2",
-    "bootstrap-icons": "^1.9.1"
+    "@popperjs/core": "^2.11.6",
+    "bootstrap": "^5.2.3",
+    "bootstrap-icons": "^1.10.3"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.13",
