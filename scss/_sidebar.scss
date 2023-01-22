@@ -171,7 +171,7 @@
         padding-bottom: .3em;
 
         display: grid;
-        grid-template-columns: auto 7em;
+        grid-template-columns: auto 10em;
         justify-content: top;
 
         .searchoptions {
@@ -243,6 +243,10 @@
             .tool-item {
                 // margin-top: .2em;
                 display: inline-block;
+            }
+
+            .part .bi-exclamation-diamond {
+                color: $orange-600;
             }
         }
     }
