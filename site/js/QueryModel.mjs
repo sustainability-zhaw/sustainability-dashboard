@@ -199,6 +199,10 @@ function drop(ev) {
 }
 
 function clear() {
+    if (!QueryModel.qterms.length) {
+        return;
+    }
+    
     QueryModel.qterms = [];
     Events.trigger.queryUpdate();
 }
