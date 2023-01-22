@@ -64,9 +64,10 @@ function initTools() {
     evAnchor.addEventListener("click", (ev) => {
         if (["indexmatcher_menu", "configure", "bookmark_menu"].includes(ev.target.id)) {
             const title = ev.target.dataset.title;
+            const overlaySize = ev.target.dataset.size;
             const prevActive = evAnchor.querySelector(".active");
             const ttip = bootstrap.Tooltip.getInstance(ev.target);
-            
+
             if (ttip) {
                 ttip.hide()
             }
@@ -89,8 +90,8 @@ function initTools() {
                 menuAnchor.classList.remove("mini");
             }
 
-            if (ev.target.id === "indexmatcher_menu") {
-                menuAnchor.classList.add("mini");
+            if (overlaySize && overlaySize.length) {
+                menuAnchor.classList.add(overlaySize);
             }
 
             ev.target.parentNode.classList.add("active");
