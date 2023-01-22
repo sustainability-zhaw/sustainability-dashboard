@@ -322,7 +322,8 @@ function handleDataUpdate() {
 
         result.querySelector(".pubtitle").innerText = object.title;
         result.querySelector(".year").innerText = object.year;
-        result.querySelector(".tool.bi-download").href = object.link;
+        [...(result.querySelectorAll(".tool.bi-download"))].forEach(e => e.href = object.link);
+        
         result.querySelector(".categories").innerHTML = object.sdg.map(sdg => `<span class="mark cat-${sdg}" data-qtype="sdg" data-qvalue="${sdg}"></span>`).join(" ");
         result.querySelector(".extra.abstract").innerText= object.abstract;
         result.querySelector(".extra.pubtype").innerText= object.subtype.name;
