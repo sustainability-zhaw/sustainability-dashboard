@@ -181,7 +181,7 @@ function dropSearchElement() {
 
             Events.trigger.queryDrop({type, value});
         }
-        else if (type !== "sdg" || type !== "department") {
+        else if (type && (type !== "sdg" || type !== "department")) {
             // remove the element from the query and place the term into the search
             Events.trigger.queryDrop({type, value});
             const searchTermElement = document.querySelector("#searchterms");
