@@ -74,7 +74,6 @@ function initTools() {
                 ttip.hide()
             }
 
-            ev.stopPropagation();
             ev.preventDefault();
 
             if (ev.target.parentNode.classList.contains("active")) {
@@ -171,6 +170,15 @@ function showQueryError(ev) {
     tooltip.show();
 }
 
+function clearQueryError() {
+    const searchTermElement = document.querySelector("#searchterms");
+    
+    searchTermElement.classList.remove("error");            
+            
+    // tell the user that something is missing
+    bootstrap.Tooltip.getInstance(searchTermElement).dispose();
+}
+
 // Self registering UI Events
 
 function addSearchTerm() {
@@ -208,6 +216,8 @@ function addSearchTerm() {
 function addSearchElement() {
     const sidebarelement = document.querySelector(".widgets");
     
+    sidebarelement.addEventListener("click", clearQueryError);
+
     sidebarelement.addEventListener("click", addQType);
     sidebarelement.addEventListener("click", foldResults);
     sidebarelement.addEventListener("click", clearSearch);
