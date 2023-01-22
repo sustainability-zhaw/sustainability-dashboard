@@ -296,7 +296,7 @@ function handleDataUpdate() {
     const targetsection = document.querySelector('.results');
 
     const section = document.querySelector('.nav-link.active');
-    const category = section.parentElement.id.split("-").shift();
+    const category = section.dataset.category;
    
     if (!["publications", "projects", "modules", "people"].includes(category)) {
         Logger.debug( "not in a data category. nothing to render");

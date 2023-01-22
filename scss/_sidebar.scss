@@ -8,28 +8,26 @@
     grid-template-columns: 2fr 1fr 1fr 360px;
 
     // the next line prepares for issue 38
-    // grid-template-rows: 68px 110px 76px 120px 1fr 68px;
-    grid-template-rows: 68px 110px 76px 120px 1fr 10px;
+    grid-template-rows: 65px 40px 148px 120px 1fr 68px;
+    // grid-template-rows: 68px 110px 76px 120px 1fr 10px;
 
     grid-template-areas: 
-        "menul menul menur menur"
+        "srch srch srch menul"
         "srch srch srch sdgs"
         "content content content sdgs"
         "content content content dept"
         "content content content pple"
-        "content content content fcts"
+        "content content content menur"
     ;
 
     .navbar-nav {
-        margin-left: 2em;
-        margin-right: 2em;
+        margin-left: 0em;
+        margin-right: 0em;
         flex-direction: row;
     }
 
     .navbar-right,
     .navbar-left {
-        background-color: $white;
-
         li {
             margin-right: .5em;
             margin-left: .5em;
@@ -44,8 +42,22 @@
     .navbar-left {
         text-align: left;
         grid-area: menul;
+        padding-top: .5em;
+        padding-bottom: 12px;
+
+        .active {
+            .marker {
+                background-color: #06699E;
+            }
+            .counter {
+                background-color: tint-color(#06699E, 80%);
+                // color: white;
+            }
+        }
     }
 
+    .navbar-right, 
+    .navbar-left,
     .sdg,
     .department,
     .people {
@@ -101,6 +113,10 @@
             gap: 0px;
             color: var(--bs-white);
             cursor: pointer;
+
+            .counter {
+                overflow: hidden;
+            }
         }
     }
 }
@@ -291,6 +307,7 @@
     text-align: center;
     line-height: $font-size-base * 2;
     font-size: $font-size-base * 1.5;
+    background-color: $gray-600;
 
     &.searchoption {
         height: inherit;
