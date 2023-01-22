@@ -65,6 +65,14 @@ function initTools() {
         if (["indexmatcher_menu", "configure", "bookmark_menu"].includes(ev.target.id)) {
             const title = ev.target.dataset.title;
             const prevActive = evAnchor.querySelector(".active");
+            const ttip = bootstrap.Tooltip.getInstance(ev.target);
+            
+            if (ttip) {
+                ttip.hide()
+            }
+
+            ev.stopPropagation();
+            ev.preventDefault();
 
             if (ev.target.parentNode.classList.contains("active")) {
                 // close
@@ -93,9 +101,6 @@ function initTools() {
             menuAnchor.removeAttribute("hidden");
 
             // trigger event to load the content
-
-            ev.stopPropagation();
-            ev.preventDefault();
         }
     });
 }
