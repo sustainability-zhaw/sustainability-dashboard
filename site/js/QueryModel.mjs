@@ -30,14 +30,14 @@ const QueryModel = {
 const validators = {
     sdg:        validateSDG,
     person:     validatePerson,
-    dept:       validateDepartment,
+    department: validateDepartment,
     lang:       validateLang,
     term:       validateTerm,
     notterm:    validateTerm
 };
 
 const queryTypes = {
-    department: "dept",
+    dept: "department",
     language: "lang",
     not: "notterm"
 };
@@ -211,15 +211,15 @@ function prefixAndQuote(value, prefix) {
     if (prefix) {
         value = prefix + value;
     }
-    // else {
-        value = JSON.stringify(value);
-    // }
+
+    value = JSON.stringify(value);
+
     return value;
 }
 
 function collectType(qterms, type) {
     const prefix = ["department", "sdg"].includes(type) ? type + "_" : "";
-    
+
     return qterms
         .filter(i => i.type === type)
         .map(i => i.value)
