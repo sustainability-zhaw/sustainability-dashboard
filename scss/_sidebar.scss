@@ -76,6 +76,11 @@
         padding-bottom: 12px;
 
         .active {
+            @extend .shadow-sm; 
+            // background-color: transparent;
+            border-bottom-right-radius: .6em;
+            border-top-right-radius: .6em;
+
             .marker {
                 background-color: $zhawlogo;
             }
