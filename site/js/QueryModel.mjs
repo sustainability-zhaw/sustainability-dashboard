@@ -187,6 +187,8 @@ function add(ev) {
     QueryModel.qterms.push({type, value});
 
     Events.trigger.queryUpdate();
+
+    checkMathingTerm(QueryModel.qterms);
 }
 
 function drop(ev) {
@@ -196,6 +198,8 @@ function drop(ev) {
     QueryModel.qterms = QueryModel.qterms.filter(t => !(type === t.type && value === t.value));
 
     Events.trigger.queryUpdate();
+
+    checkMathingTerm(QueryModel.qterms);
 }
 
 function clear() {
@@ -233,6 +237,60 @@ function collectQueryTerms(query) {
         persons:     collectType(query, "person"),
         terms:       collectType(query, "term"),
         lang:        collectType(query, "lang"),
-        notterms:     collectType(query, "notterm")
+        notterms:    collectType(query, "notterm")
     };
+}
+
+function countQueryTerms(query) {
+    return {
+        sdgs:        collectType(query, "sdg").length,
+        departments: collectType(query, "department").length,
+        persons:     collectType(query, "person").length,
+        terms:       collectType(query, "term").length,
+        lang:        collectType(query, "lang").length,
+        notterms:    collectType(query, "notterm").length
+    };
+}
+
+function checkMathingTerm(query) {
+    if (!(query && query.length)) {
+        Events.trigger.invalidMatchingTerm();
+        return; 
+    }
+
+    const qterms = countQueryTerms(query);
+
+    if (
+        qterms.persons || 
+        qterms.departments || 
+        qterms.sdgs > 1 || 
+        qterms.lang > 1 ||
+        qterms.notterms > 1 || 
+        qterms.terms > 2
+    ) {
+        Events.trigger.invalidMatchingTerm();
+        return; 
+    }
+
+    if ((
+            qterms.sdgs < 1 || 
+            qterms.lang < 1 
+        ) &&
+        qterms.terms > 0
+    ) {
+        const details = []; 
+
+        if (qterms.sdgs < 1) {
+            details.push("SDG")
+        }
+
+        if (qterms.lang < 1) {
+            details.push("a language")
+        }
+
+        Events.trigger.partialMatchingTerm(details);
+        return; 
+    }
+
+    Events.trigger.fullMatchingTerm();
 }

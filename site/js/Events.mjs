@@ -12,7 +12,10 @@ const events = [
     "queryAddItem",
     "queryError",
     "queryClear",
-    "queryDrop"
+    "queryDrop",
+    "partialMatchingTerm",
+    "fullMatchingTerm",
+    "invalidMatchingTerm"
 ];
 
 export const trigger = events.reduce((a, e) => {

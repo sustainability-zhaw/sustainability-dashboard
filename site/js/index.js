@@ -22,8 +22,7 @@ async function init() {
     addSearchElement();
     addSearchTerm();
 
-    clearSearch();
-    dropSearchElement();
+    // dropSearchElement();
 
     initTools();
 
@@ -50,6 +49,10 @@ function initEvents() {
     Events.listen.dataUpdate(handleDataUpdate);
     Events.listen.statUpdate(handleStats);
     Events.listen.bookmarkUpdate(() => {});
+
+    Events.listen.partialMatchingTerm(conditionalIndexButtonPartial);
+    Events.listen.fullMatchingTerm(conditionalIndexButtonOn);
+    Events.listen.invalidMatchingTerm(conditionalIndexButtonOff);
 
     Events.listen.queryError(showQueryError);
 }
@@ -207,39 +210,51 @@ function addSearchElement() {
     
     sidebarelement.addEventListener("click", addQType);
     sidebarelement.addEventListener("click", foldResults);
+    sidebarelement.addEventListener("click", clearSearch);
+    sidebarelement.addEventListener("click", dropSearchElement);
+    sidebarelement.addEventListener("click", editSearchElement);
 }
 
-function dropSearchElement() {
+function editSearchElement(evt) {
+    if (!evt.target.classList.contains("searchoption")) {
+        return;
+    } 
+
+    const targetParent = evt.target.parentNode;
+    const type = targetParent.dataset.qtype;
+    const value = targetParent.dataset.qvalue;
+
+    if (type && (type === "sdg" || type === "department")) {
+        return;
+    }
+
+    Events.trigger.queryDrop({type, value});
+    const searchTermElement = document.querySelector("#searchterms");
+
+    if (type === "term") {
+        searchTermElement.value = `${value}`;
+    }
+    else {
+        searchTermElement.value = `${type}:${value}`;
+    }
+}
+
+function dropSearchElement(evt) {
+    // const searchoptions = document.querySelector("#searchcontainer .searchoptions");
+    if (!evt.target.classList.contains("optionclose")) {
+        return;
+    }
+
     Logger.debug("drop search element");
-    const searchoptions = document.querySelector("#searchcontainer .searchoptions");
 
-    // should not reset the click handler
-    searchoptions.addEventListener("click", function (evt) {
-        var targetParent = evt.target.parentNode;
-        
-        const type = targetParent.dataset.qtype;
-        let value = targetParent.dataset.qvalue;
+    const targetParent = evt.target.parentNode;
+    const type = targetParent.dataset.qtype;
+    
+    const value = type === "sdg" ? 
+                  Number(targetParent.dataset.qvalue) :
+                  targetParent.dataset.qvalue;
 
-        if (evt.target.classList.contains("optionclose"))  {
-            if (type === "sdg") {
-                value = Number(value);
-            }
-
-            Events.trigger.queryDrop({type, value});
-        }
-        else if (type && (type !== "sdg" || type !== "department")) {
-            // remove the element from the query and place the term into the search
-            Events.trigger.queryDrop({type, value});
-            const searchTermElement = document.querySelector("#searchterms");
-
-            if (type === "term") {
-                searchTermElement.value = `${value}`;
-            }
-            else {
-                searchTermElement.value = `${type}:${value}`;
-            }
-        }
-    });
+    Events.trigger.queryDrop({type, value});
 } 
 
 function liveQueryInput() {
@@ -250,17 +265,16 @@ function liveQueryInput() {
     });
 } 
 
-function clearSearch() {
-    const newsearch = document.querySelector('#newsearch');
-    const searchoptions = document.querySelector('#searchcontainer .searchoptions');
-    const searchEntries = document.querySelector(".searchoptions");
-
-    newsearch.addEventListener("click", function (evt) {
-        Logger.debug("clearSearch");
-
-        searchoptions.innerHTML = "";
-        Events.trigger.queryClear();
-    });
+function clearSearch(ev) {
+    if (
+        ev.target.id !== "newsearch" && 
+        ev.target.parentNode.id !== "newsearch" 
+    ) {
+        return;
+    }
+    
+    document.querySelector('#searchcontainer .searchoptions').innerHTML = "";
+    Events.trigger.queryClear();
 } 
 
 // QueryModel event handler
@@ -274,13 +288,6 @@ function handleQueryExtraUpdate(ev) {
 
     Events.trigger.queryUpdate();
 } 
-
-// function handleQueryAdd(ev) {
-//     const type = ev.detail.type;
-//     const value = ev.detail.value;
-    
-//     QueryModel.add({type, value});
-// }
 
 // QueryModel Support functions
 
@@ -498,4 +505,45 @@ function requestQueryStats(ev) {
 
     StatsModel.loadData(category, QueryModel.query())
         .then(() => Events.trigger.statUpdate())
+}
+
+function conditionalIndexButtonOff() {
+    const button = document.querySelector("#savematcher .btn");
+    if (!button.classList.contains("disabled")) {
+        button.classList.add("disabled");
+    }
+    button.classList.add("btn-outline-secondary");
+    button.classList.remove("btn-outline-success");
+    button.classList.remove("btn-outline-danger");
+
+    bootstrap.Tooltip.getOrCreateInstance(button).dispose();
+}
+
+function conditionalIndexButtonOn() {
+    const button = document.querySelector("#savematcher .btn");
+    button.classList.remove("disabled");
+    button.classList.remove("part");
+    button.classList.remove("btn-outline-secondary");
+    button.classList.add("btn-outline-success");
+    button.classList.remove("btn-outline-danger");
+
+    button.setAttribute("title", "Save Index Match");
+
+    bootstrap.Tooltip.getOrCreateInstance(button).dispose();
+    bootstrap.Tooltip.getOrCreateInstance(button).show();
+}
+
+function conditionalIndexButtonPartial(ev) {
+    const button = document.querySelector("#savematcher .btn");
+    button.classList.remove("disabled");
+    button.classList.add("part");
+    button.classList.remove("btn-outline-secondary");
+    button.classList.remove("btn-outline-success");
+    button.classList.add("btn-outline-danger");
+
+    const details = ev.detail;
+
+    button.setAttribute("title", `Add ${details.join(" and ")} to complete index match!` );
+    bootstrap.Tooltip.getOrCreateInstance(button).dispose();
+    bootstrap.Tooltip.getOrCreateInstance(button).show();
 }
