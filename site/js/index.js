@@ -9,7 +9,9 @@ import * as Events from "./Events.mjs";
 // pull up the System with a basic configuration
 
 Events.listen.queryUpdate(handleQueryUpdate);
+Events.listen.queryUpdate(handleQueryUpdateIndex);
 Events.listen.queryUpdate(requestQueryStats);
+
 Events.listen.queryExtra(handleQueryExtraUpdate);
 // Events.listen.queryAddItem(handleQueryAdd);
 Events.listen.dataUpdate(handleDataUpdate);
@@ -67,7 +69,7 @@ function initTools() {
     const menuContent = menuAnchor.querySelector("#overlaycontent");
 
     const funcs = {
-        "indexmatcher_menu": Events.trigger.indexTermData,
+        "indexmatcher_menu": () => {Events.trigger.indexTermData(); Events.trigger.indexTermUpdate(QueryModel.query());},
         "bookmark_menu": Events.trigger.bookmarkData,
         "configure": () => {}
     };
@@ -351,7 +353,16 @@ function handleQueryExtraUpdate(ev) {
 
 // QueryModel Support functions
 
-function handleQueryUpdate(ev) {
+function handleQueryUpdateIndex() {
+    const menuitem = document.querySelector("#indexmatcher_menu");
+    if(!menuitem.parentNode.classList.contains("active")) {
+        return; 
+    }
+
+    Events.trigger.indexTermUpdate(QueryModel.query());
+}
+
+function handleQueryUpdate() {
     // trigger search request to the backend
     const section = document.querySelector('.nav-link.active');
     const category = section.dataset.category;
