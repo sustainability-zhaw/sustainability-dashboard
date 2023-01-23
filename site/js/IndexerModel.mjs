@@ -4,7 +4,8 @@ import * as Events from "./Events.mjs";
 
 const Model = {
     records: {},
-    data: []
+    data: [],
+    filter: []
 };
 
 Events.listen.indexTermCreate(createRecord);
@@ -25,11 +26,11 @@ export function getRecords() {
  * @param {Int} id 
  */
 export function getOneRecord(id) {
-    if (Model.records.id) {
-        return Model.records.id;
-    }
+    if (Model.records[id]) {
+        const query = Model.records[id].qterms.map(t => Object.assign({}, t));
 
-    return {qterms: []};
+        Events.trigger.queryReplace(query);
+    }
 }
 
 
@@ -49,7 +50,17 @@ function selectRecords(ev) {
  * @param {Event} ev 
  */
 function createRecord(ev) {
+    Logger.debug(`create INDEX Term from ${JSON.stringify(ev.detail)}`);
 
+    if (ev.detail.length) {
+        const id = Model.data.length ? Math.max(...Model.data.map((e) => e.id)) + 1 : 1;
+
+        const record = {id, qterms: ev.detail};
+        Model.data.push(record);
+        Model.records[id] = record;
+
+        Events.trigger.indexTermData();
+    }
 }
 
 /**
@@ -58,7 +69,13 @@ function createRecord(ev) {
  * @param {Event} ev 
  */
 async function deleteRecord(ev) {
+    Logger.debug(`delete record ${ev.detail}`);
 
+    // FIXME: delete the record from the database and reload data
+
+    Model.data = Model.data.filter(r => r.id != ev.detail);
+    delete Model.records[ev.detail];
+    Events.trigger.indexTermData();
 }
 
 /**

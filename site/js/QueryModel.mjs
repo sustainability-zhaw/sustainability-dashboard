@@ -6,6 +6,7 @@ import * as Events from "./Events.mjs";
 Events.listen.queryAddItem(add);
 Events.listen.queryClear(clear);
 Events.listen.queryDrop(drop);
+Events.listen.queryReplace(replaceQuery);
 
 export function query() {
     const query = collectQueryTerms(QueryModel.qterms);
@@ -197,6 +198,14 @@ function drop(ev) {
 
     Events.trigger.queryUpdate();
 
+    checkMathingTerm(QueryModel.qterms);
+}
+
+function replaceQuery(ev) {
+    QueryModel.qterms = ev.detail;
+    
+    Events.trigger.queryUpdate();
+    
     checkMathingTerm(QueryModel.qterms);
 }
 

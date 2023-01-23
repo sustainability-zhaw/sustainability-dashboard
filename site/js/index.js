@@ -3,12 +3,12 @@ import * as StatsModel from "./StatsModel.mjs";
 import * as Config from "./ConfigModel.mjs";
 import * as Logger from "./Logger.mjs";
 import * as QueryModel from "./QueryModel.mjs";
+import * as IndexModel from "./IndexerModel.mjs";
 import * as Events from "./Events.mjs";
 
 // pull up the System with a basic configuration
 
 Events.listen.queryUpdate(handleQueryUpdate);
-Events.listen.queryUpdate(renderSearchOptions);
 Events.listen.queryUpdate(requestQueryStats);
 Events.listen.queryExtra(handleQueryExtraUpdate);
 // Events.listen.queryAddItem(handleQueryAdd);
@@ -19,6 +19,9 @@ Events.listen.bookmarkUpdate(() => {});
 Events.listen.partialMatchingTerm(conditionalIndexButtonPartial);
 Events.listen.fullMatchingTerm(conditionalIndexButtonOn);
 Events.listen.invalidMatchingTerm(conditionalIndexButtonOff);
+
+Events.listen.queryUpdate(renderSearchOptions);
+Events.listen.indexTermData(renderIndexTerms);
 
 Events.listen.queryError(showQueryError);
 
@@ -63,6 +66,12 @@ function initTools() {
     const menuTitle = menuAnchor.querySelector("#overlaytitle");
     const menuContent = menuAnchor.querySelector("#overlaycontent");
 
+    const funcs = {
+        "indexmatcher_menu": Events.trigger.indexTermData,
+        "bookmark_menu": Events.trigger.bookmarkData,
+        "configure": () => {}
+    };
+
     evAnchor.addEventListener("click", (ev) => {
         if (["indexmatcher_menu", "configure", "bookmark_menu"].includes(ev.target.id)) {
             const title = ev.target.dataset.title;
@@ -103,6 +112,7 @@ function initTools() {
             menuAnchor.removeAttribute("hidden");
 
             // trigger event to load the content
+            funcs[ev.target.id]();
         }
     });
 }
@@ -176,7 +186,10 @@ function clearQueryError() {
     searchTermElement.classList.remove("error");            
             
     // tell the user that something is missing
-    bootstrap.Tooltip.getInstance(searchTermElement).dispose();
+    const ttip = bootstrap.Tooltip.getInstance(searchTermElement);
+    if (ttip) {
+        ttip.dispose();
+    }
 }
 
 // Self registering UI Events
@@ -221,8 +234,11 @@ function addSearchElement() {
     sidebarelement.addEventListener("click", addQType);
     sidebarelement.addEventListener("click", foldResults);
     sidebarelement.addEventListener("click", clearSearch);
+    sidebarelement.addEventListener("click", saveIndexQuery);
     sidebarelement.addEventListener("click", dropSearchElement);
     sidebarelement.addEventListener("click", editSearchElement);
+    sidebarelement.addEventListener("click", handleIndexActivate);
+    sidebarelement.addEventListener("click", handleIndexDelete);
 }
 
 function editSearchElement(evt) {
@@ -267,6 +283,19 @@ function dropSearchElement(evt) {
     Events.trigger.queryDrop({type, value});
 } 
 
+function saveIndexQuery(ev) {
+    if (ev.target.parentNode.id !== "savematcher") {
+        return;
+    }
+
+    if (ev.target.classList.contains("part")) {
+        Logger.debug("Incomplete Index Term. Nothing to do!");
+        return;
+    }
+
+    Events.trigger.indexTermCreate(QueryModel.queryterms());
+}
+
 function liveQueryInput() {
     const searchTermElement = document.querySelector("#searchterms");
 
@@ -286,6 +315,27 @@ function clearSearch(ev) {
     document.querySelector('#searchcontainer .searchoptions').innerHTML = "";
     Events.trigger.queryClear();
 } 
+
+function handleIndexActivate(ev) {
+    if (!ev.target.parentNode.classList.contains("indexterm")) {
+        return;
+    }
+
+    const idxid = ev.target.parentNode.id.replace("index-", "");
+
+    IndexModel.getOneRecord(idxid);
+}
+
+
+function handleIndexDelete(ev) {
+    if (!ev.target.classList.contains("bi-trash-fill")) {
+        return;
+    }
+
+    const id = ev.target.parentNode.id.replace("index-","");
+
+    Events.trigger.indexTermDelete(id);
+}
 
 // QueryModel event handler
 
@@ -351,6 +401,45 @@ function renderSearchOptions() {
 
         searchoptions.appendChild(result);
     });
+}
+
+function renderIndexTerms() {
+    // only render if the index terms are shown.
+    
+    Logger.debug("render index terms");
+
+    const menuitem = document.querySelector("#indexmatcher_menu");
+    if(!menuitem.parentNode.classList.contains("active")) {
+        return; 
+    }    
+
+    const templateList = document.querySelector("#templateIndexTerm");
+    const templateQuery = document.querySelector("#searchoption");
+    const container = document.querySelector("#overlaycontent");
+
+    container.textContent = "";
+
+    IndexModel.getRecords().forEach(
+        (rec) => {
+            const result = templateList.content.cloneNode(true);
+            const lang = rec.qterms.filter(t => t.type === "lang").map(r => r.value).join("");
+            const sdg = rec.qterms.filter(t => t.type === "sdg").map(r => r.value).pop();
+            const terms = rec.qterms
+                .filter(t => t.type === "term" || t.type === "notterm")
+                .map(t => `${t.type === "notterm" ? "not:" : ""}${t.value}`)
+                .join(", ");
+
+            const sdgcls = `cat-${sdg < 10 ? "0" : ""}${sdg}`;
+
+            result.querySelector(".indexterm").id = "index-" + rec.id;
+            result.querySelector(".index-sdg").classList.add("mark");
+            result.querySelector(".index-sdg").classList.add(sdgcls);
+            result.querySelector(".index-lang").textContent = lang;
+            result.querySelector(".index-query").textContent = terms;
+
+            container.appendChild(result);
+        }
+    );
 }
 
 function handleDataUpdate() {

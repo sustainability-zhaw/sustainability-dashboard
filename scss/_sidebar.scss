@@ -57,7 +57,7 @@
 
             .active {
                 z-index: 11;
-                
+
                 color: white;
                 background-color: $zhawlogo;
                 border-bottom-left-radius: 15px;
@@ -189,14 +189,40 @@
         grid-row-start: 4;
     }
 
-    .overlaytitle {
+    #overlaytitle {
         grid-row: 1;
     }
 
-    .overlaycontent {
+    #overlaycontent {
         grid-row: 2;
         overflow: scroll;
         padding-right: .5em;
+        overflow: scroll;
+
+        .indexterm {
+            margin-bottom: .2em;
+            display: grid;
+            height: 1.5em;
+            grid-template-columns: auto 2em 2em 1em;
+            .index-query {
+                grid-column: 1;
+                overflow: hidden;
+                font-size: 0.8em;
+            }
+            .index-sdg {
+                padding: 0;
+                text-align: center;
+                grid-column: 2;
+            }
+            .index-lang {
+                text-align: center;
+                grid-column: 3;
+            }
+            .index-tool {
+                text-align: center;
+                grid-column: 4;
+            }
+        }
     }
 }
 

@@ -12,6 +12,7 @@ const events = [
     "queryError",
     "queryClear",
     "queryDrop",
+    "queryReplace",
     "partialMatchingTerm",
     "fullMatchingTerm",
     "invalidMatchingTerm",
