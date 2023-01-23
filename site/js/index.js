@@ -7,6 +7,21 @@ import * as Events from "./Events.mjs";
 
 // pull up the System with a basic configuration
 
+Events.listen.queryUpdate(handleQueryUpdate);
+Events.listen.queryUpdate(renderSearchOptions);
+Events.listen.queryUpdate(requestQueryStats);
+Events.listen.queryExtra(handleQueryExtraUpdate);
+// Events.listen.queryAddItem(handleQueryAdd);
+Events.listen.dataUpdate(handleDataUpdate);
+Events.listen.statUpdate(handleStats);
+Events.listen.bookmarkUpdate(() => {});
+
+Events.listen.partialMatchingTerm(conditionalIndexButtonPartial);
+Events.listen.fullMatchingTerm(conditionalIndexButtonOn);
+Events.listen.invalidMatchingTerm(conditionalIndexButtonOff);
+
+Events.listen.queryError(showQueryError);
+
 async function init() {
     await Config.init("config.json", {
         "proto": "",
@@ -28,7 +43,7 @@ async function init() {
 
     initEvents();
 
-    QueryModel.init();
+    // QueryModel.init();
 }
 
 init().then(() => Events.trigger.queryUpdate());
@@ -40,21 +55,6 @@ function initEvents() {
     const evAnchor = document.querySelector("#zhaw-about");
 
     Events.init(evAnchor);
-
-    Events.listen.queryUpdate(handleQueryUpdate);
-    Events.listen.queryUpdate(renderSearchOptions);
-    Events.listen.queryUpdate(requestQueryStats);
-    Events.listen.queryExtra(handleQueryExtraUpdate);
-    // Events.listen.queryAddItem(handleQueryAdd);
-    Events.listen.dataUpdate(handleDataUpdate);
-    Events.listen.statUpdate(handleStats);
-    Events.listen.bookmarkUpdate(() => {});
-
-    Events.listen.partialMatchingTerm(conditionalIndexButtonPartial);
-    Events.listen.fullMatchingTerm(conditionalIndexButtonOn);
-    Events.listen.invalidMatchingTerm(conditionalIndexButtonOff);
-
-    Events.listen.queryError(showQueryError);
 }
 
 function initTools() {

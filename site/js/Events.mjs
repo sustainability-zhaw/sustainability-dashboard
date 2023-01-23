@@ -3,31 +3,42 @@
 let anchor; 
     
 const events = [
-    "queryUpdate",
+    "queryUpdate", // ask to load data
     "queryExtra",
-    "dataUpdate",
-    "statUpdate",
+    "dataUpdate", // new data is available
+    "statUpdate", // new data is available
     "personUpdate",
-    "bookmarkUpdate",
     "queryAddItem",
     "queryError",
     "queryClear",
     "queryDrop",
     "partialMatchingTerm",
     "fullMatchingTerm",
-    "invalidMatchingTerm"
+    "invalidMatchingTerm",
+    "indexTermDelete",
+    "indexTermCreate",
+    "indexTermUpdate",
+    "indexTermData",
+    "bookmarkDelete",
+    "bookmarkCreate",
+    "bookmarkUpdate",
+    "bookmarkData"
 ];
 
 export const trigger = events.reduce((a, e) => {
-        a[e] = (detail) => anchor.dispatchEvent(new CustomEvent(e, {detail}));
+        a[e] = (detail) => anchor ? anchor.dispatchEvent(new CustomEvent(e, {detail})) : null;
         return a;
     }, {});
 
-export const listen = events.reduce((a, e) => { 
-        a[e] = (f) => anchor.addEventListener(e, f);
+const preListeners = [];
+
+export const listen = events.reduce((a, event) => { 
+        a[event] = (func) => anchor ? anchor.addEventListener(event, func) : preListeners.push({event, func});
         return a;
     }, {});
 
 export function init(evAnchor) {
     anchor = evAnchor;
+
+    preListeners.forEach((li) => anchor.addEventListener(li.event, li.func));
 }

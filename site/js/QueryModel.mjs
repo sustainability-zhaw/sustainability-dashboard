@@ -2,11 +2,10 @@ import * as Config from "./ConfigModel.mjs";
 import * as Logger from "./Logger.mjs";
 import * as Events from "./Events.mjs";
 
-export function init() {
-    Events.listen.queryAddItem(add);
-    Events.listen.queryClear(clear);
-    Events.listen.queryDrop(drop);
-}
+
+Events.listen.queryAddItem(add);
+Events.listen.queryClear(clear);
+Events.listen.queryDrop(drop);
 
 export function query() {
     const query = collectQueryTerms(QueryModel.qterms);
@@ -19,7 +18,6 @@ export function query() {
 export function queryterms() {
     return QueryModel.qterms;
 }
-
 
 const QueryModel = {
     qterms: [],
