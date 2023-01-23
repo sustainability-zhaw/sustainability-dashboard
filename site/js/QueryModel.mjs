@@ -216,6 +216,7 @@ function clear() {
     
     QueryModel.qterms = [];
     Events.trigger.queryUpdate();
+    checkMathingTerm(QueryModel.qterms);
 }
 
 function prefixAndQuote(value, prefix) {

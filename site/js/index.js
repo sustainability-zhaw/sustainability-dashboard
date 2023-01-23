@@ -619,10 +619,13 @@ function requestQueryStats(ev) {
 
 function conditionalIndexButtonOff() {
     const button = document.querySelector("#savematcher .btn");
+
     if (!button.classList.contains("disabled")) {
         button.classList.add("disabled");
     }
-    button.classList.add("btn-outline-secondary");
+    if (!button.classList.contains("btn-outline-secondary")) {
+        button.classList.add("btn-outline-secondary");
+    }
     button.classList.remove("btn-outline-success");
     button.classList.remove("btn-outline-danger");
 
@@ -631,10 +634,13 @@ function conditionalIndexButtonOff() {
 
 function conditionalIndexButtonOn() {
     const button = document.querySelector("#savematcher .btn");
+
     button.classList.remove("disabled");
     button.classList.remove("part");
     button.classList.remove("btn-outline-secondary");
-    button.classList.add("btn-outline-success");
+    if (!button.classList.contains("btn-outline-success")) {
+        button.classList.add("btn-outline-success");
+    }
     button.classList.remove("btn-outline-danger");
 
     button.setAttribute("title", "Save Index Match");
@@ -646,10 +652,15 @@ function conditionalIndexButtonOn() {
 function conditionalIndexButtonPartial(ev) {
     const button = document.querySelector("#savematcher .btn");
     button.classList.remove("disabled");
-    button.classList.add("part");
+    if (!button.classList.contains("part")) {
+        button.classList.add("part");
+    }
     button.classList.remove("btn-outline-secondary");
     button.classList.remove("btn-outline-success");
-    button.classList.add("btn-outline-danger");
+    
+    if (!button.classList.contains("btn-outline-danger")) {
+        button.classList.add("btn-outline-danger");
+    }
 
     const details = ev.detail;
 
