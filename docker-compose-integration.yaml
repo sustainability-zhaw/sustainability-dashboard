@@ -33,7 +33,7 @@ services:
       - '9080:9080'
 
   db_init:
-    image: ghcr.io/sustainability-zhaw/dgraph-schema:sha-2016e66
+    image: ghcr.io/sustainability-zhaw/dgraph-schema:sha-0812f6f
     restart: 'no'
     networks:
       - dgraphnet
@@ -42,7 +42,7 @@ services:
       SAMPLE_DATA: pubs_and_persons
 
   dspacer: 
-    image: ghcr.io/sustainability-zhaw/extraction-dspace:sha-
+    image: ghcr.io/sustainability-zhaw/extraction-dspace:sha-a3eeb79
     restart: "no"
     networks:
       - dgraphnet
