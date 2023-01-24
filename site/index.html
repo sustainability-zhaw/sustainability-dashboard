@@ -9,56 +9,58 @@
     <body>
         <div class="widgets">
             <nav class="navbar-left navbar">    
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item" id="publications-list">
-                        <a class="nav-link active" aria-current="page" data-category="publications" href="#"><i class="bi-journal-richtext" role="img"></i> Publications (<span id="publication-counter"></span>)</a>
-                    </li>
-
-                    <li class="nav-item" id="projects-list">
-                        <a class="nav-link" aria-current="page" data-category="projects" href="#"><i class="bi-kanban" role="img"></i> Projects (<span id="project-counter"></span>)</a>
-                    </li>
-
-                    <li class="nav-item" id="modules-list">
-                        <a class="nav-link" aria-current="page" data-category="modules" href="#"><i class="bi-person-video3" role="img"></i> Modules (<span id="education-counter"></span>)</a>
-                    </li>
-
-                    <li class="nav-item" id="people-list">
-                        <a class="nav-link" aria-current="page"  data-category="people" href="#"><i class="bi-person-lines-fill " role="img"></i> People (<span id="people-counter"></span>)</a>
-                    </li>
-              </ul>
+                <div class="listgrid">
+                    <div class="cat box nav-link active" data-category="publications" data-bs-toggle="tooltip" title="Publications" data-bs-placement="bottom"><span class="menu marker bi-journal-richtext"></span><span class="menu counter" id="publication-counter"></span></div>
+                    <div class="cat box nav-link" data-category="projects" data-bs-toggle="tooltip" title="Projects" data-bs-placement="bottom"><span class="menu marker bi-kanban"></span><span class="menu counter" id="project-counter"></span></div>
+                    <!-- <div class="cat box nav-link" data-category="projects" data-bs-toggle="tooltip" title="Projects" data-bs-placement="bottom"><span class="menu marker bi-kanban"></span><span class="menu counter">90000</span></div> -->
+                    <div class="cat box nav-link" data-category="modules" data-bs-toggle="tooltip" title="Modules" data-bs-placement="bottom"><span class="menu marker bi-person-video3"></span><span class="menu counter" id="education-counter"></span></div>
+                    <div class="cat box nav-link" data-category="people" data-bs-toggle="tooltip" title="People" data-bs-placement="bottom"><span class="menu marker bi-person-lines-fill"></span><span class="menu counter" id="people-counter"></span></div>
+                </div>
             </nav>
             <nav class="navbar-right navbar">    
             <ul class="navbar-nav">
-                <li class="nav-item" id="download">
-                    <a class="nav-link disabled" aria-current="page" href="#"><i class="bi-download " role="img"></i> Download Results</a>
+                <li class="nav-item fs-5" id="download">
+                    <a class="nav-link disabled bi-download" aria-current="page" href="#"
+                       data-bs-toggle="tooltip" title="Download Results" data-bs-placement="top"></a>
                 </li>
                 
-                <li class="nav-item" id="visualize">
-                    <a class="nav-link disabled" aria-current="page" href="#"><i class="bi-bar-chart-line " role="img"></i> Visualize</a>
+                <li class="nav-item fs-5" id="visualize">
+                    <a class="nav-link bi-bar-chart-line disabled" aria-current="page" href="#"
+                       data-bs-toggle="tooltip" title="Visualize Results" data-bs-placement="top"></a>
                 </li>  
 
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle disabled"  href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi-journal-bookmark " role="img"></i> Bookmarks
-                  </a>
-                  <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <li><a class="dropdown-item" href="#">Action</a></li>
-                    <li><a class="dropdown-item" href="#">Another action</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="#">Something else here</a></li>
-                  </ul>
+                <li class="nav-item fs-5">
+                </li>  
+
+                <li class="nav-item fs-5">
+                  <a class="nav-link bi-journal-bookmark disabled" 
+                     data-bs-toggle="tooltip" id="bookmark_menu" title="Bookmarked Queries" data-bs-placement="top"
+                     href="#" role="button" data-title="Bookmarks"></a>
                 </li>
 
-                <li class="nav-item fs-4" id="configure">
-                    <span class="nav-link"  data-bs-toggle="tooltip" title="Settings" data-bs-placement="bottom"  href="#"><i class="bi-wrench-adjustable-circle " role="img"></i></span>
+                <li class="nav-item fs-5">
+                    <a class="nav-link bi-robot"  href="#" id="indexmatcher_menu"
+                       data-bs-toggle="tooltip" title="Index Terms" data-title="Index Terms" data-size="mini" data-bs-placement="top"
+                       role="button"></a>
+                  </li>
+
+                <li class="nav-item fs-5" data-title="Settings">
+                    <a class="nav-link bi-wrench-adjustable-circle disabled"   id="configure" 
+                        data-bs-toggle="tooltip" title="Settings" data-title="Settings" data-size="mini"  data-bs-placement="top"  href="#"></a>
                 </li>
-                <li class="nav-item fs-4" id="logout">
-                <a class="nav-link" aria-current="page" data-bs-toggle="tooltip" title="Logout" data-bs-placement="bottom" href="/auth/logout"><i class="bi-unlock" role="img"></i></a>
-              </li>
-              <li class="nav-item" id="zhaw-about">
-                <a class="navbar-brand align-middle ls-4" disabled href="#"><i class="zhaw-logo"></i></a>
-              </li>
+
+                
+                <li class="nav-item fs-5">
+                </li>  
+
+                <li class="nav-item fs-5" id="logout">
+                    <a class="nav-link bi-unlock" aria-current="page" data-bs-toggle="tooltip" title="Logout" data-bs-placement="top" href="/auth/logout"></a>
+                </li>
             </ul>
+
+            <div class="nav-item" id="zhaw-about">
+                <a class="navbar-brand align-middle ls-4" disabled href="#"><i class="zhaw-logo"></i></a>
+            </div>
         </nav>
 
         <div class="searchbar">
@@ -75,10 +77,13 @@
                 </div>
                 <div class="searchtools">
                     <div class="tool-item" id="newsearch">
-                        <span class="btn btn-outline-secondary btn-sm"  data-bs-toggle="tooltip" title="New Search" data-bs-placement="bottom" href="#"><i class="bi-eraser-fill" role="img"></i></span>
+                        <span class="btn btn-outline-secondary btn-sm bi-eraser-fill"  data-bs-toggle="tooltip" title="New Search" data-bs-placement="bottom" href="#"></span>
                     </div>
                     <div class="tool-item" id="bookmark">
-                        <span class="btn btn-outline-secondary btn-sm disable" data-bs-toggle="tooltip" title="Bookmark Search" data-bs-placement="bottom"  href="#"><i class="bi-search-heart " role="img"></i></span>
+                        <span class="btn btn-outline-secondary btn-sm disabled bi-search-heart" data-bs-toggle="tooltip" title="Bookmark Search" data-bs-placement="bottom"  href="#"></span>
+                    </div>
+                    <div class="tool-item" id="savematcher" >
+                        <span class="btn btn-outline-secondary btn-sm disabled bi-exclamation-diamond"  data-bs-toggle="tooltip" title="Save Index Match" data-bs-placement="bottom" href="#"></span>
                     </div>
                 </div>
             </div>
@@ -129,6 +134,13 @@
                     </li>
                 </ul>
             </div>
+        </div>
+
+        <div class="menuoverlay" hidden>
+               <h3 id="overlaytitle"></h3>
+               <div id="overlaycontent">
+                hello
+               </div>
         </div>
 
         <div id="mainarea" class="results" hidden>
@@ -203,6 +215,15 @@
         <li class="person">
             <span class="name" data-qtype="person">Chrisitan Glahn</span> (<span class="initials" data-qtype="person">glah</span>) <span class="mark cat-none" data-qtype="department" data-qvalue=""></span><span class="counter">0</span>
         </li>
+    </template>
+
+    <template id="templateIndexTerm">
+        <div class="indexterm">
+            <div class="index-query"></div>
+            <div class="index-sdg"></div>
+            <div class="index-lang"></div>
+            <div class="index-tool bi-trash-fill disabled"></div>
+        </div>
     </template>
     </body>
 </html>

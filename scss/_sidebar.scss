@@ -8,44 +8,92 @@
     grid-template-columns: 2fr 1fr 1fr 360px;
 
     // the next line prepares for issue 38
-    // grid-template-rows: 68px 110px 76px 120px 1fr 68px;
-    grid-template-rows: 68px 110px 76px 120px 1fr 10px;
+    grid-template-rows: 65px 40px 148px 120px 1fr 55px;
+    // grid-template-rows: 68px 110px 76px 120px 1fr 10px;
 
     grid-template-areas: 
-        "menul menul menur menur"
+        "srch srch srch menul"
         "srch srch srch sdgs"
         "content content content sdgs"
         "content content content dept"
         "content content content pple"
-        "content content content fcts"
+        "content content content menur"
     ;
 
     .navbar-nav {
-        margin-left: 2em;
-        margin-right: 2em;
+        margin-left: 0em;
+        margin-right: 0em;
         flex-direction: row;
     }
 
     .navbar-right,
     .navbar-left {
-        background-color: $white;
-
         li {
-            margin-right: .5em;
-            margin-left: .5em;
+            text-align: center;
+            // padding-right: .5em;
+            // padding-left: .5em;
+            width: 1.8em;
         }
     }
 
     .navbar-right {
         grid-area: menur;
-        text-align: right;
+        padding: 0 0 1em 0;
+        // padding-right: 1em;
+        display: grid;
+        grid-template-columns: auto 60px;
+
+        .navbar-brand {
+            margin-right: 0;
+        }
+
+        .zhawlogo {
+            margin-right: 0;
+            grid-column: 2;
+        }
+
+        .navbar-nav {
+            grid-column: 1;
+
+            .active {
+                z-index: 11;
+
+                color: white;
+                background-color: $zhawlogo;
+                border-bottom-left-radius: 15px;
+                border-bottom-right-radius: 15px;
+
+                a {
+                    color: white;
+                }
+            }
+        }
     }
 
     .navbar-left {
         text-align: left;
         grid-area: menul;
+        padding-top: .5em;
+        padding-bottom: 12px;
+
+        .active {
+            @extend .shadow-sm;
+            
+            border-bottom-right-radius: .6em;
+            border-top-right-radius: .6em;
+
+            .marker {
+                background-color: $zhawlogo;
+            }
+            .counter {
+                background-color: tint-color($zhawlogo, 80%);
+                color: $zhawlogo;
+            }
+        }
     }
 
+    .navbar-right, 
+    .navbar-left,
     .sdg,
     .department,
     .people {
@@ -101,6 +149,85 @@
             gap: 0px;
             color: var(--bs-white);
             cursor: pointer;
+
+            .counter {
+                overflow: hidden;
+            }
+        }
+    }
+}
+
+.menuoverlay {
+    @extend .shadow; 
+
+    z-index: 10;
+
+    grid-column: 4;
+    grid-row-start: 1;
+    grid-row-end: 6;
+
+    margin-top: .4em;
+    margin-right: .7em;
+    margin-left: .5em;
+    padding-left: .5em;
+    padding-right: .5em;
+
+    border-radius: .6em;
+    // border-top-left-radius: .6em;
+    // border-top-right-radius: .6em;
+
+    border-bottom: 3px solid $zhawlogo;
+
+    background-color: tint-color($zhawlogo, 80%);
+
+    display: grid;
+
+    grid-template-rows: 30px auto;
+
+    &.mini {
+        margin-top: 0;
+        grid-row-start: 4;
+    }
+
+    #overlaytitle {
+        grid-row: 1;
+    }
+
+    #overlaycontent {
+        grid-row: 2;
+        overflow: scroll;
+        padding-right: .5em;
+        overflow: scroll;
+
+        .indexterm {
+            cursor: pointer;
+
+            margin-bottom: .2em;
+            display: grid;
+            height: 1.5em;
+            grid-template-columns: auto 2em 2em 1em;
+            .index-query {
+                grid-column: 1;
+                overflow: hidden;
+                font-size: 0.8em;
+            }
+            .index-sdg {
+                padding: 0;
+                text-align: center;
+                grid-column: 2;
+            }
+            .index-lang {
+                text-align: center;
+                grid-column: 3;
+            }
+            .index-tool {
+                &.disabled {
+                    color: $gray-500;
+                    cursor: default;
+                }
+                text-align: center;
+                grid-column: 4;
+            }
         }
     }
 }
@@ -171,7 +298,7 @@
         padding-bottom: .3em;
 
         display: grid;
-        grid-template-columns: auto 7em;
+        grid-template-columns: auto 10em;
         justify-content: top;
 
         .searchoptions {
@@ -200,10 +327,16 @@
                     }
                 }
 
+                .bi-slash-circle::before,
+                .bi-chat-dots::before,
                 .bi-bookmark::before,
                 .bi-person-circle::before {
                     padding-right: .4em;
                     // padding-right: .3em;
+                }
+
+                .bi-slash-circle {
+                    color: $orange-600;
                 }
 
                 // .searchoption.cat {
@@ -281,6 +414,7 @@
     text-align: center;
     line-height: $font-size-base * 2;
     font-size: $font-size-base * 1.5;
+    background-color: $gray-600;
 
     &.searchoption {
         height: inherit;

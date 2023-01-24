@@ -3,9 +3,29 @@ import * as StatsModel from "./StatsModel.mjs";
 import * as Config from "./ConfigModel.mjs";
 import * as Logger from "./Logger.mjs";
 import * as QueryModel from "./QueryModel.mjs";
+import * as IndexModel from "./IndexerModel.mjs";
 import * as Events from "./Events.mjs";
 
 // pull up the System with a basic configuration
+
+Events.listen.queryUpdate(handleQueryUpdate);
+Events.listen.queryUpdate(handleQueryUpdateIndex);
+Events.listen.queryUpdate(requestQueryStats);
+
+Events.listen.queryExtra(handleQueryExtraUpdate);
+// Events.listen.queryAddItem(handleQueryAdd);
+Events.listen.dataUpdate(handleDataUpdate);
+Events.listen.statUpdate(handleStats);
+Events.listen.bookmarkUpdate(() => {});
+
+Events.listen.partialMatchingTerm(conditionalIndexButtonPartial);
+Events.listen.fullMatchingTerm(conditionalIndexButtonOn);
+Events.listen.invalidMatchingTerm(conditionalIndexButtonOff);
+
+Events.listen.queryUpdate(renderSearchOptions);
+Events.listen.indexTermData(renderIndexTerms);
+
+Events.listen.queryError(showQueryError);
 
 async function init() {
     await Config.init("config.json", {
@@ -21,12 +41,14 @@ async function init() {
 
     addSearchElement();
     addSearchTerm();
-    toggleResultDetails();
 
-    clearSearch();
-    dropSearchElement();
+    // dropSearchElement();
+
+    initTools();
 
     initEvents();
+
+    // QueryModel.init();
 }
 
 init().then(() => Events.trigger.queryUpdate());
@@ -38,25 +60,63 @@ function initEvents() {
     const evAnchor = document.querySelector("#zhaw-about");
 
     Events.init(evAnchor);
+}
 
-    evAnchor.addEventListener("queryupdate", handleQueryUpdate);
-    evAnchor.addEventListener("queryupdate", renderSearchOptions);
-    // evAnchor.addEventListener("queryupdate", requestQueryFromServer);
-    evAnchor.addEventListener("queryupdate", requestQueryStats);
+function initTools() {
+    const evAnchor = document.querySelector(".navbar.navbar-right");
+    const menuAnchor = document.querySelector(".menuoverlay");
+    const menuTitle = menuAnchor.querySelector("#overlaytitle");
+    const menuContent = menuAnchor.querySelector("#overlaycontent");
 
-    evAnchor.addEventListener("queryupdate.extra", handleQueryExtraUpdate);
-    evAnchor.addEventListener("queryadd", handleQueryAdd);
-    
-    evAnchor.addEventListener("dataupdate", handleDataUpdate);
-    evAnchor.addEventListener("dataupdate.stat", handleStats);
-   
-    // evAnchor.addEventListener("dataupdate", updaterEdu);
-    // evAnchor.addEventListener("dataupdate", updaterProj);
-    // evAnchor.addEventListener("dataupdate", updaterPubs);
-    // evAnchor.addEventListener("dataupdate", updaterStat);
-    // evAnchor.addEventListener("dataupdate", updaterPersons);
+    const funcs = {
+        "indexmatcher_menu": () => {Events.trigger.indexTermData(); Events.trigger.indexTermUpdate(QueryModel.query());},
+        "bookmark_menu": Events.trigger.bookmarkData,
+        "configure": () => {}
+    };
 
-    evAnchor.addEventListener("dataupdate.bookmark", () => {});
+    evAnchor.addEventListener("click", (ev) => {
+        if (["indexmatcher_menu", "configure", "bookmark_menu"].includes(ev.target.id)) {
+            const title = ev.target.dataset.title;
+            const overlaySize = ev.target.dataset.size;
+            const prevActive = evAnchor.querySelector(".active");
+            const ttip = bootstrap.Tooltip.getInstance(ev.target);
+
+            if (ttip) {
+                ttip.hide()
+            }
+
+            ev.preventDefault();
+
+            if (ev.target.parentNode.classList.contains("active")) {
+                // close
+                menuAnchor.setAttribute("hidden", "hidden");
+                menuAnchor.classList.remove("mini");
+
+                ev.target.parentNode.classList.remove("active")
+
+                return;
+            }
+
+            if (prevActive) {
+                prevActive.classList.remove("active");
+                menuAnchor.classList.remove("mini");
+            }
+
+            if (overlaySize && overlaySize.length) {
+                menuAnchor.classList.add(overlaySize);
+            }
+
+            ev.target.parentNode.classList.add("active");
+
+            menuTitle.textContent = title;
+            menuContent.textContent = "";
+
+            menuAnchor.removeAttribute("hidden");
+
+            // trigger event to load the content
+            funcs[ev.target.id]();
+        }
+    });
 }
 
 // UI Usability functions 
@@ -98,25 +158,41 @@ function addQType(evt) {
         const type = target.dataset.qtype;
         let value = target.dataset.qvalue;
 
-        // console.log(`${type} -> ${value} `);
-         
-        if (type && value) {
-            if (type === "sdg") {
-                value = Number(value);
-            }
-            Events.trigger.queryAddItem({type, value});            
-        }
+        console.log(`${type} -> ${value} `);
+        Events.trigger.queryAddItem({type, value});            
     }
 }
 
-function toggleResultDetails() {
-    const e = document.querySelector('.results'); 
-
-    e.addEventListener("click", foldResults);
-    e.addEventListener("click", addQType);
-} 
-
 // search query functions 
+
+function showQueryError(ev) {
+    const searchTermElement = document.querySelector("#searchterms");
+    
+    searchTermElement.classList.add("error");            
+            
+    // tell the user that something is missing
+    const tooltip = bootstrap.Tooltip.getOrCreateInstance(searchTermElement, {
+       title: ev.detail.message,
+       placement: "bottom",
+       popperConfig: {
+            placement: "bottom-start",                 
+       }
+    });
+
+    tooltip.show();
+}
+
+function clearQueryError() {
+    const searchTermElement = document.querySelector("#searchterms");
+    
+    searchTermElement.classList.remove("error");            
+            
+    // tell the user that something is missing
+    const ttip = bootstrap.Tooltip.getInstance(searchTermElement);
+    if (ttip) {
+        ttip.dispose();
+    }
+}
 
 // Self registering UI Events
 
@@ -138,93 +214,89 @@ function addSearchTerm() {
             // if no colon is in the current value, the query is definitely a term.
             type = "term";
             value = currentValue;   
-        }  
-        else {
-            switch (type) {
-                case "sdg": 
-                    info = "a SDG number";
-                    break;
-                case "person":
-                    info = "a name";
-                    break;
-                case "dept":
-                case "department":
-                    type = "department";
-                    info = "a department id"
-                    break;
-                default: 
-                    // if a colon is in the term, but the type is invalid, then the colon is 
-                    // part of the term.
-                    type = "term";
-                    value = currentValue; 
-                    break;
-            }
-        }
+        } 
 
         searchTermElement.classList.remove("error");
         bootstrap.Tooltip.getOrCreateInstance(searchTermElement).dispose();
 
-        // only add a term to the search if there is something to add
-        // This can happen when a user enters a keyword and colon but enters otherwise nothing
-        if (value.length) {
-            Events.trigger.queryAddItem({type, value});
-
-            // searchTermElement.value = "";
-        }
-        else if (!searchTermElement.classList.contains("error")) {
-            Events.trigger.queryError({message: `No query term found. Please add ${info}.`});
-        }
+        Events.trigger.queryAddItem({type, value});
 
         evt.preventDefault();
     }
 
-    function showQueryError(ev) {
-        searchTermElement.classList.add("error");            
-                
-        // tell the user that something is missing
-        const tooltip = bootstrap.Tooltip.getOrCreateInstance(searchTermElement, {
-           title: ev.detail.message,
-           placement: "bottom",
-           popperConfig: {
-                placement: "bottom-start",                 
-           }
-        });
-    
-        tooltip.show();
-    }
-
     searchFormElement.addEventListener("submit", handleSubmit);
     searchFormButton.addEventListener("click", handleSubmit);
-
-    document.querySelector("#zhaw-about").addEventListener("query.error", showQueryError);
 }
 
 function addSearchElement() {
     const sidebarelement = document.querySelector(".widgets");
     
+    sidebarelement.addEventListener("click", clearQueryError);
+
     sidebarelement.addEventListener("click", addQType);
+    sidebarelement.addEventListener("click", foldResults);
+    sidebarelement.addEventListener("click", clearSearch);
+    sidebarelement.addEventListener("click", saveIndexQuery);
+    sidebarelement.addEventListener("click", dropSearchElement);
+    sidebarelement.addEventListener("click", editSearchElement);
+    sidebarelement.addEventListener("click", handleIndexActivate);
+    sidebarelement.addEventListener("click", handleIndexDelete);
 }
 
-function dropSearchElement() {
+function editSearchElement(evt) {
+    if (!evt.target.classList.contains("searchoption")) {
+        return;
+    } 
+
+    const targetParent = evt.target.parentNode;
+    const type = targetParent.dataset.qtype;
+    const value = targetParent.dataset.qvalue;
+
+    if (type && (type === "sdg" || type === "department")) {
+        return;
+    }
+
+    Events.trigger.queryDrop({type, value});
+    const searchTermElement = document.querySelector("#searchterms");
+
+    if (type === "term") {
+        searchTermElement.value = `${value}`;
+    }
+    else {
+        searchTermElement.value = `${type}:${value}`;
+    }
+}
+
+function dropSearchElement(evt) {
+    // const searchoptions = document.querySelector("#searchcontainer .searchoptions");
+    if (!evt.target.classList.contains("optionclose")) {
+        return;
+    }
+
     Logger.debug("drop search element");
-    const searchoptions = document.querySelector("#searchcontainer .searchoptions");
 
-    // should not reset the click handler
-    searchoptions.addEventListener("click", function (evt) {
-        if (evt.target.classList.contains("optionclose"))  {
-            var targetParent = evt.target.parentNode;
+    const targetParent = evt.target.parentNode;
+    const type = targetParent.dataset.qtype;
+    
+    const value = type === "sdg" ? 
+                  Number(targetParent.dataset.qvalue) :
+                  targetParent.dataset.qvalue;
 
-            const type = targetParent.dataset.qtype;
-            let value = targetParent.dataset.qvalue;
-
-            if (type === "sdg") {
-                value = Number(value);
-            }
-
-            QueryModel.drop({type, value});
-        }
-    });
+    Events.trigger.queryDrop({type, value});
 } 
+
+function saveIndexQuery(ev) {
+    if (ev.target.parentNode.id !== "savematcher") {
+        return;
+    }
+
+    if (ev.target.classList.contains("part")) {
+        Logger.debug("Incomplete Index Term. Nothing to do!");
+        return;
+    }
+
+    Events.trigger.indexTermCreate(QueryModel.queryterms());
+}
 
 function liveQueryInput() {
     const searchTermElement = document.querySelector("#searchterms");
@@ -234,18 +306,39 @@ function liveQueryInput() {
     });
 } 
 
-function clearSearch() {
-    const newsearch = document.querySelector('#newsearch');
-    const searchoptions = document.querySelector('#searchcontainer .searchoptions');
-    const searchEntries = document.querySelector(".searchoptions");
-
-    newsearch.addEventListener("click", function (evt) {
-        Logger.debug("clearSearch");
-
-        searchoptions.innerHTML = "";
-        QueryModel.clear();
-    });
+function clearSearch(ev) {
+    if (
+        ev.target.id !== "newsearch" && 
+        ev.target.parentNode.id !== "newsearch" 
+    ) {
+        return;
+    }
+    
+    document.querySelector('#searchcontainer .searchoptions').innerHTML = "";
+    Events.trigger.queryClear();
 } 
+
+function handleIndexActivate(ev) {
+    if (!ev.target.parentNode.classList.contains("indexterm") || ev.target.classList.contains("disabled")) {
+        return;
+    }
+
+    const idxid = ev.target.parentNode.id.replace("index-", "");
+
+    IndexModel.getOneRecord(idxid);
+}
+
+
+function handleIndexDelete(ev) {
+    if (!ev.target.classList.contains("bi-trash-fill") || ev.target.classList.contains("disabled")) {
+        return;
+    }
+
+    Logger.debug("drop index");
+    const id = ev.target.parentNode.id.replace("index-","");
+
+    Events.trigger.indexTermDelete(id);
+}
 
 // QueryModel event handler
 
@@ -259,16 +352,18 @@ function handleQueryExtraUpdate(ev) {
     Events.trigger.queryUpdate();
 } 
 
-function handleQueryAdd(ev) {
-    const type = ev.detail.type;
-    const value = ev.detail.value;
-    
-    QueryModel.add({type, value});
-}
-
 // QueryModel Support functions
 
-function handleQueryUpdate(ev) {
+function handleQueryUpdateIndex() {
+    const menuitem = document.querySelector("#indexmatcher_menu");
+    if(!menuitem.parentNode.classList.contains("active")) {
+        return; 
+    }
+
+    Events.trigger.indexTermUpdate(QueryModel.query());
+}
+
+function handleQueryUpdate() {
     // trigger search request to the backend
     const section = document.querySelector('.nav-link.active');
     const category = section.dataset.category;
@@ -289,6 +384,12 @@ function renderSearchOptions() {
 
     searchoptions.innerHTML = ""; // delete all contents
 
+    const iconClass = {
+        notterm: "bi-slash-circle",
+        lang: "bi-chat-dots",
+        person: "bi-person-circle",
+    };
+
     QueryModel.queryterms().forEach(term => {
         const result = template.content.cloneNode(true);
         const datafield = result.querySelector(".searchoption");
@@ -302,9 +403,10 @@ function renderSearchOptions() {
                 datafield.classList.add("marker");
                 datafield.classList.add(`cat-${term.value < 10 ? "0" : ""}${term.value}`);
                 break;
-            case "person": 
-                datafield.classList.add("bi-person-circle");
             default:
+                if (Object.hasOwn(iconClass, term.type)) {
+                    datafield.classList.add(iconClass[term.type]);
+                }
                 datafield.innerText = term.value;
                 break;
         }
@@ -313,13 +415,52 @@ function renderSearchOptions() {
     });
 }
 
+function renderIndexTerms() {
+    // only render if the index terms are shown.
+    
+    Logger.debug("render index terms");
+
+    const menuitem = document.querySelector("#indexmatcher_menu");
+    if(!menuitem.parentNode.classList.contains("active")) {
+        return; 
+    }    
+
+    const templateList = document.querySelector("#templateIndexTerm");
+    const templateQuery = document.querySelector("#searchoption");
+    const container = document.querySelector("#overlaycontent");
+
+    container.textContent = "";
+
+    IndexModel.getRecords().forEach(
+        (rec) => {
+            const result = templateList.content.cloneNode(true);
+            const lang = rec.qterms.filter(t => t.type === "lang").map(r => r.value).join("");
+            const sdg = rec.qterms.filter(t => t.type === "sdg").map(r => r.value).pop();
+            const terms = rec.qterms
+                .filter(t => t.type === "term" || t.type === "notterm")
+                .map(t => `${t.type === "notterm" ? "not:" : ""}${t.value}`)
+                .join(", ");
+
+            const sdgcls = `cat-${sdg < 10 ? "0" : ""}${sdg}`;
+
+            result.querySelector(".indexterm").id = "index-" + rec.id;
+            result.querySelector(".index-sdg").classList.add("mark");
+            result.querySelector(".index-sdg").classList.add(sdgcls);
+            result.querySelector(".index-lang").textContent = lang;
+            result.querySelector(".index-query").textContent = terms;
+
+            container.appendChild(result);
+        }
+    );
+}
+
 function handleDataUpdate() {
     Logger.debug("data update");
     
     const targetsection = document.querySelector('.results');
 
     const section = document.querySelector('.nav-link.active');
-    const category = section.parentElement.id.split("-").shift();
+    const category = section.dataset.category;
    
     if (!["publications", "projects", "modules", "people"].includes(category)) {
         Logger.debug( "not in a data category. nothing to render");
@@ -345,7 +486,8 @@ function handleDataUpdate() {
 
         result.querySelector(".pubtitle").innerText = object.title;
         result.querySelector(".year").innerText = object.year;
-        result.querySelector(".tool.bi-download").href = object.link;
+        [...(result.querySelectorAll(".tool.bi-download"))].forEach(e => e.href = object.link);
+        
         result.querySelector(".categories").innerHTML = object.sdg.map(sdg => `<span class="mark cat-${sdg}" data-qtype="sdg" data-qvalue="${sdg}"></span>`).join(" ");
         result.querySelector(".extra.abstract").innerText= object.abstract;
         result.querySelector(".extra.pubtype").innerText= object.subtype.name;
@@ -474,4 +616,56 @@ function requestQueryStats(ev) {
 
     StatsModel.loadData(category, QueryModel.query())
         .then(() => Events.trigger.statUpdate())
+}
+
+function conditionalIndexButtonOff() {
+    const button = document.querySelector("#savematcher .btn");
+
+    if (!button.classList.contains("disabled")) {
+        button.classList.add("disabled");
+    }
+    if (!button.classList.contains("btn-outline-secondary")) {
+        button.classList.add("btn-outline-secondary");
+    }
+    button.classList.remove("btn-outline-success");
+    button.classList.remove("btn-outline-danger");
+
+    bootstrap.Tooltip.getOrCreateInstance(button).dispose();
+}
+
+function conditionalIndexButtonOn() {
+    const button = document.querySelector("#savematcher .btn");
+
+    button.classList.remove("disabled");
+    button.classList.remove("part");
+    button.classList.remove("btn-outline-secondary");
+    if (!button.classList.contains("btn-outline-success")) {
+        button.classList.add("btn-outline-success");
+    }
+    button.classList.remove("btn-outline-danger");
+
+    button.setAttribute("title", "Save Index Match");
+
+    bootstrap.Tooltip.getOrCreateInstance(button).dispose();
+    bootstrap.Tooltip.getOrCreateInstance(button).show();
+}
+
+function conditionalIndexButtonPartial(ev) {
+    const button = document.querySelector("#savematcher .btn");
+    button.classList.remove("disabled");
+    if (!button.classList.contains("part")) {
+        button.classList.add("part");
+    }
+    button.classList.remove("btn-outline-secondary");
+    button.classList.remove("btn-outline-success");
+    
+    if (!button.classList.contains("btn-outline-danger")) {
+        button.classList.add("btn-outline-danger");
+    }
+
+    const details = ev.detail;
+
+    button.setAttribute("title", `Add ${details.join(" and ")} to complete index match!` );
+    bootstrap.Tooltip.getOrCreateInstance(button).dispose();
+    bootstrap.Tooltip.getOrCreateInstance(button).show();
 }

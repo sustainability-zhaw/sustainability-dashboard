@@ -1,42 +1,45 @@
 // import * as Logger from "./Logger.mjs";
 
-export let trigger;
+let anchor; 
+    
+const events = [
+    "queryUpdate", // ask to load data
+    "queryExtra",
+    "dataUpdate", // new data is available
+    "statUpdate", // new data is available
+    "personUpdate",
+    "queryAddItem",
+    "queryError",
+    "queryClear",
+    "queryDrop",
+    "queryReplace",
+    "partialMatchingTerm",
+    "fullMatchingTerm",
+    "invalidMatchingTerm",
+    "indexTermDelete",
+    "indexTermCreate",
+    "indexTermUpdate",
+    "indexTermData",
+    "bookmarkDelete",
+    "bookmarkCreate",
+    "bookmarkUpdate",
+    "bookmarkData"
+];
+
+export const trigger = events.reduce((a, e) => {
+        a[e] = (detail) => anchor ? anchor.dispatchEvent(new CustomEvent(e, {detail})) : null;
+        return a;
+    }, {});
+
+const preListeners = [];
+
+export const listen = events.reduce((a, event) => { 
+        a[event] = (func) => anchor ? anchor.addEventListener(event, func) : preListeners.push({event, func});
+        return a;
+    }, {});
 
 export function init(evAnchor) {
-    const queryUpdate        = new CustomEvent("queryupdate", {});
-    const queryExtraUpdate   = new CustomEvent("queryupdate.extra", {});
+    anchor = evAnchor;
 
-    const dataUpdate         = new CustomEvent("dataupdate", {});
-    const dataUpdateStat     = new CustomEvent("dataupdate.stat", {});
-    const dataUpdatePerson   = new CustomEvent("dataupdate.person", {});
-    const dataUpdatePub      = new CustomEvent("dataupdate.publication", {});
-    const dataUpdateEdu      = new CustomEvent("dataupdate.education", {});
-    const dataUpdatePrj      = new CustomEvent("dataupdate.project", {});
-    const dataUpdateBookmark = new CustomEvent("dataupdate.bookmark", {});
-    
-    trigger = {
-        queryError: (detail) => evAnchor.dispatchEvent(new CustomEvent("query.error", {detail})),
-
-        queryUpdate: () => evAnchor.dispatchEvent(queryUpdate),
-        queryExtra: () => evAnchor.dispatchEvent(queryExtraUpdate),
-
-        queryAddItem: (detail) => evAnchor.dispatchEvent(new CustomEvent("queryadd", {detail})),
-
-        dataUpdate: () => evAnchor.dispatchEvent(dataUpdate),
-        statUpdate: () => evAnchor.dispatchEvent(dataUpdateStat),
-
-        // special queries
-        personUpdate: () => evAnchor.dispatchEvent(dataUpdatePerson),
-
-        // Future function
-        bookmarkUpdate: () => evAnchor.dispatchEvent(dataUpdateBookmark),
-
-        // possibly obsolete
-        // pubUpdate: () => evAnchor.dispatchEvent(dataUpdatePub),
-        // projectUpdate: () => evAnchor.dispatchEvent(dataUpdatePrj),
-        // eduUpdate: () => evAnchor.dispatchEvent(dataUpdateEdu)
-    };
-    
-    // prevent accidental dynamic changes
-    trigger = Object.freeze(trigger);
+    preListeners.forEach((li) => anchor.addEventListener(li.event, li.func));
 }

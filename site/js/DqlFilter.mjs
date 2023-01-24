@@ -13,6 +13,21 @@ export function buildFilter(queryObj) {
         .concat("}");
 }
 
+export function buildMatchFilter(queryObj) {
+
+    return []
+        .concat(buildFilterHelpers(queryObj))
+        .concat(`vFilter as var(func: type(SdgMatch))`)
+        .concat(buildMatcherFilter(queryObj))
+        // .concat("@cascade")
+        .concat("{")
+        .concat(" uid ")
+        // .concat(buildTermCascade("Keyword", "keywords", queryObj.terms))
+        // .concat(buildTermCascade("PublicationClass", "class", queryObj.terms))
+        .concat("}");
+}
+
+
 export function buildObjectTypeFilter(cat) {
     return `vObjectType as var(func: eq(InfoObjectType.name, "${ cat }")) { uid }`;
 }
@@ -51,12 +66,12 @@ function mapHelperQueryText(theType, initials) {
     return (t, i) => `qh${ theType }_${ i } as var(func: type(${ theType })) @filter(anyofterms(${ theType }.${ initials }, ${ t })) { uid }`;
 }
 
-function mapHelperVFilter(tp, tpattr) {
+function mapHelperVFilter(tp, tpattr, targetType) {
     if (!(tpattr && tpattr.length)) {
         tpattr = `${tp.toLowerCase()}s`;
     }
 
-    return (t, i) => `uid_in(InfoObject.${ tpattr }, uid(qh${ tp }_${i}))`;
+    return (t, i) => `uid_in(${targetType}.${ tpattr }, uid(qh${ tp }_${i}))`;
 }
 
 function buildFilterHelpers(queryObj) {
@@ -93,7 +108,7 @@ function buildFilterHelpers(queryObj) {
     return retval;
 }
 
-function buildHelperFilter(queryObj) {
+function buildHelperFilter(queryObj, targetType) {
     let retval = [];
 
     if (!queryObj) {
@@ -103,7 +118,7 @@ function buildHelperFilter(queryObj) {
     if (queryObj.sdgs && queryObj.sdgs.length) {
         retval = retval.concat(
             queryObj.sdgs.map(
-               mapHelperVFilter("Sdg")
+               mapHelperVFilter("Sdg", targetType === "InfoObject" ? "sdgs" : "sdg", targetType)
             ).join(" and ")
         );
     }
@@ -121,6 +136,14 @@ function buildHelperFilter(queryObj) {
             queryObj.persons.map(
                 mapHelperVFilter("Person")
             ).join(" and ")
+        );
+    }
+
+    if (queryObj.lang && queryObj.lang.length) {
+        retval = retval.concat(
+            queryObj.lang.map(
+                (lang) => `eq(${targetType}.language, ${lang.toLowerCase()})`
+            ).join(" or ")
         );
     }
 
@@ -144,8 +167,25 @@ function buildTermFilter(queryObj) {
         `alloftext(InfoObject.extras, "${terms}")`
     ];
 
-    return [ `( ${ f.join(" or ") })` ];
+    return [ `( ${ f.join(" OR ") })` ];
 }
+
+function buildNotTermFilter(queryObj) {
+    if (!(queryObj && queryObj.notterms && queryObj.notterms.length)) {
+        return [];
+    }
+
+    const terms = queryObj.notterms.map((t) => t.substring(1,t.length - 1)).join(" ");
+
+    const f = [
+        `alloftext(InfoObject.title, "${terms}")`,
+        `alloftext(InfoObject.abstract, "${terms}")`,
+        `alloftext(InfoObject.extras, "${terms}")`
+    ];
+
+    return [ `( NOT ( ${ f.join(" OR ") }))` ];
+}
+
 
 function buildMainFilter(queryObj) {
     const conditions = []; 
@@ -154,12 +194,52 @@ function buildMainFilter(queryObj) {
         return [];
     }
 
-    conditions.push(...buildHelperFilter(queryObj));
+    conditions.push(...buildHelperFilter(queryObj, "InfoObject"));
     conditions.push(...buildTermFilter(queryObj));
+    conditions.push(...buildNotTermFilter(queryObj));
 
     if (! conditions.length ) {
         return [];
     }
 
     return [ `@filter( ${ conditions.join(" and ") } )` ];
+}
+
+function buildMatcherFilter(queryObj) {
+    const conditions = []; 
+
+    if (!queryObj) {
+        return [];
+    }
+
+    conditions.push(...buildHelperFilter(queryObj, "SdgMatch"));
+    conditions.push(...buildMatchTermFilter(queryObj));
+
+    if (! conditions.length ) {
+        return [];
+    }
+
+    return [ `@filter( ${ conditions.join(" and ") } )` ];
+}
+
+
+function buildMatchTermFilter(queryObj) {
+    const f = [];
+
+    if (queryObj.terms.length && queryObj.terms.length <= 2) {
+        f.push(`( eq(SdgMatch.keyword, ${queryObj.terms[0]}) or eq(SdgMatch.required_context, ${queryObj.terms[0]}) )`);
+    }
+
+    if (queryObj.terms.length === 2) {
+        f.push(`( eq(SdgMatch.keyword, ${queryObj.terms[1]}) or eq(SdgMatch.required_context, ${queryObj.terms[1]}) )`);
+    }
+
+    if (queryObj.notterms.length) {
+        f.push(`eq(SdgMatch.forbidden_context, ${queryObj.notterms[0]})`);
+    }
+
+    if (f.length) {
+        return [ `(  ${ f.join(" AND ") } )` ];
+    }
+    return f;
 }
