@@ -66,7 +66,7 @@ function mapHelperQueryText(theType, initials) {
     return (t, i) => `qh${ theType }_${ i } as var(func: type(${ theType })) @filter(anyofterms(${ theType }.${ initials }, ${ t })) { uid }`;
 }
 
-function mapHelperVFilter(tp, tpattr, targetType) {
+function mapHelperVFilter(targetType, tp, tpattr) {
     if (!(tpattr && tpattr.length)) {
         tpattr = `${tp.toLowerCase()}s`;
     }
@@ -110,6 +110,12 @@ function buildFilterHelpers(queryObj) {
 
 function buildHelperFilter(queryObj, targetType) {
     let retval = [];
+    let attrs = {
+        InfoObject: {},
+        SdgMatch: {
+            Sdg: "sdg"
+        }
+    };
 
     if (!queryObj) {
         return retval;
@@ -118,7 +124,7 @@ function buildHelperFilter(queryObj, targetType) {
     if (queryObj.sdgs && queryObj.sdgs.length) {
         retval = retval.concat(
             queryObj.sdgs.map(
-               mapHelperVFilter("Sdg", targetType === "InfoObject" ? "sdgs" : "sdg", targetType)
+               mapHelperVFilter(targetType, "Sdg", attrs[targetType].sdg)
             ).join(" and ")
         );
     }
@@ -126,7 +132,7 @@ function buildHelperFilter(queryObj, targetType) {
     if (queryObj.departments && queryObj.departments.length) {
         retval = retval.concat(
             queryObj.departments.map(
-                mapHelperVFilter("Department")
+                mapHelperVFilter(targetType, "Department", attrs[targetType].departments)
             ).join(" and ")
         );
     }
@@ -134,7 +140,7 @@ function buildHelperFilter(queryObj, targetType) {
     if (queryObj.persons && queryObj.persons.length) {
         retval = retval.concat(
             queryObj.persons.map(
-                mapHelperVFilter("Person")
+                mapHelperVFilter(targetType, "Person", attrs[targetType].persons)
             ).join(" and ")
         );
     }
