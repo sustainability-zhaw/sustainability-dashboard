@@ -124,7 +124,7 @@ function buildHelperFilter(queryObj, targetType) {
     if (queryObj.sdgs && queryObj.sdgs.length) {
         retval = retval.concat(
             queryObj.sdgs.map(
-               mapHelperVFilter(targetType, "Sdg", attrs[targetType].sdg)
+               mapHelperVFilter(targetType, "Sdg", attrs[targetType].Sdg)
             ).join(" and ")
         );
     }

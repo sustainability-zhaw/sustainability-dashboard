@@ -553,9 +553,7 @@ function handleStats() {
             e.id = e.id.replace(/-(\d)$/, "-0$1");
             return e;
         })
-        .forEach((e) => {
-            document.querySelector(`.cat.counter.${ e.id }`).textContent = e.n;
-        });
+        .forEach((e) => document.querySelector(`.cat.counter.${ e.id }`).textContent = e.n);
 
     stats.section.department
         .map(e => {
