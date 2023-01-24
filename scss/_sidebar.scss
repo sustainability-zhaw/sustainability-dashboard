@@ -200,6 +200,8 @@
         overflow: scroll;
 
         .indexterm {
+            cursor: pointer;
+
             margin-bottom: .2em;
             display: grid;
             height: 1.5em;
@@ -219,6 +221,10 @@
                 grid-column: 3;
             }
             .index-tool {
+                &.disabled {
+                    color: $gray-500;
+                    cursor: default;
+                }
                 text-align: center;
                 grid-column: 4;
             }

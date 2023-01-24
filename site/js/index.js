@@ -319,7 +319,7 @@ function clearSearch(ev) {
 } 
 
 function handleIndexActivate(ev) {
-    if (!ev.target.parentNode.classList.contains("indexterm")) {
+    if (!ev.target.parentNode.classList.contains("indexterm") || ev.target.classList.contains("disabled")) {
         return;
     }
 
@@ -330,10 +330,11 @@ function handleIndexActivate(ev) {
 
 
 function handleIndexDelete(ev) {
-    if (!ev.target.classList.contains("bi-trash-fill")) {
+    if (!ev.target.classList.contains("bi-trash-fill") || ev.target.classList.contains("disabled")) {
         return;
     }
 
+    Logger.debug("drop index");
     const id = ev.target.parentNode.id.replace("index-","");
 
     Events.trigger.indexTermDelete(id);
