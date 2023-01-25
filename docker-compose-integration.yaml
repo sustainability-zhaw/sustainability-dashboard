@@ -39,29 +39,38 @@ services:
       - dgraphnet
     environment:
       DGRAPH_SERVER: http://db:8080
-      SAMPLE_DATA: pubs_and_persons
 
-  dspacer: 
-    image: ghcr.io/sustainability-zhaw/extraction-dspace:sha-0b007cb
-    restart: "no"
+  db_keywords:
+    image: ghcr.io/sustainability-zhaw/keywords:sha-0c40ab7
+    restart: 'no'
     networks:
       - dgraphnet
     depends_on:
       db_init:
         condition: service_completed_successfully 
-    environment: 
-      DGRAPH_SERVER: http://db:8080
-      BATCH_SIZE: 10
-      LIMIT_BATCH: 2
-      AD_HOST: digitalcollection.zhaw.ch
+    environment:
+      DB_URI: http://db:8080/graphql
 
-  # db_browser:
-  #   image: dgraph/ratel:v21.12.0
-  #   restart: 'no'
-  #   networks:
-  #     - dgraphnet
-  #   ports:
-  #     - '8000:8000'
+  dspacer: 
+    image: ghcr.io/sustainability-zhaw/extraction-dspace:sha-f5ec55d
+    restart: "no"
+    networks:
+      - dgraphnet
+    depends_on:
+      db_keywords:
+        condition: service_completed_successfully 
+    environment: 
+      TARGET_HOST: https://digitalcollection.zhaw.ch
+      DB_HOST: http://db:8080
+      LIMIT_BATCH: 2
+
+  db_browser:
+    image: dgraph/ratel:v21.12.0
+    restart: 'no'
+    networks:
+      - dgraphnet
+    ports:
+      - '8000:8000'
 
 networks:
   dgraphnet:
