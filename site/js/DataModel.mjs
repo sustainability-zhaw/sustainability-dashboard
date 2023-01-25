@@ -189,8 +189,20 @@ function processModel(feed) {
     Logger.debug(`fetched ${feed.data.objects.length} objects`);
 
     const upfeed = feed.data.objects.map((record) => {
-        record.sdg = record.sdg.map(sdg => sdg.id.split("_").pop()).map((sdg) => `${Number(sdg)< 10 ? "0": ""}${sdg}`);
-        record.dept = record.dept.map(d => d.id.split("_").pop());
+        if (record.sdg && record.sdg.length) {
+            record.sdg = record.sdg.map(sdg => sdg.id.split("_").pop()).map((sdg) => `${Number(sdg)< 10 ? "0": ""}${sdg}`);
+        }
+        else {
+            record.sdg = [];
+        }
+
+        if (record.dept && record.dept.length) {
+            record.dept = record.dept.map(d => d.id.split("_").pop());
+        }
+        else {
+            record.dept = [];
+        }
+
         if (!record.keywords) {
             record.keywords = [];
         }
@@ -357,7 +369,7 @@ function buildDQLQueryString(category, queryObj) {
 
 function buildSelector() {
     return [
-        "objects (func: uid(vFilter), orderdesc: InfoObject.year, orderdesc: InfoObject.link) @filter(uid_in(InfoObject.category, uid(vObjectType)))",
+        "objects (func: uid(vFilter), orderdesc: InfoObject.year, orderdesc: InfoObject.link, first: 20) @filter(uid_in(InfoObject.category, uid(vObjectType)))",
         "{",
         ...Filter.selectorAlias([
             "title",

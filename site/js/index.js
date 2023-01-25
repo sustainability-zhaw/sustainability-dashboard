@@ -480,6 +480,7 @@ function handleDataUpdate() {
     Logger.debug(`update ${ category }`);
 
     DataModel.feed(category).forEach((object) => {
+        // Logger.debug(`render record ${index}`);
         // Logger.debug(JSON.stringify(object, null, "  "));
 
         const result = template.content.cloneNode(true);
