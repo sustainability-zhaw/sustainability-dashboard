@@ -38,11 +38,11 @@ services:
     networks:
       - dgraphnet
     environment:
-      DGRAPH_SERVER: http://sustainability-dashboard-db-1:8080
+      DGRAPH_SERVER: http://db:8080
       SAMPLE_DATA: pubs_and_persons
 
   dspacer: 
-    image: ghcr.io/sustainability-zhaw/extraction-dspace:sha-a3eeb79
+    image: ghcr.io/sustainability-zhaw/extraction-dspace:sha-0b007cb
     restart: "no"
     networks:
       - dgraphnet
@@ -50,18 +50,18 @@ services:
       db_init:
         condition: service_completed_successfully 
     environment: 
-      DGRAPH_SERVER: http://sustainability-dashboard-db-1:8080
+      DGRAPH_SERVER: http://db:8080
       BATCH_SIZE: 10
-      LIMIT_RUN: 1
+      LIMIT_BATCH: 2
       AD_HOST: digitalcollection.zhaw.ch
 
-  db_browser:
-    image: dgraph/ratel:v21.12.0
-    restart: 'no'
-    networks:
-      - dgraphnet
-    ports:
-      - '8000:8000'
+  # db_browser:
+  #   image: dgraph/ratel:v21.12.0
+  #   restart: 'no'
+  #   networks:
+  #     - dgraphnet
+  #   ports:
+  #     - '8000:8000'
 
 networks:
   dgraphnet:

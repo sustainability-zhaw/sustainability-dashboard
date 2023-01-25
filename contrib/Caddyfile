@@ -15,14 +15,14 @@
     rewrite /stats/* /stats/query
 
     handle_path /dashboard/* {
-        reverse_proxy sustainability-dashboard-app-1:80
+        reverse_proxy app:80
     }
 
     handle_path /api/* {
-        reverse_proxy sustainability-dashboard-db-1:8080
+        reverse_proxy db:8080
     }
 
     handle_path /stats/* {
-        reverse_proxy sustainability-dashboard-db-1:8080
+        reverse_proxy db:8080
     }
 }

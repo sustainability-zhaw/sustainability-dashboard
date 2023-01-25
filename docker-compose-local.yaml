@@ -38,7 +38,7 @@ services:
     networks:
       - dgraphnet
     environment:
-      DGRAPH_SERVER: http://sustainability-dashboard-db-1:8080
+      DGRAPH_SERVER: http://db:8080
       SAMPLE_DATA: pubs_and_persons
 
   db_browser:
