@@ -41,6 +41,19 @@ services:
       DGRAPH_SERVER: http://db:8080
       SAMPLE_DATA: pubs_and_persons
 
+  dspacer: 
+    image: ghcr.io/sustainability-zhaw/extraction-dspace:sha-
+    restart: "no"
+    networks:
+      - dgraphnet
+    depends_on:
+      db_keywords:
+        condition: service_completed_successfully 
+    environment: 
+      TARGET_HOST: https://digitalcollection.zhaw.ch
+      DB_HOST: http://db:8080
+      LIMIT_BATCH: 5
+
   db_browser:
     image: dgraph/ratel:v21.12.0
     restart: 'no'
