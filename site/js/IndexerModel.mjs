@@ -187,7 +187,7 @@ function buildQueryString(queryObj) {
 
 function buildSelector() {
     return [
-       "sdgmatch (func: uid(vFilter)) {",
+       "sdgmatch (func: uid(vFilter), first: 200) {",
        ...Filter.selectorAlias([
             "construct",
             "keyword",
