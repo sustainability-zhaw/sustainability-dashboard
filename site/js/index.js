@@ -8,6 +8,8 @@ import * as Events from "./Events.mjs";
 
 // pull up the System with a basic configuration
 
+const scrollLimit = 600;
+
 Events.listen.queryUpdate(handleQueryUpdate);
 Events.listen.queryUpdate(handleQueryUpdateIndex);
 Events.listen.queryUpdate(requestQueryStats);
@@ -15,6 +17,7 @@ Events.listen.queryUpdate(requestQueryStats);
 Events.listen.queryExtra(handleQueryExtraUpdate);
 // Events.listen.queryAddItem(handleQueryAdd);
 Events.listen.dataUpdate(handleDataUpdate);
+Events.listen.moreDataAvailable(handleMoreData);
 Events.listen.statUpdate(handleStats);
 Events.listen.bookmarkUpdate(() => {});
 
@@ -45,6 +48,7 @@ async function init() {
     // dropSearchElement();
 
     initTools();
+    initScroll()
 
     initEvents();
 
@@ -117,6 +121,29 @@ function initTools() {
             funcs[ev.target.id]();
         }
     });
+}
+
+function initScroll() {
+    const mainContent = document.querySelector("#mainarea");
+
+    mainContent.addEventListener("scroll", (ev) => {
+
+        const vpHeight = window.visualViewport.height;
+        const height = mainContent.scrollHeight - vpHeight;
+        const offset = mainContent.scrollTop;
+
+        Logger.debug(`${height} - ${offset}`);
+
+        if ((height - offset) < scrollLimit) {
+            Logger.debug("load more data");
+
+            const section = document.querySelector('.nav-link.active');
+            const category = section.dataset.category;
+            
+            Events.trigger.moreData({category});
+        }
+    });
+
 }
 
 // UI Usability functions 
@@ -531,6 +558,12 @@ function handleDataUpdate() {
         document.querySelector("#warnings").removeAttribute("hidden", "hidden");
     }
 }   
+
+function handleMoreData(ev) {
+    const detail = ev.detail;   
+
+}
+
 
 function handleStats() {
     // display numbers
