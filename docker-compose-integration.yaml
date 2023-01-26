@@ -52,7 +52,7 @@ services:
       DB_URI: http://db:8080/graphql
 
   dspacer: 
-    image: ghcr.io/sustainability-zhaw/extraction-dspace:sha-f5ec55d
+    image: ghcr.io/sustainability-zhaw/extraction-dspace:sha-d32cad4
     restart: "no"
     networks:
       - dgraphnet
