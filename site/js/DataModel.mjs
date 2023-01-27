@@ -19,6 +19,8 @@ const Model = {
     complete: false
 };
 
+const queryLimit = 20;
+
 const RequestController = new AbortController();
 
 Events.listen.queryUpdate(handleLoadData);
@@ -154,7 +156,8 @@ export async function loadData(type, queryObj) {
         return false;
     }
 
-    Model.complete = !Model.records.length;
+    Model.complete = !Model.records.length || Model.records.length < queryLimit;
+    
     if (Model.complete) {
         Logger.debug("Query is complete!");
     }
@@ -203,7 +206,7 @@ function buildSelector() {
     return [
         "objects (func: uid(vFilter), orderdesc: InfoObject.year, orderdesc: InfoObject.link,",
         Model.offset ? `offset: ${Model.offset},` : "",  
-        "first: 20) ",
+        `first: ${queryLimit}) `,
         "@filter(uid_in(InfoObject.category, uid(vObjectType)))",
         "{",
         ...Filter.selectorAlias([

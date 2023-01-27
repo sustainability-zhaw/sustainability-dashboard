@@ -409,6 +409,7 @@ function handleQueryUpdate() {
     document.querySelector("#warnings").removeAttribute("hidden", "hidden");
     document.querySelector("#no_data").setAttribute("hidden", "hidden");
     document.querySelector("#loading_data").removeAttribute("hidden", "hidden");
+    document.querySelector("#mainarea .info").setAttribute("hidden", "hidden");
     
     // Events.trigger.queryUpdate({category});
 
@@ -467,6 +468,7 @@ function handleDataUpdate(ev) {
 
     // set the result type
 
+    document.querySelector("#mainarea .info").removeAttribute("hidden");
     document.querySelector("#mainarea .intransit").setAttribute("hidden", "hidden");
 
     // when we get the first results of a fresh search, reset the results section
@@ -529,7 +531,7 @@ function handleDataUpdate(ev) {
     }, targetsection);
 
     
-    if (DataModel.is_complete() ){ 
+    if (DataModel.is_complete() && DataModel.feed().length){ 
         document.querySelector("#mainarea .EOF").removeAttribute("hidden");
     }
     document.querySelector("#mainarea").removeAttribute("hidden", "hidden");
