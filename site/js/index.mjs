@@ -534,6 +534,7 @@ function handleDataUpdate(ev) {
     if (DataModel.is_complete() && DataModel.feed().length){ 
         document.querySelector("#mainarea .EOF").removeAttribute("hidden");
     }
+    
     document.querySelector("#mainarea").removeAttribute("hidden", "hidden");
     document.querySelector("#warnings").setAttribute("hidden", "hidden");
     document.querySelector("#loading_data").setAttribute("hidden", "hidden");
@@ -541,6 +542,8 @@ function handleDataUpdate(ev) {
     if (!DataModel.feed().length && !DataModel.offset()) {
         document.querySelector("#no_data").removeAttribute("hidden");
         document.querySelector("#warnings").removeAttribute("hidden", "hidden");
+        document.querySelector("#mainarea .EOF").setAttribute("hidden", "hidden");
+        document.querySelector("#mainarea .limit-reached").setAttribute("hidden", "hidden");
     }
 
     if (DataModel.offset() > maxScrollRecords && !DataModel.is_complete()) {
