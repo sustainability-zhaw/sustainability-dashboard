@@ -17,7 +17,7 @@ Events.listen.queryUpdate(requestQueryStats);
 Events.listen.queryExtra(handleQueryExtraUpdate);
 // Events.listen.queryAddItem(handleQueryAdd);
 Events.listen.dataUpdate(handleDataUpdate);
-Events.listen.moreDataAvailable(handleMoreData);
+// Events.listen.moreDataAvailable(handleMoreData);
 Events.listen.statUpdate(handleStats);
 Events.listen.bookmarkUpdate(() => {});
 
@@ -29,6 +29,8 @@ Events.listen.queryUpdate(renderSearchOptions);
 Events.listen.indexTermData(renderIndexTerms);
 
 Events.listen.queryError(showQueryError);
+
+await init();
 
 async function init() {
     await Config.init("config.json", {
@@ -53,9 +55,12 @@ async function init() {
     initEvents();
 
     // QueryModel.init();
-}
+    const section = document.querySelector('.nav-link.active');
+    const category = section.dataset.category;
 
-init().then(() => Events.trigger.queryUpdate());
+    Logger.debug("call update from init!");
+    Events.trigger.queryUpdate({category});
+}
 
 // function definitions
 
@@ -132,7 +137,7 @@ function initScroll() {
         const height = mainContent.scrollHeight - vpHeight;
         const offset = mainContent.scrollTop;
 
-        Logger.debug(`${height} - ${offset}`);
+        // Logger.debug(`${height} - ${offset}`);
 
         if ((height - offset) < scrollLimit) {
             Logger.debug("load more data");
@@ -376,7 +381,11 @@ function handleQueryExtraUpdate(ev) {
         extraterm = searchterms.value.trim();
     }
 
-    Events.trigger.queryUpdate();
+    const section = document.querySelector('.nav-link.active');
+    const category = section.dataset.category;
+
+    Logger.debug("call extra update!");
+    Events.trigger.queryUpdate({category});
 } 
 
 // QueryModel Support functions
@@ -402,7 +411,9 @@ function handleQueryUpdate() {
     document.querySelector("#no_data").setAttribute("hidden", "hidden");
     document.querySelector("#loading_data").removeAttribute("hidden", "hidden");
     
-    DataModel.loadData(category, QueryModel.query()).then(() => Events.trigger.dataUpdate());
+    // Events.trigger.queryUpdate({category});
+
+    // DataModel.loadData(category, QueryModel.query()).then(() => Events.trigger.dataUpdate());
 }
 
 function renderSearchOptions() {
@@ -481,7 +492,7 @@ function renderIndexTerms() {
     );
 }
 
-function handleDataUpdate() {
+function handleDataUpdate(ev) {
     Logger.debug("data update");
     
     const targetsection = document.querySelector('.results');
@@ -498,56 +509,62 @@ function handleDataUpdate() {
 
     // when we get the first results of a fresh search, reset the results section
     // TODO Pagination
-    targetsection.innerHTML = "";
+    if (ev.detail.reset) {
+        Logger.debug("reset data section");
+        targetsection.innerHTML = "";
+    }
+
     targetsection.dataset.resulttype = category;
    
     const template = document.querySelector('#resultcontainer');
-    const authortemplate = document.querySelector('#resourceauthor');
 
     Logger.debug(`update ${ category }`);
 
-    DataModel.feed(category).forEach((object) => {
-        // Logger.debug(`render record ${index}`);
-        // Logger.debug(JSON.stringify(object, null, "  "));
+    DataModel.feed().reduce((section, object) => {
+        const element = Object.keys(object).reduce((result, k) => {
+            let sel = `.${k}`;
 
-        const result = template.content.cloneNode(true);
-
-        result.querySelector(".pubtitle").innerText = object.title;
-        result.querySelector(".year").innerText = object.year;
-        [...(result.querySelectorAll(".tool.bi-download"))].forEach(e => e.href = object.link);
-        
-        result.querySelector(".categories").innerHTML = object.sdg.map(sdg => `<span class="mark cat-${sdg}" data-qtype="sdg" data-qvalue="${sdg}"></span>`).join(" ");
-        result.querySelector(".extra.abstract").innerText= object.abstract;
-        result.querySelector(".extra.pubtype").innerText= object.subtype.name;
-
-        result.querySelector(".extra.keywords").innerText= object.keywords.map(k => k.name).join(", ");
-        result.querySelector(".extra.classification").innerText= object.class.map(cls => `${cls.id}: ${cls.name}`).join(", ");
-
-        const authorlist = result.querySelector(".authors");
-
-        object.authors.forEach(author => {
-            // Logger.debug(JSON.stringify(author, null, "  "));
-            const authorTag = authortemplate.content.cloneNode(true);
-            const personname = authorTag.querySelector(".name");
-            personname.innerText = author.fullname;
-            if (Object.hasOwn(author, "person") && author.person) {
-                const person = author.person;
-                const dept  = author.department;
-                const dmark = authorTag.querySelector(".mark");
-
-                personname.dataset.qvalue = person.initials;
-                
-                dmark.classList.add(`cat-${ dept }`);
-                dmark.dataset.qvalue = dept;
-
-                authorTag.querySelector(".counter").innerText = "_";
-                authorTag.querySelector(".affiliation").classList.remove("d-none");
+            if (k === "link") {
+                [...(result.querySelectorAll(sel))].forEach(e => e.href = object[k]);
+                return result;
             }
-            authorlist.appendChild(authorTag);    
-        });
 
-        targetsection.appendChild(result);
-    });
+            if (typeof(object[k]) !== "object") {
+                result.querySelector(sel).innerText = object[k];
+                return result;
+            }          
+
+            let templateId = `#${sel.slice(1)}template`;
+
+            if (["sdg", "department"].includes(k)) {
+                templateId = "#cattemplate";
+                sel = ".categories";
+            }
+            else if (k !== "authors") {
+                templateId = `#listitemtemplate`;
+            }
+
+            const template = document.querySelector(templateId);
+            sel += ".list";
+            
+            if (Array.isArray(object[k])) {
+                object[k].reduce(
+                    handleListElement(template), 
+                    result.querySelector(sel)
+                 );
+
+                return result;
+            }
+
+            handleListElement(template)(result.querySelector(sel), object[k]);
+
+            return result;
+        }, template.content.cloneNode(true));
+
+        section.appendChild(element);
+
+        return section;
+    }, targetsection);
 
     document.querySelector("#mainarea").removeAttribute("hidden", "hidden");
     document.querySelector("#warnings").setAttribute("hidden", "hidden");
@@ -556,14 +573,41 @@ function handleDataUpdate() {
     if (!DataModel.feed(category).length) {
         document.querySelector("#no_data").removeAttribute("hidden", "hidden");
         document.querySelector("#warnings").removeAttribute("hidden", "hidden");
-    }
-}   
-
-function handleMoreData(ev) {
-    const detail = ev.detail;   
-
+    }   
 }
 
+function handleListElement(template) {
+    return (a, e) => {
+        const element = Object.keys(e).reduce((tmpl, k) => {
+            const field = tmpl.querySelector(`.${k}`);
+            const value = e[k];
+            if (!field) {
+                return tmpl;
+            }
+
+            if (k.startsWith("qvalue")) {
+                field.dataset.qvalue = value;
+                return tmpl;
+            }
+
+            if (k === "id") {
+                field.classList.add(value);
+                return tmpl;
+            }
+
+            if (k === "department") {
+                field.querySelector(".id").classList.add(value.id)
+            }
+
+            field.innerHTML = value;
+            return tmpl;
+        }, template.content.cloneNode(true));
+
+        a.appendChild(element);
+
+        return a;
+    };
+}
 
 function handleStats() {
     // display numbers
@@ -578,23 +622,13 @@ function handleStats() {
     document.querySelector("#peoplecountvalue").textContent = stats.section.contributors;
 
     stats.section.sdg
-        .map(e => { 
-            e.id = e.id.replace("sdg_", "cat-");
-            return e;
-        })
-        .filter(e => e.id != "cat-17")
-        .map(e => {
-            e.id = e.id.replace(/-(\d)$/, "-0$1");
-            return e;
-        })
-        .forEach((e) => document.querySelector(`.cat.counter.${ e.id }`).textContent = e.n);
+        .filter(e => e.id != "sdg_17")
+        .forEach((e) => {
+            document.querySelector(`.cat.counter.${ e.id }`).textContent = e.n
+        });
 
     stats.section.department
-        .map(e => {
-            e.id = e.id.replace("department_", "cat-"); 
-            return e;
-        })
-        .filter(e => !( ["cat-R", "cat-V"].includes(e.id) ))
+        .filter(e => !( ["department_R", "department_V"].includes(e.id) ))
         .forEach((e) => document.querySelector(`.cat.counter.${ e.id }`).textContent = e.n);
 
     // contributor list per section

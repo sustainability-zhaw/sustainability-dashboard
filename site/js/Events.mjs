@@ -3,11 +3,10 @@
 let anchor; 
     
 const events = [
-    "queryUpdate", // ask to load data
+    "queryUpdate", // a query has changed 
     "queryExtra",
     "dataUpdate", // new data is available
     "moreData", // ask for more data
-    "moreDataAvailable", // more data for the UI has arrived. 
     "statUpdate", // new data is available
     "personUpdate",
     "queryAddItem",
