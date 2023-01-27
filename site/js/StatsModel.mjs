@@ -1,6 +1,8 @@
 import * as Config from "./ConfigModel.mjs";
 import * as Logger from "./Logger.mjs";
 import * as Filter from "./DqlFilter.mjs";
+import * as Events from "./Events.mjs";
+import * as QueryModel from "./QueryModel.mjs";
 
 const StatsObject = {
     stats: {}
@@ -37,6 +39,21 @@ export function getStats() {
 
 export function getPersonStats(initials) {
     return "x";
+}
+
+Events.listen.queryUpdate(handleLoadData);
+Events.listen.changeCategory(categoryChange);
+
+function categoryChange(ev) {
+    StatsObject.category = ev.detail.category;
+}
+
+async function handleLoadData(ev) {
+    
+    // RequestController.abort();
+    Logger.debug("load stats");
+    await loadData(StatsObject.category, QueryModel.query());
+    Events.trigger.statUpdate();
 }
 
 export async function loadData(category, queryObj) {

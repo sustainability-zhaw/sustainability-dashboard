@@ -12,7 +12,7 @@ const scrollLimit = 600;
 
 Events.listen.queryUpdate(handleQueryUpdate);
 Events.listen.queryUpdate(handleQueryUpdateIndex);
-Events.listen.queryUpdate(requestQueryStats);
+// Events.listen.queryUpdate(requestQueryStats);
 
 Events.listen.queryExtra(handleQueryExtraUpdate);
 // Events.listen.queryAddItem(handleQueryAdd);
@@ -59,7 +59,8 @@ async function init() {
     const category = section.dataset.category;
 
     Logger.debug("call update from init!");
-    Events.trigger.queryUpdate({category});
+    Events.trigger.changeCategory({category});
+    Events.trigger.queryUpdate();
 }
 
 // function definitions
@@ -126,6 +127,22 @@ function initTools() {
             funcs[ev.target.id]();
         }
     });
+
+    document.querySelectorAll(".navbar-left .cat.nav-link")
+        .forEach((n) => n.addEventListener("click", handleCategoryChange));
+}
+
+function handleCategoryChange(ev) {
+    const category = ev.currentTarget.dataset.category;
+
+    ev.currentTarget
+        .parentNode
+        .querySelectorAll(".nav-link")
+        .forEach((e) => e.classList.remove("active"));
+    
+    ev.currentTarget.classList.add("active");
+
+    Events.trigger.changeCategory({category});
 }
 
 function initScroll() {
@@ -518,7 +535,7 @@ function handleDataUpdate(ev) {
    
     const template = document.querySelector('#resultcontainer');
 
-    Logger.debug(`update ${ category }`);
+    // Logger.debug(`update ${ category }`);
 
     DataModel.feed().reduce((section, object) => {
         const element = Object.keys(object).reduce((result, k) => {
@@ -689,8 +706,8 @@ function requestQueryStats(ev) {
 
     Logger.debug(`active category: ${category}`);
 
-    StatsModel.loadData(category, QueryModel.query())
-        .then(() => Events.trigger.statUpdate())
+    // StatsModel.loadData(category, QueryModel.query())
+    //     .then(() => Events.trigger.statUpdate())
 }
 
 function conditionalIndexButtonOff() {

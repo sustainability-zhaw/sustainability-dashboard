@@ -22,6 +22,7 @@ const RequestController = new AbortController();
 
 Events.listen.queryUpdate(handleLoadData);
 Events.listen.moreData(handleMoreData);
+Events.listen.changeCategory(categoryChange);
 
 async function handleLoadData(ev) {
     if (Model.active) {
@@ -29,7 +30,7 @@ async function handleLoadData(ev) {
         RequestController.abort();
     }
 
-    await fetchData(ev.detail.category, true);
+    await fetchData(Model.category, true);
 }
 
 async function handleMoreData(ev) {
@@ -37,7 +38,7 @@ async function handleMoreData(ev) {
         return;
     }
 
-    await fetchData(ev.detail.category, false);
+    await fetchData(Model.category, false);
 }
 
 async function fetchData(category, reset) {
@@ -53,6 +54,10 @@ async function fetchData(category, reset) {
     }
     Model.active = false;
 
+}
+
+function categoryChange(ev) {
+    Model.category = ev.detail.category;
 }
 
 function initBaseUri(){

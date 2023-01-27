@@ -24,7 +24,8 @@ const events = [
     "bookmarkDelete",
     "bookmarkCreate",
     "bookmarkUpdate",
-    "bookmarkData"
+    "bookmarkData",
+    "changeCategory"
 ];
 
 export const trigger = events.reduce((a, e) => {
