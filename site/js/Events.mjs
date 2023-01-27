@@ -8,6 +8,8 @@ const events = [
     "dataUpdate", // new data is available
     "moreData", // ask for more data
     "statUpdate", // new data is available
+    "statMainUpdate", 
+    "statPeopleUpdate",
     "personUpdate",
     "queryAddItem",
     "queryError",

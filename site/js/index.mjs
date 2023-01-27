@@ -5,12 +5,13 @@ import * as Logger from "./Logger.mjs";
 
 // models
 import * as DataModel from "./DataModel.mjs";
-import * as StatsModel from "./StatsModel.mjs";
+// import * as StatsModel from "./StatsModel.mjs";
 import * as QueryModel from "./QueryModel.mjs";
-import * as IndexModel from "./IndexerModel.mjs";
+// import * as IndexModel from "./IndexerModel.mjs";
 
 // views
 import * as IndexOverlayView from "./views/indexterms.mjs";
+import * as StatsView from "./views/stats.mjs";
 
 // pull up the System with a basic configuration
 
@@ -22,7 +23,6 @@ Events.listen.queryUpdate(handleQueryUpdateIndex);
 Events.listen.queryExtra(handleQueryExtraUpdate);
 Events.listen.dataUpdate(handleDataUpdate);
 
-Events.listen.statUpdate(handleStats);
 Events.listen.bookmarkUpdate(() => {});
 
 Events.listen.partialMatchingTerm(conditionalIndexButtonPartial);
@@ -145,7 +145,10 @@ function handleCategoryChange(ev) {
     
     ev.currentTarget.classList.add("active");
 
+    // Inform all models that changes are due
     Events.trigger.changeCategory({category});
+    // once everything is set up, reload the data.
+    Events.trigger.queryUpdate();
 }
 
 function initScroll() {
@@ -293,6 +296,7 @@ function addSearchElement() {
     sidebarelement.addEventListener("click", editSearchElement);
     
     IndexOverlayView.init(sidebarelement);
+    StatsView.init(sidebarelement);
 }
 
 function editSearchElement(evt) {
@@ -570,69 +574,6 @@ function handleListElement(template) {
     };
 }
 
-function handleStats() {
-    // display numbers
-    const stats = StatsModel.getStats();
-
-    // Logger.debug(`stats are: ${JSON.stringify(stats, null, "  ")}`)
-
-    document.querySelector("#publication-counter").textContent =  stats.publications;
-    document.querySelector("#project-counter").textContent = stats.projects;
-    document.querySelector("#education-counter").textContent = stats.modules;
-    document.querySelector("#people-counter").textContent = stats.people;
-    document.querySelector("#peoplecountvalue").textContent = stats.section.contributors;
-
-    stats.section.sdg
-        .filter(e => e.id != "sdg_17")
-        .forEach((e) => {
-            document.querySelector(`.cat.counter.${ e.id }`).textContent = e.n
-        });
-
-    stats.section.department
-        .filter(e => !( ["department_R", "department_V"].includes(e.id) ))
-        .forEach((e) => document.querySelector(`.cat.counter.${ e.id }`).textContent = e.n);
-
-    // contributor list per section
-
-    const template = document.querySelector("#contributorlistitem");
-    const target = document.querySelector("#contributors .peopleinner");
-
-    target.innerHTML = "";
-
-    stats.section.person
-        // .map((p) => {
-        //     p.department = p.department.id.replace("department_", "");
-        //     return p;
-        // })
-        .sort((a, b) => { 
-            let c = b.n - a.n;
-            if (c === 0) {
-               c = a.fullname.toLowerCase().localeCompare(b.fullname.toLowerCase(), "de");
-            }
-            return c;
-        })
-        .forEach((p) => {
-            const result = template.content.cloneNode(true);
-
-            // result.querySelector(".person").dataset.qvalue = p.initials;
-            const name = result.querySelector(".person .name");
-            name.textContent = p.fullname;
-            name.dataset.qvalue = p.initials;
-            const initials = result.querySelector(".person .initials");
-            initials.textContent = p.initials;
-            initials.dataset.qvalue = p.initials;
-            
-            result.querySelector(".person .counter").textContent = p.n;
-            
-            const dnode = result.querySelector(".person .mark");
-
-            dnode.classList.remove("cat-none");
-            dnode.classList.add(`department_${p.department.id}`);
-            dnode.dataset.qvalue = p.department;
-            
-            target.appendChild(result);
-        });
-}
 
 function conditionalIndexButtonOff() {
     const button = document.querySelector("#savematcher .btn");
