@@ -31,8 +31,10 @@ export function getRecords() {
  */
 export function getOneRecord(id) {
     if (Model.records[id]) {
-        const query = Model.records[id].qterms.map(t => Object.assign({}, t));
-
+        const query = Model.records[id].qterms
+            .filter(t => t.type !== "sdg")
+            .map(t => Object.assign({}, t));
+        
         Events.trigger.queryReplace(query);
     }
 }
@@ -137,7 +139,7 @@ function parseRecord(rec) {
         qterms: [
             {type: "term", value: rec.keyword},
             {type: "lang", value: rec.language.toUpperCase()},
-            {type: "sdg", value: Number(rec.sdg.id.replace("sdg_", ""))}
+            {type: "sdg", value: rec.sdg.id.replace("sdg_", "")}
         ]
     };
 
