@@ -16,6 +16,7 @@ import * as StatsView from "./views/stats.mjs";
 // pull up the System with a basic configuration
 
 const scrollLimit = 600;
+const maxScrollRecords = 500
 
 Events.listen.queryUpdate(handleQueryUpdate);
 Events.listen.queryUpdate(handleQueryUpdateIndex);
@@ -60,6 +61,8 @@ async function init() {
     // QueryModel.init();
     const section = document.querySelector('.nav-link.active');
     const category = section.dataset.category;
+
+    document.querySelector('.scroll-limit').textContent = maxScrollRecords;
 
     Logger.debug("call update from init!");
     Events.trigger.changeCategory({category});
@@ -163,12 +166,13 @@ function initScroll() {
         // Logger.debug(`${height} - ${offset}`);
 
         if ((height - offset) < scrollLimit) {
-            Logger.debug("load more data");
+            if (!DataModel.is_complete() && DataModel.offset() < maxScrollRecords) {
+                document.querySelector("#mainarea .intransit").removeAttribute("hidden");
+            }
 
-            const section = document.querySelector('.nav-link.active');
-            const category = section.dataset.category;
-            
-            Events.trigger.moreData({category});
+            if (DataModel.offset() < maxScrollRecords) {
+                Events.trigger.moreData();
+            }
         }
     });
 
@@ -463,6 +467,8 @@ function handleDataUpdate(ev) {
 
     // set the result type
 
+    document.querySelector("#mainarea .intransit").setAttribute("hidden", "hidden");
+
     // when we get the first results of a fresh search, reset the results section
     // TODO Pagination
     if (ev.detail.reset) {
@@ -522,13 +528,22 @@ function handleDataUpdate(ev) {
         return section;
     }, targetsection);
 
+    
+    if (DataModel.is_complete() ){ 
+        document.querySelector("#mainarea .EOF").removeAttribute("hidden");
+    }
     document.querySelector("#mainarea").removeAttribute("hidden", "hidden");
     document.querySelector("#warnings").setAttribute("hidden", "hidden");
     document.querySelector("#loading_data").setAttribute("hidden", "hidden");
 
-    if (!DataModel.feed(category).length) {
-        document.querySelector("#no_data").removeAttribute("hidden", "hidden");
+    if (!DataModel.feed().length && !DataModel.offset()) {
+        document.querySelector("#no_data").removeAttribute("hidden");
         document.querySelector("#warnings").removeAttribute("hidden", "hidden");
+    }
+
+    if (DataModel.offset() > maxScrollRecords && !DataModel.is_complete()) {
+        document.querySelector("#mainarea .intransit").setAttribute("hidden", "hidden");
+        document.querySelector("#mainarea .limit-reached").removeAttribute("hidden");
     }   
 }
 

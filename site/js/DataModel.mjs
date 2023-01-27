@@ -15,7 +15,8 @@ const Message = {
 const Model = {
     records: [],
     offset: 0,
-    active: false
+    active: false,
+    complete: false
 };
 
 const RequestController = new AbortController();
@@ -24,19 +25,35 @@ Events.listen.queryUpdate(handleLoadData);
 Events.listen.moreData(handleMoreData);
 Events.listen.changeCategory(categoryChange);
 
+export function feed() {
+    return Model.records;
+}
+
+export function offset() {
+    return Model.offset;
+}
+
+export function is_complete() {
+    return Model.complete;
+}
+
 async function handleLoadData(ev) {
     if (Model.active) {
         Logger.debug("abort previous fetch!");
         RequestController.abort();
     }
 
+    Model.complete = false;
+
     await fetchData(Model.category, true);
 }
 
 async function handleMoreData(ev) {
-    if (Model.active) {
+    if (Model.active || Model.complete) {
         return;
     }
+
+    Logger.debug("load more data");
 
     await fetchData(Model.category, false);
 }
@@ -106,10 +123,6 @@ function initDQLUri(){
     return baseuri;
 }
 
-export function feed() {
-    return Model.records;
-}
-
 export async function loadData(type, queryObj) {
     Model.message = "";
     Model[type] = [];
@@ -141,6 +154,10 @@ export async function loadData(type, queryObj) {
         return false;
     }
 
+    Model.complete = !Model.records.length;
+    if (Model.complete) {
+        Logger.debug("Query is complete!");
+    }
     return true;
 }
 
@@ -162,7 +179,7 @@ async function executeDQLQuery(body) {
 
     const result = await response.json();
 
-    if (Object.hasOwn(result, "data")) {
+    if ("data" in result) {
         // Logger.info(`response: \n ${ JSON.stringify(result, null, "  ") }`);
         return result.data.objects;
     }

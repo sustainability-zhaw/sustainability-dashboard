@@ -139,8 +139,19 @@
                </div>
         </div>
 
-        <div id="mainarea" class="results" hidden>
-            
+        <div id="mainarea" hidden>
+            <div class="results"></div>
+            <div class="info">
+                <div class="alert alert-warning intransit" hidden>
+                    Your network is slow. More results are on their way.
+                </div>
+                <div class="alert alert-success EOF" hidden>
+                    The query has no more results.
+                </div>
+                <div class="alert alert-warning limit-reached" hidden>
+                    You have looked at <span class="scroll-limit"></span> documents. Try using a more specific search. 
+                </div>
+            </div>
         </div>
 
         <div id="warnings">
