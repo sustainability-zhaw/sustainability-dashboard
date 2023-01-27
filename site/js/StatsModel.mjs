@@ -1,9 +1,15 @@
 import * as Config from "./ConfigModel.mjs";
 import * as Logger from "./Logger.mjs";
 import * as Filter from "./DqlFilter.mjs";
+import * as Events from "./Events.mjs";
+import * as QueryModel from "./QueryModel.mjs";
 
 const StatsObject = {
-    stats: {}
+    stats: {},
+    overview: {},
+    people: [],
+    contributors: 0,
+    category: ""
 };
 
 const RequestController = new AbortController();
@@ -31,17 +37,116 @@ function initBaseStatsUri() {
     return baseuri;
 }
 
+export function getOverviewStats() {
+    return StatsObject.overview;
+}
+
 export function getStats() {
     return StatsObject.stats;
 }
 
-export function getPersonStats(initials) {
-    return "x";
+export function getPeopleStats() {
+    return StatsObject.people;
 }
 
-export async function loadData(category, queryObj) {
+export function getPersonStats(initials) {
+    return StatsObject.people.filter(o => o.initials === initials)[0];
+}
+
+export function getContributors() {
+    return StatsObject.contributors;
+}
+
+Events.listen.queryUpdate(handleLoadData);
+Events.listen.queryUpdate(handlePeopleData);
+Events.listen.queryUpdate(handleOverviewLoadData);
+Events.listen.changeCategory(categoryChange);
+
+function categoryChange(ev) {
+    StatsObject.category = ev.detail.category;
+}
+
+async function handleLoadData(ev) {
+    // RequestController.abort();
+    Logger.debug("load stats");
+    await loadData(StatsObject.category, QueryModel.query());
+    Events.trigger.statUpdate();
+}
+
+async function loadData(category, queryObj) {
     let body  = buildQueryString(category, queryObj);
 
+    const data = await fetchData(body);
+
+    StatsObject.stats =  {
+        sdg: [
+            { id: "sdg_1", n: 0 },
+            { id: "sdg_2", n: 0 },
+            { id: "sdg_3", n: 0 },
+            { id: "sdg_4", n: 0 },
+            { id: "sdg_5", n: 0 },
+            { id: "sdg_6", n: 0 },
+            { id: "sdg_7", n: 0 },
+            { id: "sdg_8", n: 0 },
+            { id: "sdg_9", n: 0 },
+            { id: "sdg_10", n: 0 },
+            { id: "sdg_11", n: 0 },
+            { id: "sdg_12", n: 0 },
+            { id: "sdg_13", n: 0 },
+            { id: "sdg_14", n: 0 },
+            { id: "sdg_15", n: 0 },
+            { id: "sdg_16", n: 0 }
+        ],
+        department: [
+            { id: "department_A", n: 0 },
+            { id: "department_G", n: 0 },
+            { id: "department_L", n: 0 },
+            { id: "department_N", n: 0 },
+            { id: "department_P", n: 0 },
+            { id: "department_S", n: 0 },
+            { id: "department_T", n: 0 },
+            { id: "department_W", n: 0 }
+        ]
+    };
+
+    if (data) {
+        // Logger.info(`response data: \n ${ JSON.stringify(data, null, "  ") }`);
+
+        StatsObject.stats = data; 
+    }
+}
+
+async function handlePeopleData(ev) {
+    // RequestController.abort();
+    Logger.debug("load people stats");
+    await loadPeopleData(StatsObject.category, QueryModel.query());
+    Events.trigger.statPeopleUpdate();
+}
+
+async function loadPeopleData(category, queryObj) {
+    let body  = buildPeopleQueryString(category, queryObj);
+
+    const data = await fetchData(body);
+
+    StatsObject.people =  [];
+    StatsObject.contributors = 0;
+
+    if ("people" in data && data.people) {
+        Logger.info(`response data: \n ${ JSON.stringify(data, null, "  ") }`);
+
+        StatsObject.people = data.people; 
+        StatsObject.contributors = data.contributors[0].n;
+    }
+}
+
+async function handleOverviewLoadData(ev) {
+    // RequestController.abort();
+    Logger.debug("load stats");
+    await loadOverviewData(QueryModel.query());
+    Events.trigger.statMainUpdate();
+}
+
+async function fetchData(body) {
     const url = initBaseStatsUri();
     const {signal} = RequestController;
     const method = "POST"; // all requests are POST requests
@@ -64,85 +169,84 @@ export async function loadData(category, queryObj) {
     });
 
     const result = await response.json();
+    
+    if ("data" in result && result.data) {
+        return result.data;
+    }
 
-    StatsObject.stats =  {
+    Logger.info(`error response: \n ${ JSON.stringify(result, null, "  ") }`);
+
+    return {};
+}
+
+async function loadOverviewData(queryObj) {
+    let body  = buildOverviewQueryString(queryObj);
+
+    const data = await fetchData(body);
+
+    StatsObject.overview =  {
         people: 0,
         publications: 0,
         modules: 0,
-        projects: 0,
-        section: {
-            sdg: [
-                { id: "sdg_1", n: 0 },
-                { id: "sdg_2", n: 0 },
-                { id: "sdg_3", n: 0 },
-                { id: "sdg_4", n: 0 },
-                { id: "sdg_5", n: 0 },
-                { id: "sdg_6", n: 0 },
-                { id: "sdg_7", n: 0 },
-                { id: "sdg_8", n: 0 },
-                { id: "sdg_9", n: 0 },
-                { id: "sdg_10", n: 0 },
-                { id: "sdg_11", n: 0 },
-                { id: "sdg_12", n: 0 },
-                { id: "sdg_13", n: 0 },
-                { id: "sdg_14", n: 0 },
-                { id: "sdg_15", n: 0 },
-                { id: "sdg_16", n: 0 }
-            ],
-            department: [
-                { id: "department_A", n: 0 },
-                { id: "department_G", n: 0 },
-                { id: "department_L", n: 0 },
-                { id: "department_N", n: 0 },
-                { id: "department_P", n: 0 },
-                { id: "department_S", n: 0 },
-                { id: "department_T", n: 0 },
-                { id: "department_W", n: 0 }
-            ],
-            person: 0
-        }
+        projects: 0
     };
 
-    if (Object.hasOwn(result, "data") && result.data) {
-        // Logger.info(`response data: \n ${ JSON.stringify(result.data, null, "  ") }`);
-
-        const data = result.data
-
-        StatsObject.stats = {
-            people: data.people[0].n,
-            section: {
-                sdg: data.sdg,
-                department: data.department,
-                person: data.person,
-                contributors: data.contributors[0].n
-            }
+    if ("infoobjecttype" in data && data.infoobjecttype) {
+        StatsObject.overview = {
+            people: data.people[0].n
         }; 
-        data.infoobjecttype.forEach((o) => StatsObject.stats[o.id] = o.n);
+
+        StatsObject.overview = data.infoobjecttype.reduce((a, o) => {
+            a[o.id] = o.n;
+            return a;
+        }, StatsObject.overview);
 
         // Logger.info(`stats are : \n ${ JSON.stringify(StatsObject, null, "  ") }`);
     }
     else {
-        Logger.info(`error response: \n ${ JSON.stringify(result, null, "  ") }`);
+        Logger.info("OVERVIEW error!");
     }
+}
+
+function buildOverviewQueryString(queryObj) {
+    const items = []
+        .concat(Filter.buildFilter(queryObj))
+        .concat("vPersons as var(func: type(Person)) @filter(uid_in(Person.objects, uid(vFilter))) { uid }")
+        .concat(buildNavCounts());
+
+    return `{ ${items.join("\n")} }`;
 }
 
 function buildQueryString(category, queryObj) {
     const items = []
         .concat(Filter.buildFilter(queryObj))
         .concat(Filter.buildObjectTypeFilter(category))
-        .concat(buildNavCounts())
+        // .concat("vPersons as var(func: type(Person)) @filter(uid_in(Person.objects, uid(vFilter))) { uid }")
         .concat(buildCatCounts("Sdg"))
-        .concat(buildCatCounts("Department"))
+        .concat(buildCatCounts("Department"));
+        // .concat(buildAuthorCount())
+        // .concat(buildPersonCounts("Person", "LDAPDN"));
+
+    return `{ ${items.join("\n")} }`;
+}
+
+function buildPeopleQueryString(category, queryObj) {
+    const items = []
+        .concat(Filter.buildFilter(queryObj))
+        .concat(Filter.buildObjectTypeFilter(category))
+        .concat("vPersons as var(func: type(Person)) @filter(uid_in(Person.objects, uid(vFilter))) { uid }")
+        // .concat(buildCatCounts("Sdg"))
+        // .concat(buildCatCounts("Department"));
         .concat(buildAuthorCount())
         .concat(buildPersonCounts("Person", "LDAPDN"));
 
     return `{ ${items.join("\n")} }`;
 }
 
+
 function buildNavCounts() {
     return [
-        ...buildCatCounts("InfoObjectType", null, "name"),
-        "vPersons as var(func: type(Person)) @cascade { uid Person.objects @filter(uid(vFilter)) { uid } }",
+        ...buildCatCounts("InfoObjectType", null, "name", true),
         "people(func: uid(vPersons)) { n: count(uid) }"
     ];
 }
@@ -155,7 +259,7 @@ function buildAuthorCount() {
     ];
 }
 
-function buildCatCounts(cat, dqlFunc, cid) {
+function buildCatCounts(cat, dqlFunc, cid, overview) {
     if (!(dqlFunc && dqlFunc.length)) {
         dqlFunc = `type(${ cat })`
     }
@@ -167,7 +271,10 @@ function buildCatCounts(cat, dqlFunc, cid) {
     return [
         `${ cat.toLowerCase() }(func: ${ dqlFunc }) {`,
         `id: ${ cat }.${ cid }`,
-        `n: count(${ cat }.objects @filter(uid_in(InfoObject.category, uid(vObjectType)) and uid(vFilter)))`,
+        `n: count(${ cat }.objects @filter(`,
+        "uid(vFilter)",
+        overview ? "" : " and uid_in(InfoObject.category, uid(vObjectType))",
+        "))",
         "}"
     ];
 }

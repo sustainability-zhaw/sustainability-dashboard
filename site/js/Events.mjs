@@ -3,10 +3,13 @@
 let anchor; 
     
 const events = [
-    "queryUpdate", // ask to load data
+    "queryUpdate", // a query has changed 
     "queryExtra",
     "dataUpdate", // new data is available
+    "moreData", // ask for more data
     "statUpdate", // new data is available
+    "statMainUpdate", 
+    "statPeopleUpdate",
     "personUpdate",
     "queryAddItem",
     "queryError",
@@ -23,7 +26,8 @@ const events = [
     "bookmarkDelete",
     "bookmarkCreate",
     "bookmarkUpdate",
-    "bookmarkData"
+    "bookmarkData",
+    "changeCategory"
 ];
 
 export const trigger = events.reduce((a, e) => {

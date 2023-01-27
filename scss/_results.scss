@@ -1,6 +1,7 @@
 .resultcontainer {
     display: grid;
     grid-template-columns: 1em 8em auto 5em;
+    grid-template-rows: auto auto 2.5em;
     grid-template-areas: 
         "title title title year"
         ". authors authors tools"
@@ -8,10 +9,10 @@
     ;
 
     &:has(.bi-layer-forward) {
+        grid-template-rows: auto auto auto 2em 2em 2em 2.5em;
         grid-template-areas: 
             "title title title year"
             ". authors authors tools"
-            
             ". absttl abs abs"
             ". kwttl kw kw"
             ". clsfttl clsf clsf"
@@ -36,13 +37,13 @@
     .abstract, 
     .keywords,
     .classification,
-    .pubtype {
+    .subtype {
         @extend .border;
         padding-left: .5em;
         padding-right: .5em;
     }
 
-    .pubtype.title,
+    .subtype.title,
     .abstract.title, 
     .keywords.title,
     .classification.title {        
@@ -52,7 +53,7 @@
         text-align: right;
     }
 
-    .pubtitle {
+    .title {
         @extend .border;
         @extend .fw-bolder;
         
@@ -72,7 +73,11 @@
         .author {
             margin-right: .5em;
             display: inline-block;
-
+            
+            .affiliation:has(.mark[data-qvalue= ""]) {
+                display: none;
+            }
+            
             .mark, .counter {
                 display: inline-block;
                 text-align: center;
@@ -153,7 +158,7 @@
     .classification  {
         grid-area: clsf;
     }
-    .pubtype  {
+    .subtype  {
         grid-area: tp;
     }
 
@@ -178,10 +183,25 @@
         }
     }
 
-    .pubtype.title { 
+    .subtype.title { 
         grid-area: tpttl;
         &::before  {
             content: "Type:";
+        }
+    }
+
+    .listitem {
+        display: inline-block;
+
+        &:has(.label.itemid:empty) {
+            .label,
+            .extralabel {
+                display: none;
+            }
+        }
+
+        .extralabel::before {
+            content: ": ";
         }
     }
 }

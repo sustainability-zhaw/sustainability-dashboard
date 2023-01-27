@@ -41,12 +41,12 @@ $deptColors: (
 
 @each $id, $code in $sdgColors {
     $nullid: $id;
-    @if $id < 10 {
-        $nullid: "0#{$id}";
-    }
+    // @if $id < 10 {
+    //     $nullid: "0#{$id}";
+    // }
 
-    .mark.cat-#{$nullid} ,
-    .marker.cat-#{$nullid} {
+    .mark.sdg_#{$nullid} ,
+    .marker.sdg_#{$nullid} {
         background-color: $code;
         &::before {
             content: "#{$id}";
@@ -55,8 +55,8 @@ $deptColors: (
 }
 
 @each $id, $code in $deptColors {
-    .mark.cat-#{$id},
-    .marker.cat-#{$id} {
+    .mark.department_#{$id},
+    .marker.department_#{$id} {
         background-color: $code;
         &::before {
             content: "#{$id}";

@@ -1,21 +1,29 @@
-import * as DataModel from "./DataModel.mjs";
-import * as StatsModel from "./StatsModel.mjs";
+// more modules
+import * as Events from "./Events.mjs";
 import * as Config from "./ConfigModel.mjs";
 import * as Logger from "./Logger.mjs";
+
+// models
+import * as DataModel from "./DataModel.mjs";
+// import * as StatsModel from "./StatsModel.mjs";
 import * as QueryModel from "./QueryModel.mjs";
-import * as IndexModel from "./IndexerModel.mjs";
-import * as Events from "./Events.mjs";
+// import * as IndexModel from "./IndexerModel.mjs";
+
+// views
+import * as IndexOverlayView from "./views/indexterms.mjs";
+import * as StatsView from "./views/stats.mjs";
 
 // pull up the System with a basic configuration
 
+const scrollLimit = 600;
+const maxScrollRecords = 500
+
 Events.listen.queryUpdate(handleQueryUpdate);
 Events.listen.queryUpdate(handleQueryUpdateIndex);
-Events.listen.queryUpdate(requestQueryStats);
 
 Events.listen.queryExtra(handleQueryExtraUpdate);
-// Events.listen.queryAddItem(handleQueryAdd);
 Events.listen.dataUpdate(handleDataUpdate);
-Events.listen.statUpdate(handleStats);
+
 Events.listen.bookmarkUpdate(() => {});
 
 Events.listen.partialMatchingTerm(conditionalIndexButtonPartial);
@@ -23,9 +31,10 @@ Events.listen.fullMatchingTerm(conditionalIndexButtonOn);
 Events.listen.invalidMatchingTerm(conditionalIndexButtonOff);
 
 Events.listen.queryUpdate(renderSearchOptions);
-Events.listen.indexTermData(renderIndexTerms);
 
 Events.listen.queryError(showQueryError);
+
+await init();
 
 async function init() {
     await Config.init("config.json", {
@@ -45,13 +54,20 @@ async function init() {
     // dropSearchElement();
 
     initTools();
+    initScroll()
 
     initEvents();
 
     // QueryModel.init();
-}
+    const section = document.querySelector('.nav-link.active');
+    const category = section.dataset.category;
 
-init().then(() => Events.trigger.queryUpdate());
+    document.querySelector('.scroll-limit').textContent = maxScrollRecords;
+
+    Logger.debug("call update from init!");
+    Events.trigger.changeCategory({category});
+    Events.trigger.queryUpdate();
+}
 
 // function definitions
 
@@ -117,6 +133,49 @@ function initTools() {
             funcs[ev.target.id]();
         }
     });
+
+    document.querySelectorAll(".navbar-left .cat.nav-link")
+        .forEach((n) => n.addEventListener("click", handleCategoryChange));
+}
+
+function handleCategoryChange(ev) {
+    const category = ev.currentTarget.dataset.category;
+
+    ev.currentTarget
+        .parentNode
+        .querySelectorAll(".nav-link")
+        .forEach((e) => e.classList.remove("active"));
+    
+    ev.currentTarget.classList.add("active");
+
+    // Inform all models that changes are due
+    Events.trigger.changeCategory({category});
+    // once everything is set up, reload the data.
+    Events.trigger.queryUpdate();
+}
+
+function initScroll() {
+    const mainContent = document.querySelector("#mainarea");
+
+    mainContent.addEventListener("scroll", (ev) => {
+
+        const vpHeight = window.visualViewport.height;
+        const height = mainContent.scrollHeight - vpHeight;
+        const offset = mainContent.scrollTop;
+
+        // Logger.debug(`${height} - ${offset}`);
+
+        if ((height - offset) < scrollLimit) {
+            if (!DataModel.is_complete() && DataModel.offset() < maxScrollRecords) {
+                document.querySelector("#mainarea .intransit").removeAttribute("hidden");
+            }
+
+            if (DataModel.offset() < maxScrollRecords) {
+                Events.trigger.moreData();
+            }
+        }
+    });
+
 }
 
 // UI Usability functions 
@@ -239,8 +298,9 @@ function addSearchElement() {
     sidebarelement.addEventListener("click", saveIndexQuery);
     sidebarelement.addEventListener("click", dropSearchElement);
     sidebarelement.addEventListener("click", editSearchElement);
-    sidebarelement.addEventListener("click", handleIndexActivate);
-    sidebarelement.addEventListener("click", handleIndexDelete);
+    
+    IndexOverlayView.init(sidebarelement);
+    StatsView.init(sidebarelement);
 }
 
 function editSearchElement(evt) {
@@ -298,14 +358,6 @@ function saveIndexQuery(ev) {
     Events.trigger.indexTermCreate(QueryModel.queryterms());
 }
 
-function liveQueryInput() {
-    const searchTermElement = document.querySelector("#searchterms");
-
-    searchTermElement.addEventListener("keyup", function(evt) {
-        // TODO Trigger live querying
-    });
-} 
-
 function clearSearch(ev) {
     if (
         ev.target.id !== "newsearch" && 
@@ -318,27 +370,6 @@ function clearSearch(ev) {
     Events.trigger.queryClear();
 } 
 
-function handleIndexActivate(ev) {
-    if (!ev.target.parentNode.classList.contains("indexterm") || ev.target.classList.contains("disabled")) {
-        return;
-    }
-
-    const idxid = ev.target.parentNode.id.replace("index-", "");
-
-    IndexModel.getOneRecord(idxid);
-}
-
-
-function handleIndexDelete(ev) {
-    if (!ev.target.classList.contains("bi-trash-fill") || ev.target.classList.contains("disabled")) {
-        return;
-    }
-
-    Logger.debug("drop index");
-    const id = ev.target.parentNode.id.replace("index-","");
-
-    Events.trigger.indexTermDelete(id);
-}
 
 // QueryModel event handler
 
@@ -349,7 +380,11 @@ function handleQueryExtraUpdate(ev) {
         extraterm = searchterms.value.trim();
     }
 
-    Events.trigger.queryUpdate();
+    const section = document.querySelector('.nav-link.active');
+    const category = section.dataset.category;
+
+    Logger.debug("call extra update!");
+    Events.trigger.queryUpdate({category});
 } 
 
 // QueryModel Support functions
@@ -375,7 +410,9 @@ function handleQueryUpdate() {
     document.querySelector("#no_data").setAttribute("hidden", "hidden");
     document.querySelector("#loading_data").removeAttribute("hidden", "hidden");
     
-    DataModel.loadData(category, QueryModel.query()).then(() => Events.trigger.dataUpdate());
+    // Events.trigger.queryUpdate({category});
+
+    // DataModel.loadData(category, QueryModel.query()).then(() => Events.trigger.dataUpdate());
 }
 
 function renderSearchOptions() {
@@ -401,7 +438,7 @@ function renderSearchOptions() {
             case "department":
             case "sdg":
                 datafield.classList.add("marker");
-                datafield.classList.add(`cat-${term.value < 10 ? "0" : ""}${term.value}`);
+                datafield.classList.add(`${term.type}_${term.value}`);
                 break;
             default:
                 if (Object.hasOwn(iconClass, term.type)) {
@@ -415,46 +452,7 @@ function renderSearchOptions() {
     });
 }
 
-function renderIndexTerms() {
-    // only render if the index terms are shown.
-    
-    Logger.debug("render index terms");
-
-    const menuitem = document.querySelector("#indexmatcher_menu");
-    if(!menuitem.parentNode.classList.contains("active")) {
-        return; 
-    }    
-
-    const templateList = document.querySelector("#templateIndexTerm");
-    const templateQuery = document.querySelector("#searchoption");
-    const container = document.querySelector("#overlaycontent");
-
-    container.textContent = "";
-
-    IndexModel.getRecords().forEach(
-        (rec) => {
-            const result = templateList.content.cloneNode(true);
-            const lang = rec.qterms.filter(t => t.type === "lang").map(r => r.value).join("");
-            const sdg = rec.qterms.filter(t => t.type === "sdg").map(r => r.value).pop();
-            const terms = rec.qterms
-                .filter(t => t.type === "term" || t.type === "notterm")
-                .map(t => `${t.type === "notterm" ? "not:" : ""}${t.value}`)
-                .join(", ");
-
-            const sdgcls = `cat-${sdg < 10 ? "0" : ""}${sdg}`;
-
-            result.querySelector(".indexterm").id = "index-" + rec.id;
-            result.querySelector(".index-sdg").classList.add("mark");
-            result.querySelector(".index-sdg").classList.add(sdgcls);
-            result.querySelector(".index-lang").textContent = lang;
-            result.querySelector(".index-query").textContent = terms;
-
-            container.appendChild(result);
-        }
-    );
-}
-
-function handleDataUpdate() {
+function handleDataUpdate(ev) {
     Logger.debug("data update");
     
     const targetsection = document.querySelector('.results');
@@ -469,153 +467,128 @@ function handleDataUpdate() {
 
     // set the result type
 
+    document.querySelector("#mainarea .intransit").setAttribute("hidden", "hidden");
+
     // when we get the first results of a fresh search, reset the results section
     // TODO Pagination
-    targetsection.innerHTML = "";
+    if (ev.detail.reset) {
+        Logger.debug("reset data section");
+        targetsection.innerHTML = "";
+    }
+
     targetsection.dataset.resulttype = category;
    
     const template = document.querySelector('#resultcontainer');
-    const authortemplate = document.querySelector('#resourceauthor');
 
-    Logger.debug(`update ${ category }`);
+    // Logger.debug(`update ${ category }`);
 
-    DataModel.feed(category).forEach((object) => {
-        // Logger.debug(`render record ${index}`);
-        // Logger.debug(JSON.stringify(object, null, "  "));
+    DataModel.feed().reduce((section, object) => {
+        const element = Object.keys(object).reduce((result, k) => {
+            let sel = `.${k}`;
 
-        const result = template.content.cloneNode(true);
-
-        result.querySelector(".pubtitle").innerText = object.title;
-        result.querySelector(".year").innerText = object.year;
-        [...(result.querySelectorAll(".tool.bi-download"))].forEach(e => e.href = object.link);
-        
-        result.querySelector(".categories").innerHTML = object.sdg.map(sdg => `<span class="mark cat-${sdg}" data-qtype="sdg" data-qvalue="${sdg}"></span>`).join(" ");
-        result.querySelector(".extra.abstract").innerText= object.abstract;
-        result.querySelector(".extra.pubtype").innerText= object.subtype.name;
-
-        result.querySelector(".extra.keywords").innerText= object.keywords.map(k => k.name).join(", ");
-        result.querySelector(".extra.classification").innerText= object.class.map(cls => `${cls.id}: ${cls.name}`).join(", ");
-
-        const authorlist = result.querySelector(".authors");
-
-        object.authors.forEach(author => {
-            // Logger.debug(JSON.stringify(author, null, "  "));
-            const authorTag = authortemplate.content.cloneNode(true);
-            const personname = authorTag.querySelector(".name");
-            personname.innerText = author.fullname;
-            if (Object.hasOwn(author, "person") && author.person) {
-                const person = author.person;
-                const dept  = author.department;
-                const dmark = authorTag.querySelector(".mark");
-
-                personname.dataset.qvalue = person.initials;
-                
-                dmark.classList.add(`cat-${ dept }`);
-                dmark.dataset.qvalue = dept;
-
-                authorTag.querySelector(".counter").innerText = "_";
-                authorTag.querySelector(".affiliation").classList.remove("d-none");
+            if (k === "link") {
+                [...(result.querySelectorAll(sel))].forEach(e => e.href = object[k]);
+                return result;
             }
-            authorlist.appendChild(authorTag);    
-        });
 
-        targetsection.appendChild(result);
-    });
+            if (typeof(object[k]) !== "object") {
+                result.querySelector(sel).innerText = object[k];
+                return result;
+            }          
 
+            let templateId = `#${sel.slice(1)}template`;
+
+            if (["sdg", "department"].includes(k)) {
+                templateId = "#cattemplate";
+                sel = ".categories";
+            }
+            else if (k !== "authors") {
+                templateId = `#listitemtemplate`;
+            }
+
+            const template = document.querySelector(templateId);
+            sel += ".list";
+            
+            if (Array.isArray(object[k])) {
+                object[k].reduce(
+                    handleListElement(template), 
+                    result.querySelector(sel)
+                 );
+
+                return result;
+            }
+
+            handleListElement(template)(result.querySelector(sel), object[k]);
+
+            return result;
+        }, template.content.cloneNode(true));
+
+        section.appendChild(element);
+
+        return section;
+    }, targetsection);
+
+    
+    if (DataModel.is_complete() ){ 
+        document.querySelector("#mainarea .EOF").removeAttribute("hidden");
+    }
     document.querySelector("#mainarea").removeAttribute("hidden", "hidden");
     document.querySelector("#warnings").setAttribute("hidden", "hidden");
     document.querySelector("#loading_data").setAttribute("hidden", "hidden");
 
-    if (!DataModel.feed(category).length) {
-        document.querySelector("#no_data").removeAttribute("hidden", "hidden");
+    if (!DataModel.feed().length && !DataModel.offset()) {
+        document.querySelector("#no_data").removeAttribute("hidden");
         document.querySelector("#warnings").removeAttribute("hidden", "hidden");
     }
-}   
 
-function handleStats() {
-    // display numbers
-    const stats = StatsModel.getStats();
+    if (DataModel.offset() > maxScrollRecords && !DataModel.is_complete()) {
+        document.querySelector("#mainarea .intransit").setAttribute("hidden", "hidden");
+        document.querySelector("#mainarea .limit-reached").removeAttribute("hidden");
+    }   
+}
 
-    // Logger.debug(`stats are: ${JSON.stringify(stats, null, "  ")}`)
-
-    document.querySelector("#publication-counter").textContent =  stats.publications;
-    document.querySelector("#project-counter").textContent = stats.projects;
-    document.querySelector("#education-counter").textContent = stats.modules;
-    document.querySelector("#people-counter").textContent = stats.people;
-    document.querySelector("#peoplecountvalue").textContent = stats.section.contributors;
-
-    stats.section.sdg
-        .map(e => { 
-            e.id = e.id.replace("sdg_", "cat-");
-            return e;
-        })
-        .filter(e => e.id != "cat-17")
-        .map(e => {
-            e.id = e.id.replace(/-(\d)$/, "-0$1");
-            return e;
-        })
-        .forEach((e) => document.querySelector(`.cat.counter.${ e.id }`).textContent = e.n);
-
-    stats.section.department
-        .map(e => {
-            e.id = e.id.replace("department_", "cat-"); 
-            return e;
-        })
-        .filter(e => !( ["cat-R", "cat-V"].includes(e.id) ))
-        .forEach((e) => document.querySelector(`.cat.counter.${ e.id }`).textContent = e.n);
-
-    // contributor list per section
-
-    const template = document.querySelector("#contributorlistitem");
-    const target = document.querySelector("#contributors .peopleinner");
-
-    target.innerHTML = "";
-
-    stats.section.person
-        .map((p) => {
-            p.department = p.department.id.replace("department_", "");
-            return p;
-        })
-        .sort((a, b) => { 
-            let c = b.n - a.n;
-            if (c === 0) {
-               c = a.fullname.toLowerCase().localeCompare(b.fullname.toLowerCase(), "de");
+function handleListElement(template) {
+    return (a, e) => {
+        const element = Object.keys(e).reduce((tmpl, k) => {
+            const field = tmpl.querySelector(`.${k}`);
+            const value = e[k];
+            if (!field) {
+                return tmpl;
             }
-            return c;
-        })
-        .forEach((p) => {
-            const result = template.content.cloneNode(true);
 
-            // result.querySelector(".person").dataset.qvalue = p.initials;
-            const name = result.querySelector(".person .name");
-            name.textContent = p.fullname;
-            name.dataset.qvalue = p.initials;
-            const initials = result.querySelector(".person .initials");
-            initials.textContent = p.initials;
-            initials.dataset.qvalue = p.initials;
-            
-            result.querySelector(".person .counter").textContent = p.n;
-            
-            const dnode = result.querySelector(".person .mark");
+            if (k.startsWith("qvalue")) {
+                field.dataset.qvalue = value;
+                return tmpl;
+            }
 
-            dnode.classList.remove("cat-none");
-            dnode.classList.add(`cat-${p.department}`);
-            dnode.dataset.qvalue = p.department;
-            
-            target.appendChild(result);
-        });
+            if (k === "id") {
+                field.classList.add(value);
+
+                if ("qtype" in field.dataset && field.dataset.qtype.length === 0) {
+
+                    const [qtype, qvalue] = value.split("_");
+
+                    field.dataset.qtype = qtype;
+                    field.dataset.qvalue = qvalue;
+                }
+                
+                return tmpl;
+            }
+
+            if (k === "department") {
+                field.querySelector(".id").classList.add(value.id)
+            }
+
+            field.innerHTML = value;
+            return tmpl;
+        }, template.content.cloneNode(true));
+
+        a.appendChild(element);
+
+        return a;
+    };
 }
 
-function requestQueryStats(ev) {
-    // download numbers
-    const section = document.querySelector('.nav-link.active');
-    const category = section.dataset.category;
-
-    Logger.debug(`active category: ${category}`);
-
-    StatsModel.loadData(category, QueryModel.query())
-        .then(() => Events.trigger.statUpdate())
-}
 
 function conditionalIndexButtonOff() {
     const button = document.querySelector("#savematcher .btn");

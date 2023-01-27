@@ -39,10 +39,21 @@ services:
       - dgraphnet
     environment:
       DGRAPH_SERVER: http://db:8080
-      SAMPLE_DATA: pubs_and_persons
+      # SAMPLE_DATA: pubs_and_persons
+
+  db_keywords:
+    image: ghcr.io/sustainability-zhaw/keywords:sha-0c40ab7
+    restart: 'no'
+    networks:
+      - dgraphnet
+    depends_on:
+      db_init:
+        condition: service_completed_successfully 
+    environment:
+      DB_URI: http://db:8080/graphql
 
   dspacer: 
-    image: ghcr.io/sustainability-zhaw/extraction-dspace:sha-
+    image: ghcr.io/sustainability-zhaw/extraction-dspace:sha-d32cad4
     restart: "no"
     networks:
       - dgraphnet
