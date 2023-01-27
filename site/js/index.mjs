@@ -1,10 +1,16 @@
-import * as DataModel from "./DataModel.mjs";
-import * as StatsModel from "./StatsModel.mjs";
+// more modules
+import * as Events from "./Events.mjs";
 import * as Config from "./ConfigModel.mjs";
 import * as Logger from "./Logger.mjs";
+
+// models
+import * as DataModel from "./DataModel.mjs";
+import * as StatsModel from "./StatsModel.mjs";
 import * as QueryModel from "./QueryModel.mjs";
 import * as IndexModel from "./IndexerModel.mjs";
-import * as Events from "./Events.mjs";
+
+// views
+import * as IndexOverlayView from "./views/indexterms.mjs";
 
 // pull up the System with a basic configuration
 
@@ -12,12 +18,10 @@ const scrollLimit = 600;
 
 Events.listen.queryUpdate(handleQueryUpdate);
 Events.listen.queryUpdate(handleQueryUpdateIndex);
-// Events.listen.queryUpdate(requestQueryStats);
 
 Events.listen.queryExtra(handleQueryExtraUpdate);
-// Events.listen.queryAddItem(handleQueryAdd);
 Events.listen.dataUpdate(handleDataUpdate);
-// Events.listen.moreDataAvailable(handleMoreData);
+
 Events.listen.statUpdate(handleStats);
 Events.listen.bookmarkUpdate(() => {});
 
@@ -26,7 +30,6 @@ Events.listen.fullMatchingTerm(conditionalIndexButtonOn);
 Events.listen.invalidMatchingTerm(conditionalIndexButtonOff);
 
 Events.listen.queryUpdate(renderSearchOptions);
-Events.listen.indexTermData(renderIndexTerms);
 
 Events.listen.queryError(showQueryError);
 
@@ -288,8 +291,8 @@ function addSearchElement() {
     sidebarelement.addEventListener("click", saveIndexQuery);
     sidebarelement.addEventListener("click", dropSearchElement);
     sidebarelement.addEventListener("click", editSearchElement);
-    sidebarelement.addEventListener("click", handleIndexActivate);
-    sidebarelement.addEventListener("click", handleIndexDelete);
+    
+    IndexOverlayView.init(sidebarelement);
 }
 
 function editSearchElement(evt) {
@@ -347,14 +350,6 @@ function saveIndexQuery(ev) {
     Events.trigger.indexTermCreate(QueryModel.queryterms());
 }
 
-function liveQueryInput() {
-    const searchTermElement = document.querySelector("#searchterms");
-
-    searchTermElement.addEventListener("keyup", function(evt) {
-        // TODO Trigger live querying
-    });
-} 
-
 function clearSearch(ev) {
     if (
         ev.target.id !== "newsearch" && 
@@ -367,27 +362,6 @@ function clearSearch(ev) {
     Events.trigger.queryClear();
 } 
 
-function handleIndexActivate(ev) {
-    if (!ev.target.parentNode.classList.contains("indexterm") || ev.target.classList.contains("disabled")) {
-        return;
-    }
-
-    const idxid = ev.target.parentNode.id.replace("index-", "");
-
-    IndexModel.getOneRecord(idxid);
-}
-
-
-function handleIndexDelete(ev) {
-    if (!ev.target.classList.contains("bi-trash-fill") || ev.target.classList.contains("disabled")) {
-        return;
-    }
-
-    Logger.debug("drop index");
-    const id = ev.target.parentNode.id.replace("index-","");
-
-    Events.trigger.indexTermDelete(id);
-}
 
 // QueryModel event handler
 
@@ -468,45 +442,6 @@ function renderSearchOptions() {
 
         searchoptions.appendChild(result);
     });
-}
-
-function renderIndexTerms() {
-    // only render if the index terms are shown.
-    
-    Logger.debug("render index terms");
-
-    const menuitem = document.querySelector("#indexmatcher_menu");
-    if(!menuitem.parentNode.classList.contains("active")) {
-        return; 
-    }    
-
-    const templateList = document.querySelector("#templateIndexTerm");
-    const templateQuery = document.querySelector("#searchoption");
-    const container = document.querySelector("#overlaycontent");
-
-    container.textContent = "";
-
-    IndexModel.getRecords().forEach(
-        (rec) => {
-            const result = templateList.content.cloneNode(true);
-            const lang = rec.qterms.filter(t => t.type === "lang").map(r => r.value).join("");
-            const sdg = rec.qterms.filter(t => t.type === "sdg").map(r => r.value).pop();
-            const terms = rec.qterms
-                .filter(t => t.type === "term" || t.type === "notterm")
-                .map(t => `${t.type === "notterm" ? "not:" : ""}${t.value}`)
-                .join(", ");
-
-            const sdgcls = `cat-${sdg < 10 ? "0" : ""}${sdg}`;
-
-            result.querySelector(".indexterm").id = "index-" + rec.id;
-            result.querySelector(".index-sdg").classList.add("mark");
-            result.querySelector(".index-sdg").classList.add(sdgcls);
-            result.querySelector(".index-lang").textContent = lang;
-            result.querySelector(".index-query").textContent = terms;
-
-            container.appendChild(result);
-        }
-    );
 }
 
 function handleDataUpdate(ev) {
@@ -697,17 +632,6 @@ function handleStats() {
             
             target.appendChild(result);
         });
-}
-
-function requestQueryStats(ev) {
-    // download numbers
-    const section = document.querySelector('.nav-link.active');
-    const category = section.dataset.category;
-
-    Logger.debug(`active category: ${category}`);
-
-    // StatsModel.loadData(category, QueryModel.query())
-    //     .then(() => Events.trigger.statUpdate())
 }
 
 function conditionalIndexButtonOff() {

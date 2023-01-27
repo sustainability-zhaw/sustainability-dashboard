@@ -49,7 +49,6 @@ function categoryChange(ev) {
 }
 
 async function handleLoadData(ev) {
-    
     // RequestController.abort();
     Logger.debug("load stats");
     await loadData(StatsObject.category, QueryModel.query());
