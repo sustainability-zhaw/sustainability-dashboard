@@ -439,7 +439,7 @@ function renderSearchOptions() {
             case "department":
             case "sdg":
                 datafield.classList.add("marker");
-                datafield.classList.add(`cat-${term.value < 10 ? "0" : ""}${term.value}`);
+                datafield.classList.add(`${term.type}_${term.value}`);
                 break;
             default:
                 if (Object.hasOwn(iconClass, term.type)) {
@@ -592,6 +592,15 @@ function handleListElement(template) {
 
             if (k === "id") {
                 field.classList.add(value);
+
+                if ("qtype" in field.dataset && field.dataset.qtype.length === 0) {
+
+                    const [qtype, qvalue] = value.split("_");
+
+                    field.dataset.qtype = qtype;
+                    field.dataset.qvalue = qvalue;
+                }
+                
                 return tmpl;
             }
 
@@ -639,10 +648,10 @@ function handleStats() {
     target.innerHTML = "";
 
     stats.section.person
-        .map((p) => {
-            p.department = p.department.id.replace("department_", "");
-            return p;
-        })
+        // .map((p) => {
+        //     p.department = p.department.id.replace("department_", "");
+        //     return p;
+        // })
         .sort((a, b) => { 
             let c = b.n - a.n;
             if (c === 0) {
@@ -666,7 +675,7 @@ function handleStats() {
             const dnode = result.querySelector(".person .mark");
 
             dnode.classList.remove("cat-none");
-            dnode.classList.add(`cat-${p.department}`);
+            dnode.classList.add(`department_${p.department.id}`);
             dnode.dataset.qvalue = p.department;
             
             target.appendChild(result);
