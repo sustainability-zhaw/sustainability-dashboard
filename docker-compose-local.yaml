@@ -70,8 +70,16 @@ services:
     restart: 'no'
     networks:
       - dgraphnet
-    ports:
-      - '8000:8000'
+    # ports:
+    #   - '8000:8000'
+  
+  gql_browser: 
+     image: caddy:2.6.2
+     restart: 'no'
+     networks:
+      - dgraphnet
+     volumes: 
+      - ./gqldev:/usr/share/caddy
 
 networks:
   dgraphnet:
