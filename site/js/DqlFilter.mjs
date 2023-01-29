@@ -59,6 +59,14 @@ function mapHelperQuery(theType, initials) {
     return (t, i) => `qh${ theType }_${ i } as var(func: type(${ theType })) @filter(eq(${ theType }.${ initials }, ${ t })) { uid }`;
 }
 
+function mapPersonHelperQuery(theType, initials) {
+    if (!(initials && initials.length)) {
+        initials = "id";
+    }
+    return (t, i) => `qh${ theType }_${ i } as var(func: type(Author)) @cascade { uid Author.person @filter(eq(${theType}.${ initials }, ${ t })) { uid }}`;
+}
+
+
 function mapHelperQueryText(theType, initials) {
     if (!(initials && initials.length)) {
         initials = "name";
@@ -100,7 +108,7 @@ function buildFilterHelpers(queryObj) {
     if (queryObj.persons && queryObj.persons.length) {
         retval = retval.concat(
             queryObj.persons.map(
-                mapHelperQuery("Person", "initials")
+                mapPersonHelperQuery("Person", "initials")
             )
         );
     }
@@ -111,7 +119,9 @@ function buildFilterHelpers(queryObj) {
 function buildHelperFilter(queryObj, targetType) {
     let retval = [];
     let attrs = {
-        InfoObject: {},
+        InfoObject: {
+            persons: "authors"
+        },
         SdgMatch: {
             Sdg: "sdg"
         }

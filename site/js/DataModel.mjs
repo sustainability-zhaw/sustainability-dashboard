@@ -89,10 +89,10 @@ export async function loadData(type, queryObj) {
 
     const dqlQuery = buildDQLQueryString(type, queryObj);
 
-    // Logger.debug("DQL Follows");
-    // Logger.debug("------------------------------");
-    // Logger.debug(dqlQuery);
-    // Logger.debug("------------------------------");
+    Logger.debug("DQL Data Follows");
+    Logger.debug("------------------------------");
+    Logger.debug(dqlQuery);
+    Logger.debug("------------------------------");
 
     try {
         Model.records = await executeDQLQuery(dqlQuery);

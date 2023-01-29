@@ -50,7 +50,7 @@ function handlePeopleStats() {
         .sort((a, b) => { 
             let c = b.n - a.n;
             if (c === 0) {
-               c = a.fullname.toLowerCase().localeCompare(b.fullname.toLowerCase(), "de");
+               c = a.displayname.toLowerCase().localeCompare(b.displayname.toLowerCase(), "de");
             }
             return c;
         })
@@ -59,7 +59,7 @@ function handlePeopleStats() {
 
             // result.querySelector(".person").dataset.qvalue = p.initials;
             const name = result.querySelector(".person .name");
-            name.textContent = p.fullname;
+            name.textContent = `${p.surname}, ${p.givenname}`;
             name.dataset.qvalue = p.initials;
             const initials = result.querySelector(".person .initials");
             initials.textContent = p.initials;

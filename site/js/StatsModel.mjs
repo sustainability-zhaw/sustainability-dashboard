@@ -131,10 +131,10 @@ async function loadPeopleData(category, queryObj) {
     StatsObject.people =  [];
     StatsObject.contributors = 0;
 
-    if ("people" in data && data.people) {
+    if ("person" in data && data.person) {
         Logger.info(`response data: \n ${ JSON.stringify(data, null, "  ") }`);
 
-        StatsObject.people = data.people; 
+        StatsObject.people = data.person; 
         StatsObject.contributors = data.contributors[0].n;
     }
 }
@@ -211,7 +211,8 @@ async function loadOverviewData(queryObj) {
 function buildOverviewQueryString(queryObj) {
     const items = []
         .concat(Filter.buildFilter(queryObj))
-        .concat("vPersons as var(func: type(Person)) @filter(uid_in(Person.objects, uid(vFilter))) { uid }")
+        .concat("vAuthors as var(func: type(Author)) @filter(uid_in(Author.objects, uid(vFilter))) { uid }")
+        .concat("vPersons as var(func: type(Person)) @filter(uid_in(Person.pseudonyms, uid(vAuthors))) { uid }")
         .concat(buildNavCounts());
 
     return `{ ${items.join("\n")} }`;
@@ -234,7 +235,8 @@ function buildPeopleQueryString(category, queryObj) {
     const items = []
         .concat(Filter.buildFilter(queryObj))
         .concat(Filter.buildObjectTypeFilter(category))
-        .concat("vPersons as var(func: type(Person)) @filter(uid_in(Person.objects, uid(vFilter))) { uid }")
+        .concat("vAuthors as var(func: type(Author)) @filter(uid_in(Author.objects, uid(vFilter))) { uid }")
+        .concat("vPersons as var(func: type(Person)) @filter(uid_in(Person.pseudonyms, uid(vAuthors))) { uid }")
         // .concat(buildCatCounts("Sdg"))
         // .concat(buildCatCounts("Department"));
         .concat(buildAuthorCount())
@@ -254,7 +256,7 @@ function buildNavCounts() {
 function buildAuthorCount() {
     return [
         "contributors(func: type(Person))",
-        " @filter(uid_in(Person.objects, uid(vFilter)))",
+        " @filter(uid(vPersons))",
         "{ n: count(uid) }"
     ];
 }
@@ -281,10 +283,16 @@ function buildCatCounts(cat, dqlFunc, cid, overview) {
 
 function buildPersonCounts(cat, cid) {
     return [
-        `${ cat.toLowerCase() }(func: uid(vPersons)) {`,
+        "tperson as var(func: type(Person)) @filter(uid_in(Person.pseudonyms, uid(vAuthors))) {",
+        "ps_c: Person.pseudonyms { n: npub as count(Author.objects @filter(uid(vFilter) and uid_in(InfoObject.category, uid(vObjectType)))) }",
+        "n: tpn as sum(val(npub))",
+        "} ",
+        `${ cat.toLowerCase() }(func: uid(tperson), orderdesc: val(tpn), first: 100) {`,
         `id: ${ cat }.${ cid }`,
         ...Filter.selectorAlias([
-                "fullname",
+                "displayname",
+                "givenname",
+                "surname",
                 "title", 
                 "initials",
                 "mail",
@@ -294,7 +302,7 @@ function buildPersonCounts(cat, cid) {
              "Person"
         ),
         "department: Person.department { id: Department.id } ",
-        `n: count(${ cat }.objects @filter(uid_in(InfoObject.category, uid(vObjectType)) and uid(vFilter)))`,
+        "n: val(tpn)",
         "}"
     ];
 }
