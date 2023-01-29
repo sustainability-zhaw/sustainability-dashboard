@@ -558,17 +558,17 @@ function handleField(tmpl, field, key, value) {
     if (!field) {
         return tmpl;
     }
-    
+
     if (key.startsWith("qvalue")) {
         field.dataset.qvalue = value;
         return tmpl;
     }
 
-    if (key === "id") {
+    if (key === "id") {   
         field.classList.add(value);
 
         if ("qtype" in field.dataset && field.dataset.qtype.length === 0) {
-
+            // Logger.debug("set dataset type and value");
             const [qtype, qvalue] = value.split("_");
 
             field.dataset.qtype = qtype;
