@@ -18,11 +18,12 @@ services:
       - dgraphnet
 
   db_init:
-    image: ghcr.io/sustainability-zhaw/dgraph-schema:sha-0812f6f
+    image: ghcr.io/sustainability-zhaw/dgraph-schema:sha-2b58e84
     restart: 'no'
     networks:
       - dgraphnet
     environment:
+      TIMEOUT: 15
       DGRAPH_SERVER: http://db:8080
 
   db_keywords:
