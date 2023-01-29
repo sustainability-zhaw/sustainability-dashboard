@@ -389,6 +389,7 @@ function handleQueryExtraUpdate(ev) {
 
 // QueryModel Support functions
 
+// FIXME This should be part of the indexerModel.
 function handleQueryUpdateIndex() {
     const menuitem = document.querySelector("#indexmatcher_menu");
     if(!menuitem.parentNode.classList.contains("active")) {

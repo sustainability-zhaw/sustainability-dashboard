@@ -25,8 +25,8 @@ function handleIndexDelete(ev) {
         return;
     }
 
-    Logger.debug("drop index");
     const id = ev.target.parentNode.id.replace("index-","");
+    Logger.debug(`drop index ${id}`);
 
     Events.trigger.indexTermDelete(id);
 }
@@ -42,7 +42,7 @@ function renderIndexTerms() {
     }    
 
     const templateList = document.querySelector("#templateIndexTerm");
-    const templateQuery = document.querySelector("#searchoption");
+    // const templateQuery = document.querySelector("#searchoption");
     const container = document.querySelector("#overlaycontent");
 
     container.textContent = "";

@@ -3,11 +3,13 @@ import * as Logger from "./Logger.mjs";
 import * as Events from "./Events.mjs";
 
 import * as Filter from "./DqlFilter.mjs";
+import { query } from "./QueryModel.mjs";
 
 const Model = {
     records: {},
     data: [],
-    filter: []
+    filter: [],
+    query: ""
 };
 
 const RequestController = new AbortController();
@@ -55,18 +57,76 @@ function selectRecords(ev) {
  * Creates a new matching term record in the backend
  * @param {Event} ev 
  */
-function createRecord(ev) {
+async function createRecord(ev) {
     Logger.debug(`create INDEX Term from ${JSON.stringify(ev.detail)}`);
 
-    if (ev.detail.length) {
-        const id = Model.data.length ? Math.max(...Model.data.map((e) => e.id)) + 1 : 1;
+    const sdgMatch = ev.detail.reduce((agg, {type, value}) => {
+        switch(type) {
+        case "notterm":
+            agg.forbidden_context = value;
+            break;
+        case "lang":
+            agg.language = value.toLowerCase();
+            break;
+        case "sdg":
+            agg.sdg = {id: `sdg_${value}`};
+            break;
+        default:
+            if ("keyword" in agg) {
+                agg.required_context = value;
+                break;
+            }
+            agg.keyword = value;
+            break;
+        }
+        return agg;
+    }, {});
 
-        const record = {id, qterms: ev.detail};
-        Model.data.push(record);
-        Model.records[id] = record;
+    // get next construct
+    sdgMatch["construct"] = await findMaxId(sdgMatch.sdg.id, sdgMatch.language);
 
-        Events.trigger.indexTermData();
+    Logger.debug(`matchobject ${JSON.stringify(sdgMatch, null, "  ")}`);
+
+    const qstring = `mutation addSdgMatch($sdgMatch: AddSdgMatchInput!) {
+        addSdgMatch(input: [$sdgMatch]) {
+          n: numUids
+          sdgMatch {
+            construct
+          }
+        }        
+    }`;
+
+    await mutateData(qstring, {sdgMatch});
+}
+
+async function findMaxId(sdg, lang) {
+    const qstring = `query querySdgMatch($sdgfilter: SdgFilter!) {
+    result: querySdgMatch @cascade {
+      id: construct
+      sdg(filter: $sdgfilter) {
+        id
+      }
     }
+}`;
+    const variables = {
+        sdgfilter: {
+            id: {
+                eq: sdg
+            }
+        }
+    };
+
+    const data = await gqlQurey(qstring, variables);
+
+    // this will yield different ids after a while
+    if ("result" in data && data.result.length) {
+        const nextid = data.result.map(r => Number(r.id.split("_")[1].replace("c","")))
+            .reduce((a,b) => Math.max(a,b)) + 1
+
+        return `${sdg.replace("_", "")}_c${nextid}_${lang}`;
+    }
+    
+    return `${sdg.replace("_", "")}_c1_${lang}`;
 }
 
 /**
@@ -77,10 +137,89 @@ function createRecord(ev) {
 async function deleteRecord(ev) {
     Logger.debug(`delete record ${ev.detail}`);
 
-    // FIXME: delete the record from the database and reload data
+    const query = "mutation deleteSdgMatch($filter: SdgMatchFilter!) { result: deleteSdgMatch(filter: $filter) { msg sdgMatch { construct language } } }";
+    const variables = {
+        filter: {
+            construct: { 
+                eq: ev.detail
+            }
+        }
+    };
 
-    Model.data = Model.data.filter(r => r.id != ev.detail);
-    delete Model.records[ev.detail];
+    await mutateData(query, variables);
+}
+
+async function gqlQurey(query, variables) {
+    const url = Config.initGQLUri();
+    const body = JSON.stringify({query,variables});
+    const {signal} = RequestController;
+    const method = "POST"; // all requests are POST requests
+
+    const cache = "no-store";
+
+    const headers = {
+        'Content-Type': 'application/json'
+    };
+
+    const response = await fetch(url, {
+        signal,
+        method,
+        headers,
+        cache,
+        body
+    });
+    
+    // console.log(">>> post request");
+    
+    const result = await response.json();
+
+    // Logger.debug(`error ${JSON.stringify(result, null, "  ")}`);
+    
+    return result.data || {};
+}
+
+async function mutateData(query, variables) {
+    const data = await gqlQurey(query,variables);
+
+    if ("result" in data) {
+        Logger.debug(`Result is ${data.result.msg}`);
+    }
+
+    await fetchData();
+}
+
+async function fetchData() {
+    const body = Model.query;
+    const url = Config.initDQLUri();
+    const {signal} = RequestController;
+    const method = "POST"; // all requests are POST requests
+
+    const cache = "no-store";
+
+    const headers = {
+        'Content-Type': 'application/dql'
+    };
+
+    const response = await fetch(url, {
+        signal,
+        method,
+        headers,
+        cache,
+        body
+    });
+
+    const result = await response.json();
+
+    const data = result.data || {};
+
+    if (data && "sdgmatch" in data) {
+        Model.data = data.sdgmatch.map(parseRecord);
+        Model.records = Model.data.reduce((a, r) => {
+            a[r.id] = r;
+            return a;
+        }, {});
+    }
+
     Events.trigger.indexTermData();
 }
 
@@ -92,45 +231,11 @@ async function loadData(ev) {
 
     Logger.debug("load matcher data")
 
-    const url = initBaseStatsUri();
-    const {signal} = RequestController;
-    const method = "POST"; // all requests are POST requests
-
-    const cache = "no-store";
-
-    const headers = {
-        'Content-Type': 'application/dql'
-    };
-
-    let body  = buildQueryString(query);
+    Model.query =  buildQueryString(query);
     
-    Logger.debug(body);
+    // Logger.debug(body);
 
-    const response = await fetch(url, {
-        signal,
-        method,
-        headers,
-        cache,
-        body
-    });
-
-    const result = await response.json();
-    
-    // Logger.debug(JSON.stringify(result, null, "  "));
-
-    // if (Object.hasOwn(result, "errors")) {
-    //     Logger.debug(result.errors[0].message);
-    // } 
-
-    if (Object.hasOwn(result, "data") && result.data && Object.hasOwn(result.data, "sdgmatch")) {
-        Model.data = result.data.sdgmatch.map(parseRecord);
-        Model.records = Model.data.reduce((a, r) => {
-            a[r.id] = r;
-            return a;
-        }, {});
-    }
-
-    Events.trigger.indexTermData();
+    await fetchData();
 }
 
 function parseRecord(rec) {
@@ -150,29 +255,6 @@ function parseRecord(rec) {
         result.qterms.push({type: "notterm", value: rec.forbidden_context});
     }
     return result;
-}
-
-function initBaseStatsUri() {
-    const buri = Config.get("staturi");
-
-    if (buri && buri.length) {
-        Logger.debug("got staturi");
-        return buri;
-    }
-
-    // Logger.debug("STATS prepare baseuri");
-
-    const proto = Config.get("proto") || "https://",
-          host  = Config.get("host") || "",
-          path  = Config.get("stats") || "";
-
-    const baseuri = `${host.length ? proto : ""}${host}${(host.length && host.at(-1) !== "/") ? "/" : ""}${path}`
-
-    // Logger.debug("STATS set stats baseuri to " + baseuri);
-
-    Config.set("staturi", baseuri);
-
-    return baseuri;
 }
 
 function buildQueryString(queryObj) {
