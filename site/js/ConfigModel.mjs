@@ -34,3 +34,43 @@ export function set(name, value) {
         config[name] = value;
     }
 }
+
+export function initDQLUri() {
+    const buri = get("staturi");
+
+    if (buri && buri.length) {
+        return buri;
+    }
+
+    // Logger.debug("STATS prepare baseuri");
+
+    const proto = get("proto") || "https://",
+          host  = get("host") || "",
+          path  = get("stats") || "";
+
+    const baseuri = `${host.length ? proto : ""}${host}${(host.length && host.at(-1) !== "/") ? "/" : ""}${path}`
+
+    set("staturi", baseuri);
+
+    return baseuri;
+}
+
+export function initGQLUri(){
+    const buri = get("baseuri");
+
+    if (buri && buri.length) {
+        return buri;
+    }
+
+    const proto = get("proto") || "https://",
+          host  = get("host") || "",
+          path  = get("path") || "";
+
+
+    const baseuri = `${host.length ? proto : ""}${host}${(host.length && host.at(-1) !== "/") ? "/" : ""}${path}`
+
+    set("baseuri", baseuri);
+
+    return baseuri;
+}
+

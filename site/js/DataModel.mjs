@@ -79,51 +79,6 @@ function categoryChange(ev) {
     Model.category = ev.detail.category;
 }
 
-function initBaseUri(){
-    const buri = Config.get("baseuri");
-    if (buri && buri.length) {
-        Logger.debug("got baseuri");
-        return buri;
-    }
-
-    Logger.debug("prepare baseuri");
-
-    const proto = Config.get("proto") || "https://",
-          host  = Config.get("host") || "",
-          path  = Config.get("path") || "";
-
-
-    const baseuri = `${host.length ? proto : ""}${host}${(host.length && host.at(-1) !== "/") ? "/" : ""}${path}`
-
-    Logger.debug("set baseuri to " + baseuri);
-
-    Config.set("baseuri", baseuri);
-
-    return baseuri;
-}
-
-function initDQLUri(){
-    const buri = Config.get("staturi");
-    if (buri && buri.length) {
-        Logger.debug("got staturi");
-        return buri;
-    }
-
-    Logger.debug("prepare staturi");
-
-    const proto = Config.get("proto") || "https://",
-          host  = Config.get("host") || "",
-          path  = Config.get("stats") || "";
-
-
-    const baseuri = `${host.length ? proto : ""}${host}${(host.length && host.at(-1) !== "/") ? "/" : ""}${path}`
-
-    Logger.debug("set staturi to " + baseuri);
-
-    Config.set("staturi", baseuri);
-
-    return baseuri;
-}
 
 export async function loadData(type, queryObj) {
     Model.message = "";
@@ -157,7 +112,7 @@ export async function loadData(type, queryObj) {
     }
 
     Model.complete = !Model.records.length || Model.records.length < queryLimit;
-    
+
     if (Model.complete) {
         Logger.debug("Query is complete!");
     }
@@ -165,7 +120,7 @@ export async function loadData(type, queryObj) {
 }
 
 async function executeDQLQuery(body) {
-    const url = initDQLUri();
+    const url = Config.initDQLUri();
     const {signal} = RequestController;
 
     const headers = {
