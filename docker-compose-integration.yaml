@@ -18,7 +18,7 @@ services:
       - dgraphnet
 
   db_init:
-    image: ghcr.io/sustainability-zhaw/dgraph-schema:sha-3914aa2
+    image: ghcr.io/sustainability-zhaw/dgraph-schema:sha-cd0f0d0
     restart: 'no'
     networks:
       - dgraphnet
@@ -51,7 +51,7 @@ services:
       LIMIT_BATCH: 10
 
   adresolver: 
-    image: ghcr.io/sustainability-zhaw/ad-resolver:sha-9affb17
+    image: ghcr.io/sustainability-zhaw/ad-resolver:sha-c0ba73f
     restart: "no"
     networks:
       - dgraphnet
