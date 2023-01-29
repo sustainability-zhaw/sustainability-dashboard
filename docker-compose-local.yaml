@@ -30,7 +30,7 @@ services:
       - dgraphnet
 
   db_init:
-    image: ghcr.io/sustainability-zhaw/dgraph-schema:sha-2b58e84
+    image: ghcr.io/sustainability-zhaw/dgraph-schema:sha-3914aa2
     restart: 'no'
     networks:
       - dgraphnet
