@@ -596,9 +596,7 @@ function handleField(tmpl, field, key, value) {
 function handleListElement(template) {
     return (a, e) => {
         const element = Object.keys(e).reduce((tmpl, k) => {
-            const field = tmpl.querySelector(`.${k}`);
-            const value = e[k];
-            return handleField(tmpl, field, k, value);
+            return handleField(tmpl, tmpl.querySelector(`.${k}`), k,  e[k]);
         }, template.content.cloneNode(true));
 
         a.appendChild(element);
