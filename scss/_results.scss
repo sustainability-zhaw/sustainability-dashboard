@@ -74,6 +74,10 @@
             margin-right: .5em;
             display: inline-block;
             
+            .affiliation.department {
+                padding-left: 0.2em;
+            }
+
             .affiliation:has(.mark[data-qvalue= ""]) {
                 display: none;
             }
@@ -94,10 +98,9 @@
                 // line-height: $font-size-base;
                 // font-size: $font-size-base * .8;
             }
-            .mark {
-                margin-left: 0.5em;
+            .mark, .mark.department {
+                margin-left: 0;
                 width: $font-size-base* 2;
-                
             }
 
             &::after {

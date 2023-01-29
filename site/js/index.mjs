@@ -554,40 +554,51 @@ function handleDataUpdate(ev) {
     }   
 }
 
+function handleField(tmpl, field, key, value) {
+    if (!field) {
+        return tmpl;
+    }
+    
+    if (key.startsWith("qvalue")) {
+        field.dataset.qvalue = value;
+        return tmpl;
+    }
+
+    if (key === "id") {
+        field.classList.add(value);
+
+        if ("qtype" in field.dataset && field.dataset.qtype.length === 0) {
+
+            const [qtype, qvalue] = value.split("_");
+
+            field.dataset.qtype = qtype;
+            field.dataset.qvalue = qvalue;
+        }
+
+        return tmpl;
+    }
+
+    if (key === "department") {
+        field.querySelector(".id").classList.add(value.id)
+        return tmpl;
+    }
+
+    if (typeof(value) === "object") {
+        return Object.keys(value).reduce((agg, k) => {
+            return handleField(agg, agg.querySelector(`.${k}`), k, value[k]);
+        }, tmpl);
+    }
+
+    field.innerHTML = value;
+    return tmpl;
+}
+
 function handleListElement(template) {
     return (a, e) => {
         const element = Object.keys(e).reduce((tmpl, k) => {
             const field = tmpl.querySelector(`.${k}`);
             const value = e[k];
-            if (!field) {
-                return tmpl;
-            }
-
-            if (k.startsWith("qvalue")) {
-                field.dataset.qvalue = value;
-                return tmpl;
-            }
-
-            if (k === "id") {
-                field.classList.add(value);
-
-                if ("qtype" in field.dataset && field.dataset.qtype.length === 0) {
-
-                    const [qtype, qvalue] = value.split("_");
-
-                    field.dataset.qtype = qtype;
-                    field.dataset.qvalue = qvalue;
-                }
-                
-                return tmpl;
-            }
-
-            if (k === "department") {
-                field.querySelector(".id").classList.add(value.id)
-            }
-
-            field.innerHTML = value;
-            return tmpl;
+            return handleField(tmpl, field, k, value);
         }, template.content.cloneNode(true));
 
         a.appendChild(element);

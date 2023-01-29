@@ -176,7 +176,7 @@ function buildSelector() {
         "person: Author.person {",
         "fullname: Person.fullname",
         "qvalue.person: Person.initials",
-        "department: Person.department {",
+        "department.affiliation: Person.department {",
         "id: Department.id",
         "}",
         "}",
