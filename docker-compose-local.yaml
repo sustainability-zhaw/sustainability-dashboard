@@ -28,9 +28,6 @@ services:
     restart: 'no'
     networks:
       - dgraphnet
-    ports:
-      - '8080:8080'
-      - '9080:9080'
 
   db_init:
     image: ghcr.io/sustainability-zhaw/dgraph-schema:sha-0812f6f
