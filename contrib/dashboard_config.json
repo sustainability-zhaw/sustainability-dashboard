@@ -1,6 +1,6 @@
 {
     "proto": "http://",
-    "host": "localhost:8081",
+    "host": "localhost:8080",
     "path": "api/",
     "stats": "stats/",
     "static": 0,
