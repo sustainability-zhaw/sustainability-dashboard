@@ -1,0 +1,5 @@
+{
+    "db_host": "http://db:8080",
+    "target_host": "https://digitalcollection.zhaw.ch",
+    "limit_batch": 5
+}
