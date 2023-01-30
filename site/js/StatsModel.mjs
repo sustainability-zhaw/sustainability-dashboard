@@ -132,7 +132,7 @@ async function loadPeopleData(category, queryObj) {
     StatsObject.contributors = 0;
 
     if ("person" in data && data.person) {
-        Logger.info(`response data: \n ${ JSON.stringify(data, null, "  ") }`);
+        // Logger.info(`response data: \n ${ JSON.stringify(data, null, "  ") }`);
 
         StatsObject.people = data.person; 
         StatsObject.contributors = data.contributors[0].n;

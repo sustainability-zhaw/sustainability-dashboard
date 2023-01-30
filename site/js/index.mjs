@@ -209,7 +209,7 @@ function addQType(evt) {
     if (evt.target.classList.contains("cat") || 
         evt.target.classList.contains("mark") ||
         evt.target.dataset.qtype) {
-        console.log("got qtype");
+        // console.log("got qtype");
         let target = evt.target;
         if (!(target.dataset.qtype && target.dataset.qtype.length)) {
             target = target.parentNode;
@@ -217,7 +217,7 @@ function addQType(evt) {
         const type = target.dataset.qtype;
         let value = target.dataset.qvalue;
 
-        console.log(`${type} -> ${value} `);
+        // console.log(`${type} -> ${value} `);
         Events.trigger.queryAddItem({type, value});            
     }
 }
