@@ -88,7 +88,7 @@ services:
      networks:
       - dgraphnet
      volumes: 
-      - ./gqldev:/usr/share/caddy
+      - ./contrib/graphiql:/usr/share/caddy
 
 networks:
   dgraphnet:

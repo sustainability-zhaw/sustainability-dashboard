@@ -38,5 +38,4 @@
     handle_path /ratel/* {
         reverse_proxy db_browser:8000
     }
-
 }
