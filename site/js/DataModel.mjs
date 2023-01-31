@@ -87,7 +87,7 @@ export async function loadData(type, queryObj) {
     // const queryTerms = queryObj;
     // const objects = gqlSearchQuery(type, queryTerms);
 
-    const dqlQuery = buildDQLQueryString(type, queryObj);
+    const dqlQuery = Filter.objectsQuery(type, 20, Model.offset, queryObj);
 
     Logger.debug("DQL Data Follows");
     Logger.debug("------------------------------");
@@ -137,55 +137,16 @@ async function executeDQLQuery(body) {
 
     const result = await response.json();
 
-    if ("data" in result) {
+    if ("data" in result && "category" in result.data) {
         // Logger.info(`response: \n ${ JSON.stringify(result, null, "  ") }`);
-        return result.data.objects;
+        if (result.data.category.length &&"objects" in result.data.category[0]) {
+            return result.data.category[0].objects;
+        }
+        return [];
     }
     else {
         Logger.info(`error response: \n ${ JSON.stringify(result, null, "  ") }`);
     }
 
     return []
-}
-
-function buildDQLQueryString(category, queryObj) {
-    const items = []
-        .concat(Filter.buildFilter(queryObj))
-        .concat(Filter.buildObjectTypeFilter(category))
-        .concat(buildSelector());
-
-    return `{ ${items.join("\n")} }`;
-}
-
-function buildSelector() {
-    return [
-        "objects (func: uid(vFilter), orderdesc: InfoObject.year, orderdesc: InfoObject.link,",
-        Model.offset ? `offset: ${Model.offset},` : "",  
-        `first: ${queryLimit}) `,
-        "@filter(uid_in(InfoObject.category, uid(vObjectType)))",
-        "{",
-        ...Filter.selectorAlias([
-            "title",
-            "abstract",
-            "year",
-            "extras",
-            "link"
-        ], "InfoObject"),
-        "authors: InfoObject.authors {",
-        "fullname: Author.fullname",
-        "person: Author.person {",
-        "fullname: Person.fullname",
-        "qvalue.person: Person.initials",
-        "department.affiliation: Person.department {",
-        "id: Department.id",
-        "}",
-        "}",
-        "}",
-        "department: InfoObject.departments { id: Department.id }",
-        "sdg: InfoObject.sdgs { id: Sdg.id }",
-        "keywords: InfoObject.keywords { name: Keyword.name }",
-        "subtype: InfoObject.subtype { name: InfoObjectSubType.name }",
-        "classification: InfoObject.class { itemid: PublicationClass.id name: PublicationClass.name }",
-        "}"
-    ];
 }

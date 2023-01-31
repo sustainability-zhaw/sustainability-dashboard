@@ -46,10 +46,16 @@ export function getStats() {
 }
 
 export function getPeopleStats() {
+    if (!StatsObject.people) {
+        return [];
+    }
     return StatsObject.people;
 }
 
 export function getPersonStats(initials) {
+    if (!StatsObject.people) {
+        return 0;
+    }
     return StatsObject.people.filter(o => o.initials === initials)[0];
 }
 
@@ -74,7 +80,7 @@ async function handleLoadData(ev) {
 }
 
 async function loadData(category, queryObj) {
-    let body  = buildQueryString(category, queryObj);
+    let body  = Filter.statQuery(category, queryObj);
 
     const data = await fetchData(body);
 
@@ -124,7 +130,7 @@ async function handlePeopleData(ev) {
 }
 
 async function loadPeopleData(category, queryObj) {
-    let body  = buildPeopleQueryString(category, queryObj);
+    let body  = Filter.peopleQuery(category, 50, 0, queryObj);
 
     const data = await fetchData(body);
 
@@ -180,7 +186,7 @@ async function fetchData(body) {
 }
 
 async function loadOverviewData(queryObj) {
-    let body  = buildOverviewQueryString(queryObj);
+    let body  = Filter.mainQuery(queryObj);
 
     const data = await fetchData(body);
 
@@ -197,7 +203,7 @@ async function loadOverviewData(queryObj) {
         }; 
 
         StatsObject.overview = data.infoobjecttype.reduce((a, o) => {
-            a[o.id] = o.n;
+            a[o.name] = o.n;
             return a;
         }, StatsObject.overview);
 
@@ -206,103 +212,4 @@ async function loadOverviewData(queryObj) {
     else {
         Logger.info("OVERVIEW error!");
     }
-}
-
-function buildOverviewQueryString(queryObj) {
-    const items = []
-        .concat(Filter.buildFilter(queryObj))
-        .concat("vAuthors as var(func: type(Author)) @filter(uid_in(Author.objects, uid(vFilter))) { uid }")
-        .concat("vPersons as var(func: type(Person)) @filter(uid_in(Person.pseudonyms, uid(vAuthors))) { uid }")
-        .concat(buildNavCounts());
-
-    return `{ ${items.join("\n")} }`;
-}
-
-function buildQueryString(category, queryObj) {
-    const items = []
-        .concat(Filter.buildFilter(queryObj))
-        .concat(Filter.buildObjectTypeFilter(category))
-        // .concat("vPersons as var(func: type(Person)) @filter(uid_in(Person.objects, uid(vFilter))) { uid }")
-        .concat(buildCatCounts("Sdg"))
-        .concat(buildCatCounts("Department"));
-        // .concat(buildAuthorCount())
-        // .concat(buildPersonCounts("Person", "LDAPDN"));
-
-    return `{ ${items.join("\n")} }`;
-}
-
-function buildPeopleQueryString(category, queryObj) {
-    const items = []
-        .concat(Filter.buildFilter(queryObj))
-        .concat(Filter.buildObjectTypeFilter(category))
-        .concat("vAuthors as var(func: type(Author)) @filter(uid_in(Author.objects, uid(vFilter))) { uid }")
-        .concat("vPersons as var(func: type(Person)) @filter(uid_in(Person.pseudonyms, uid(vAuthors))) { uid }")
-        // .concat(buildCatCounts("Sdg"))
-        // .concat(buildCatCounts("Department"));
-        .concat(buildAuthorCount())
-        .concat(buildPersonCounts("Person", "LDAPDN"));
-
-    return `{ ${items.join("\n")} }`;
-}
-
-
-function buildNavCounts() {
-    return [
-        ...buildCatCounts("InfoObjectType", null, "name", true),
-        "people(func: uid(vPersons)) { n: count(uid) }"
-    ];
-}
-
-function buildAuthorCount() {
-    return [
-        "contributors(func: type(Person))",
-        " @filter(uid(vPersons))",
-        "{ n: count(uid) }"
-    ];
-}
-
-function buildCatCounts(cat, dqlFunc, cid, overview) {
-    if (!(dqlFunc && dqlFunc.length)) {
-        dqlFunc = `type(${ cat })`
-    }
-
-    if (!(cid && cid.length)) {
-        cid = "id"
-    }
-    
-    return [
-        `${ cat.toLowerCase() }(func: ${ dqlFunc }) {`,
-        `id: ${ cat }.${ cid }`,
-        `n: count(${ cat }.objects @filter(`,
-        "uid(vFilter)",
-        overview ? "" : " and uid_in(InfoObject.category, uid(vObjectType))",
-        "))",
-        "}"
-    ];
-}
-
-function buildPersonCounts(cat, cid) {
-    return [
-        "tperson as var(func: type(Person)) @filter(uid_in(Person.pseudonyms, uid(vAuthors))) {",
-        "ps_c: Person.pseudonyms { n: npub as count(Author.objects @filter(uid(vFilter) and uid_in(InfoObject.category, uid(vObjectType)))) }",
-        "n: tpn as sum(val(npub))",
-        "} ",
-        `${ cat.toLowerCase() }(func: uid(tperson), orderdesc: val(tpn), first: 100) {`,
-        `id: ${ cat }.${ cid }`,
-        ...Filter.selectorAlias([
-                "displayname",
-                "givenname",
-                "surname",
-                "title", 
-                "initials",
-                "mail",
-                "retired",
-                "ipphone"
-            ],
-             "Person"
-        ),
-        "department: Person.department { id: Department.id } ",
-        "n: val(tpn)",
-        "}"
-    ];
 }

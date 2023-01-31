@@ -1,261 +1,249 @@
 
-export function buildFilter(queryObj) {
+export function mainQuery(queryObj) {
+    const helper = buildFilterMain(queryObj);
 
-    return []
-        .concat(buildFilterHelpers(queryObj))
-        .concat("vFilter as var(func: type(InfoObject))")
-        .concat(buildMainFilter(queryObj))
-        // .concat("@cascade")
-        .concat("{")
-        .concat(" uid ")
-        // .concat(buildTermCascade("Keyword", "keywords", queryObj.terms))
-        // .concat(buildTermCascade("PublicationClass", "class", queryObj.terms))
-        .concat("}");
+    return `query {
+${helper.handler}
+${mainSelector(helper.filter)}
+}`;
 }
 
-export function buildMatchFilter(queryObj) {
+export function objectsQuery(category, limit, offset, queryObj) {
+    const helper = buildFilterMain(queryObj);
 
-    return []
-        .concat(buildFilterHelpers(queryObj))
-        .concat(`vFilter as var(func: type(SdgMatch))`)
-        .concat(buildMatcherFilter(queryObj))
-        // .concat("@cascade")
-        .concat("{")
-        .concat(" uid ")
-        // .concat(buildTermCascade("Keyword", "keywords", queryObj.terms))
-        // .concat(buildTermCascade("PublicationClass", "class", queryObj.terms))
-        .concat("}");
+    return `query {
+${helper.handler}
+${objectSelector(category, limit, offset, helper.filter)}
+}`;
 }
 
+export function peopleQuery(category, limit, offset, queryObj) {
+    const helper = buildFilterMain(queryObj);
 
-export function buildObjectTypeFilter(cat) {
-    return `vObjectType as var(func: eq(InfoObjectType.name, "${ cat }")) { uid }`;
+    return `query {
+${helper.handler}
+${personSelector(category, limit, offset, helper.filter)}
+}`;
 }
 
-export function buildTypeFilter(obj, attr, terms) {
-    if (!(terms && terms.length)) {
-        return [];
-    }
+export function statQuery(category, queryObj) {
+    const helper = buildFilterMain(queryObj);
 
-    return [
-        `InfoObject.${attr} @filter(`,
-        terms.map(t => `eq(${obj}.id, ${t})`).join(" and "),
-        ") { uid }"
-    ];
+    return `query {
+${helper.handler}
+${statSelector(category, helper.filter)}
+}`;
 }
 
-export function selectorAlias(selectors, type) {
-    if (!Array.isArray(selectors)) {
-        selectors = [selectors];
-    }
-    
-    return selectors.map(s => `${s}: ${type}.${s}`);
-}
-
-function mapHelperQuery(theType, initials) {
-    if (!(initials && initials.length)) {
-        initials = "id";
-    }
-    return (t, i) => `qh${ theType }_${ i } as var(func: type(${ theType })) @filter(eq(${ theType }.${ initials }, ${ t })) { uid }`;
-}
-
-function mapPersonHelperQuery(theType, initials) {
-    if (!(initials && initials.length)) {
-        initials = "id";
-    }
-    return (t, i) => `qh${ theType }_${ i } as var(func: type(Author)) @cascade { uid Author.person @filter(eq(${theType}.${ initials }, ${ t })) { uid }}`;
-}
-
-
-function mapHelperQueryText(theType, initials) {
-    if (!(initials && initials.length)) {
-        initials = "name";
-    }
-    return (t, i) => `qh${ theType }_${ i } as var(func: type(${ theType })) @filter(anyofterms(${ theType }.${ initials }, ${ t })) { uid }`;
-}
-
-function mapHelperVFilter(targetType, tp, tpattr) {
-    if (!(tpattr && tpattr.length)) {
-        tpattr = `${tp.toLowerCase()}s`;
-    }
-
-    return (t, i) => `uid_in(${targetType}.${ tpattr }, uid(qh${ tp }_${i}))`;
-}
-
-function buildFilterHelpers(queryObj) {
-    let retval = [];
-
+function buildFilterMain(queryObj) {
     if (!queryObj) {
-        return retval;
+        return {};
     }
+
+    const aFilter = [];
+    const aHandler = [];
 
     if (queryObj.sdgs && queryObj.sdgs.length) {
-        retval = retval.concat(
-            queryObj.sdgs.map(
-                mapHelperQuery("Sdg")
-            )
-        );
+        queryObj.sdgs.forEach((t, i) => {
+            aFilter.push(buildUidFilter("sdg", i));
+            aHandler.push(buildEdgeHandler("sdg", t, i));
+        });
     }
 
     if (queryObj.departments && queryObj.departments.length) {
-        retval = retval.concat(
-            queryObj.departments.map(
-                mapHelperQuery("Department")
-            )
-        );
+        queryObj.departments.forEach((t, i) => {
+            aFilter.push(buildUidFilter("department", i));
+            aHandler.push(buildEdgeHandler("department", t, i));
+        });
     }
 
     if (queryObj.persons && queryObj.persons.length) {
-        retval = retval.concat(
-            queryObj.persons.map(
-                mapPersonHelperQuery("Person", "initials")
-            )
-        );
-    }
-
-    return retval;
-}
-
-function buildHelperFilter(queryObj, targetType) {
-    let retval = [];
-    let attrs = {
-        InfoObject: {
-            persons: "authors"
-        },
-        SdgMatch: {
-            Sdg: "sdg"
-        }
-    };
-
-    if (!queryObj) {
-        return retval;
-    }
-
-    if (queryObj.sdgs && queryObj.sdgs.length) {
-        retval = retval.concat(
-            queryObj.sdgs.map(
-               mapHelperVFilter(targetType, "Sdg", attrs[targetType].Sdg)
-            ).join(" and ")
-        );
-    }
-
-    if (queryObj.departments && queryObj.departments.length) {
-        retval = retval.concat(
-            queryObj.departments.map(
-                mapHelperVFilter(targetType, "Department", attrs[targetType].departments)
-            ).join(" and ")
-        );
-    }
-
-    if (queryObj.persons && queryObj.persons.length) {
-        retval = retval.concat(
-            queryObj.persons.map(
-                mapHelperVFilter(targetType, "Person", attrs[targetType].persons)
-            ).join(" and ")
-        );
+        queryObj.persons.forEach((t, i) => {
+            aFilter.push(buildUidFilter("person", i));
+            aHandler.push(buildPersonHandler(t, i));
+        });
     }
 
     if (queryObj.lang && queryObj.lang.length) {
-        retval = retval.concat(
-            queryObj.lang.map(
-                (lang) => `eq(${targetType}.language, ${lang.toLowerCase()})`
-            ).join(" or ")
-        );
+        queryObj.lang.forEach((t) => {
+            aFilter.push(buildLangFilter(t));
+        });
     }
 
-    if (retval.length) {
-        return retval.map((t) => `( ${ t } )`);
+    if (queryObj.terms && queryObj.terms.length) {
+        queryObj.terms.forEach((t) => {
+            aFilter.push(buildTermFilter("term", t));
+        });
     }
 
-    return [];
+    if (queryObj.notterms && queryObj.notterms.length) {
+        queryObj.notterms.forEach((t) => {
+            aFilter.push(buildTermFilter("notterm", t));
+        });
+    }
+
+    const filter = aFilter.join(" and ");
+    const handler = aHandler.join("\n    ");
+
+    return {
+        filter,
+        handler
+    };
 }
 
-function buildTermFilter(queryObj) {
-    if (!(queryObj && queryObj.terms && queryObj.terms.length)) {
-        return [];
+function mainSelector(filter) {
+    filter = (filter && filter.length) ? ` @filter(${filter})` : "";
+
+
+    const aHelper = filter.length ? `aph as var(func: type(Author)) @cascade { Author.objects${filter} { uid } }` : "";
+    const pHelper = filter.length ? " @filter(uid_in(Person.pseudonyms, uid(aph)))" : "";
+
+    return `
+    ${aHelper}
+    infoobjecttype(func: type(InfoObjectType)) {
+        name: InfoObjectType.name
+        n: count(InfoObjectType.objects${filter})
     }
-
-    const terms = queryObj.terms.map((t) => t.substring(1,t.length - 1)).join(" ");
-
-    const f = [
-        `alloftext(InfoObject.title, "${terms}")`,
-        `alloftext(InfoObject.abstract, "${terms}")`,
-        `alloftext(InfoObject.extras, "${terms}")`
-    ];
-
-    return [ `( ${ f.join(" OR ") })` ];
+      
+    people(func: has(Person.pseudonyms))${pHelper} {
+        n: count(uid)
+    }
+`;
 }
 
-function buildNotTermFilter(queryObj) {
-    if (!(queryObj && queryObj.notterms && queryObj.notterms.length)) {
-        return [];
+function statSelector(category, filter) {
+    filter = (filter && filter.length) ? ` and ${filter}` : "";
+    return `
+    categ as var(func: type(InfoObjectType)) @filter(eq(InfoObjectType.name, ${JSON.stringify(category)})) {
+        uid
     }
 
-    const terms = queryObj.notterms.map((t) => t.substring(1,t.length - 1)).join(" ");
+    sdg(func: type(Sdg)) {
+        id: Sdg.id
+        n: count(Sdg.objects @filter(uid_in(InfoObject.category, uid(categ))${filter}))
+    }
 
-    const f = [
-        `alloftext(InfoObject.title, "${terms}")`,
-        `alloftext(InfoObject.abstract, "${terms}")`,
-        `alloftext(InfoObject.extras, "${terms}")`
-    ];
-
-    return [ `( NOT ( ${ f.join(" OR ") }))` ];
+    department(func:type(Department)) {
+        id: Department.id
+        n: count(Department.objects @filter(uid_in(InfoObject.category, uid(categ))${filter}))
+    }
+`;
 }
 
+function personSelector(category, limit, offset, filter) {
+    filter = (filter && filter.length) ? ` and ${filter}` : "";
+    return `
+        categ as var(func: type(InfoObjectType)) @filter(eq(InfoObjectType.name, ${JSON.stringify(category)})) {
+            uid
+        }
 
-function buildMainFilter(queryObj) {
-    const conditions = []; 
+        pps as var(func: has(Person.pseudonyms))
+          {
+            Person.pseudonyms {
+        		np as count(Author.objects 
+                    # filter
+                    @filter(uid_in(InfoObject.category, uid(categ))${filter}) 
+                )
+            }
+            tmpn as sum(val(np))
+        }
 
-    if (!queryObj) {
-        return [];
-    }
+        contributors(func: uid(pps)) {
+            n: count(uid)
+        }
 
-    conditions.push(...buildHelperFilter(queryObj, "InfoObject"));
-    conditions.push(...buildTermFilter(queryObj));
-    conditions.push(...buildNotTermFilter(queryObj));
-
-    if (! conditions.length ) {
-        return [];
-    }
-
-    return [ `@filter( ${ conditions.join(" and ") } )` ];
+        person(func: uid(pps), orderdesc: val(tmpn), first: ${limit}, offset: ${offset}) @filter(gt(val(tmpn), 0)){
+            initials: Person.initials
+            surname: Person.surname
+            givenname: Person.givenname
+            displayname: Person.displayname
+            mail: Person.mail
+            department: Person.department {
+                id: Department.id
+            }
+            n: val(tmpn)
+        }
+`;
 }
 
-function buildMatcherFilter(queryObj) {
-    const conditions = []; 
+function objectSelector(category, limit, offset, filter) {
+    filter = (filter && filter.length) ? ` @filter(${filter})` : "";
 
-    if (!queryObj) {
-        return [];
+    return `
+    category(func: eq(InfoObjectType.name, ${JSON.stringify(category)})) {
+        objects: InfoObjectType.objects(first: ${limit}, offset: ${offset},  orderdesc: InfoObject.year) 
+        ${filter}
+        {
+          link: InfoObject.link
+          title: InfoObject.title
+          abstract: InfoObject.abstract
+          extras: InfoObject.extras
+          year: InfoObject.year
+          authors: InfoObject.authors {
+            fullname: Author.fullname
+            person: Author.person {
+                qvalue.person: Person.initials
+                firstname: Person.givenname
+                lastname: Person.surname
+                displayname: Person.displayname
+                department.affiliation: Person.department {
+                    id: Department.id
+                }
+            }
+          }
+          department: InfoObject.departments {
+            id: Department.id
+          }
+          sdg: InfoObject.sdgs {
+            id: Sdg.id
+          }
+          keywords: InfoObject.keywords {
+            name: Keyword.name
+          }
+          subtype: InfoObject.subtype {
+            name: InfoObjectSubType.name 
+          }
+          classification: InfoObject.class { 
+            itemid: PublicationClass.id 
+            name: PublicationClass.name 
+          }
+        }
     }
-
-    conditions.push(...buildHelperFilter(queryObj, "SdgMatch"));
-    conditions.push(...buildMatchTermFilter(queryObj));
-
-    if (! conditions.length ) {
-        return [];
-    }
-
-    return [ `@filter( ${ conditions.join(" and ") } )` ];
+`;
 }
 
+function buildPersonHandler(author, id) {
+    return `ph${id} as var(func: has(Author.person)) @cascade { 
+        Author.person @filter(eq(Person.initials, ${author})) {
+            uid
+        }
+    }`;
+}
 
-function buildMatchTermFilter(queryObj) {
-    const f = [];
+function buildEdgeHandler(type, value, id) {
+    const firstChar = type.trim().charAt(0);
 
-    if (queryObj.terms.length && queryObj.terms.length <= 2) {
-        f.push(`( eq(SdgMatch.keyword, ${queryObj.terms[0]}) or eq(SdgMatch.required_context, ${queryObj.terms[0]}) )`);
+    const realType = firstChar.toUpperCase() + type.slice(1);
+
+    return `${firstChar}h${id} as var(func: type(${realType})) @filter(eq(${realType}.id, ${value})) { uid }`;
+}
+
+function buildUidFilter(type, id) {
+    const firstChar = type.trim().charAt(0);
+
+    if (!["sdg", "department", "person"].includes(type)) {
+        return "";
     }
 
-    if (queryObj.terms.length === 2) {
-        f.push(`( eq(SdgMatch.keyword, ${queryObj.terms[1]}) or eq(SdgMatch.required_context, ${queryObj.terms[1]}) )`);
-    }
+    return `uid_in(InfoObject.${type === "person" ? "author" : type}s, uid(${firstChar}h${id}))`;
+}
 
-    if (queryObj.notterms.length) {
-        f.push(`eq(SdgMatch.forbidden_context, ${queryObj.notterms[0]})`);
-    }
+function buildTermFilter(type, term) {
+    const not = (type !== "term");
 
-    if (f.length) {
-        return [ `(  ${ f.join(" AND ") } )` ];
-    }
-    return f;
+    return `${not ? "not" : ""}(alloftext(InfoObject.title, ${term}) or alloftext(InfoObject.abstract, ${term}) or alloftext(InfoObject.extras, ${term}))`;
+}
+
+function buildLangFilter(lang) {
+    return `eq(InfoObject.language, ${lang.toLowerCase()})`
 }
