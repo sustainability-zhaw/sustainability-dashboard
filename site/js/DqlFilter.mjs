@@ -1,6 +1,6 @@
 
 export function mainQuery(queryObj) {
-    const helper = buildFilterMain(queryObj);
+    const helper = buildFilter(queryObj, "InfoObject");
 
     return `query {
 ${helper.handler}
@@ -9,7 +9,7 @@ ${mainSelector(helper.filter)}
 }
 
 export function objectsQuery(category, limit, offset, queryObj) {
-    const helper = buildFilterMain(queryObj);
+    const helper = buildFilter(queryObj, "InfoObject");
 
     return `query {
 ${helper.handler}
@@ -18,7 +18,7 @@ ${objectSelector(category, limit, offset, helper.filter)}
 }
 
 export function peopleQuery(category, limit, offset, queryObj) {
-    const helper = buildFilterMain(queryObj);
+    const helper = buildFilter(queryObj, "InfoObject");
 
     return `query {
 ${helper.handler}
@@ -27,7 +27,7 @@ ${personSelector(category, limit, offset, helper.filter)}
 }
 
 export function statQuery(category, queryObj) {
-    const helper = buildFilterMain(queryObj);
+    const helper = buildFilter(queryObj, "InfoObject");
 
     return `query {
 ${helper.handler}
@@ -35,7 +35,21 @@ ${statSelector(category, helper.filter)}
 }`;
 }
 
-function buildFilterMain(queryObj) {
+export function indexQuery(queryObj, limit, offset) {
+    const helper = buildFilter(queryObj, "SdgMatch");
+    const filterExtra = buildMatchTermFilter(queryObj);
+
+    if(filterExtra.length && helper.filter && helper.filter.length) {
+        helper.filter = [helper.filter, filterExtra].join(" and ");
+    }
+
+    return `query {
+        ${helper.handler}
+        ${matchSelector(helper.filter, limit, offset)}
+}`;
+}
+
+function buildFilter(queryObj, refType) {
     if (!queryObj) {
         return {};
     }
@@ -45,21 +59,21 @@ function buildFilterMain(queryObj) {
 
     if (queryObj.sdgs && queryObj.sdgs.length) {
         queryObj.sdgs.forEach((t, i) => {
-            aFilter.push(buildUidFilter("sdg", i));
+            aFilter.push(buildUidFilter("sdg", i, refType));
             aHandler.push(buildEdgeHandler("sdg", t, i));
         });
     }
 
     if (queryObj.departments && queryObj.departments.length) {
         queryObj.departments.forEach((t, i) => {
-            aFilter.push(buildUidFilter("department", i));
+            aFilter.push(buildUidFilter("department", i, refType));
             aHandler.push(buildEdgeHandler("department", t, i));
         });
     }
 
     if (queryObj.persons && queryObj.persons.length) {
         queryObj.persons.forEach((t, i) => {
-            aFilter.push(buildUidFilter("person", i));
+            aFilter.push(buildUidFilter("person", i, refType));
             aHandler.push(buildPersonHandler(t, i));
         });
     }
@@ -148,7 +162,7 @@ function personSelector(category, limit, offset, filter) {
             tmpn as sum(val(np))
         }
 
-        contributors(func: uid(pps)) {
+        contributors(func: uid(pps)) @filter(gt(val(tmpn), 0)) {
             n: count(uid)
         }
 
@@ -212,6 +226,24 @@ function objectSelector(category, limit, offset, filter) {
 `;
 }
 
+function matchSelector(filter, limit, offset) {
+
+    filter = filter && filter.length ? ` @filter(${filter})` : "";
+
+    return `
+	sdgmatch(func: type(SdgMatch), first: ${limit}, offset: ${offset})${filter} {
+		construct: SdgMatch.construct
+        keyword: SdgMatch.keyword
+        required_context: SdgMatch.required_context
+        forbidden_context: SdgMatch.forbidden_context
+        language: SdgMatch.language
+        sdg: SdgMatch.sdg {
+    			id: Sdg.id
+        }
+    }
+`;
+}
+
 function buildPersonHandler(author, id) {
     return `ph${id} as var(func: has(Author.person)) @cascade { 
         Author.person @filter(eq(Person.initials, ${author})) {
@@ -228,14 +260,15 @@ function buildEdgeHandler(type, value, id) {
     return `${firstChar}h${id} as var(func: type(${realType})) @filter(eq(${realType}.id, ${value})) { uid }`;
 }
 
-function buildUidFilter(type, id) {
+function buildUidFilter(type, id, refType) {
     const firstChar = type.trim().charAt(0);
+    refType = refType && refType.length ? refType : "InfoObject";
 
     if (!["sdg", "department", "person"].includes(type)) {
         return "";
     }
 
-    return `uid_in(InfoObject.${type === "person" ? "author" : type}s, uid(${firstChar}h${id}))`;
+    return `uid_in(${refType}.${type === "person" ? "author" : type}${refType === "InfoObject"? "s" : ""}, uid(${firstChar}h${id}))`;
 }
 
 function buildTermFilter(type, term) {
@@ -246,4 +279,30 @@ function buildTermFilter(type, term) {
 
 function buildLangFilter(lang) {
     return `eq(InfoObject.language, ${lang.toLowerCase()})`
+}
+
+function buildMatchTermFilter(queryObj) {
+    const f = [];
+
+    if (queryObj.terms.length && queryObj.terms.length <= 2) {
+        f.push(`( eq(SdgMatch.keyword, ${queryObj.terms[0]}) or eq(SdgMatch.required_context, ${queryObj.terms[0]}) )`);
+    }
+
+    if (queryObj.terms.length === 2) {
+        f.push(`( eq(SdgMatch.keyword, ${queryObj.terms[1]}) or eq(SdgMatch.required_context, ${queryObj.terms[1]}) )`);
+    }
+
+    if (queryObj.notterms.length) {
+        f.push(`eq(SdgMatch.forbidden_context, ${queryObj.notterms[0]})`);
+    }
+
+    if (queryObj.lang.length) {
+        f.push(`eq(SdgMatch.language, ${queryObj.lang[0]})`);
+    }
+
+    if (f.length) {
+        return f.join(" and ") ;
+    }
+
+    return "";
 }

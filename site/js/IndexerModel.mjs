@@ -3,7 +3,7 @@ import * as Logger from "./Logger.mjs";
 import * as Events from "./Events.mjs";
 
 import * as Filter from "./DqlFilter.mjs";
-import { query } from "./QueryModel.mjs";
+import * as QueryModel from "./QueryModel.mjs";
 
 const Model = {
     records: {},
@@ -226,14 +226,14 @@ async function fetchData() {
 /**
  * loads all matching terms
  */
-async function loadData(ev) {
-    const query = ev.detail;
+async function loadData() {
+    const query = QueryModel.query();
 
     Logger.debug("load matcher data")
 
-    Model.query =  buildQueryString(query);
+    Model.query =  Filter.indexQuery(query, 100, 0);
     
-    // Logger.debug(body);
+    Logger.debug(Model.query);
 
     await fetchData();
 }
@@ -255,33 +255,4 @@ function parseRecord(rec) {
         result.qterms.push({type: "notterm", value: rec.forbidden_context});
     }
     return result;
-}
-
-function buildQueryString(queryObj) {
-    // ensure valid query statement for match terms
-    queryObj.departments = [];
-    queryObj.persons = [];
-
-    const items = []
-        .concat(Filter.buildMatchFilter(queryObj))
-        .concat(buildSelector());
-
-    return `{ ${items.join("\n")} }`;
-}
-
-function buildSelector() {
-    return [
-       "sdgmatch (func: uid(vFilter), first: 200) {",
-       ...Filter.selectorAlias([
-            "construct",
-            "keyword",
-            "required_context",
-            "forbidden_context",
-            "language"
-       ], "SdgMatch"),
-       "sdg: SdgMatch.sdg {",
-       "id: Sdg.id",
-       "}",
-       "}"
-    ];
 }
