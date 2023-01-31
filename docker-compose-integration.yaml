@@ -50,7 +50,7 @@ services:
         target: /etc/app/config.json
 
   adresolver: 
-    image: ghcr.io/sustainability-zhaw/ad-resolver:sha-4481b4a
+    image: ghcr.io/sustainability-zhaw/ad-resolver:sha-abbee7e
     restart: "no"
     networks:
       - dgraphnet
