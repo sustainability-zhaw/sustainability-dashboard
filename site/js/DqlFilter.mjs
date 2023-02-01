@@ -37,12 +37,7 @@ ${statSelector(category, helper.filter)}
 
 export function indexQuery(queryObj, limit, offset) {
     const helper = buildFilter(queryObj, "SdgMatch");
-    const filterExtra = buildMatchTermFilter(queryObj);
-
-    if(filterExtra.length && helper.filter && helper.filter.length) {
-        helper.filter = [helper.filter, filterExtra].join(" and ");
-    }
-
+    
     return `query {
         ${helper.handler}
         ${matchSelector(helper.filter, limit, offset)}
@@ -80,20 +75,29 @@ function buildFilter(queryObj, refType) {
 
     if (queryObj.lang && queryObj.lang.length) {
         queryObj.lang.forEach((t) => {
-            aFilter.push(buildLangFilter(t));
+            aFilter.push(buildLangFilter(t, refType));
         });
     }
 
-    if (queryObj.terms && queryObj.terms.length) {
-        queryObj.terms.forEach((t) => {
-            aFilter.push(buildTermFilter("term", t));
-        });
+    if (refType === "SdgMatch") {
+        const tf = buildMatchTermFilter(queryObj);
+        
+        if (tf && tf.length){
+             aFilter.push();
+        }
     }
+    else {
+        if (queryObj.terms && queryObj.terms.length) {
+            queryObj.terms.forEach((t) => {
+                aFilter.push(buildTermFilter("term", t));
+            });
+        }
 
-    if (queryObj.notterms && queryObj.notterms.length) {
-        queryObj.notterms.forEach((t) => {
-            aFilter.push(buildTermFilter("notterm", t));
-        });
+        if (queryObj.notterms && queryObj.notterms.length) {
+            queryObj.notterms.forEach((t) => {
+                aFilter.push(buildTermFilter("notterm", t));
+            });
+        }
     }
 
     const filter = aFilter.join(" and ");
@@ -273,8 +277,8 @@ function buildTermFilter(type, term) {
     return `${not ? "not" : ""}(alloftext(InfoObject.title, ${term}) or alloftext(InfoObject.abstract, ${term}) or alloftext(InfoObject.extras, ${term}))`;
 }
 
-function buildLangFilter(lang) {
-    return `eq(InfoObject.language, ${lang.toLowerCase()})`
+function buildLangFilter(lang, type) {
+    return `eq(${type}.language, ${lang.toLowerCase()})`
 }
 
 function buildMatchTermFilter(queryObj) {
@@ -290,10 +294,6 @@ function buildMatchTermFilter(queryObj) {
 
     if (queryObj.notterms.length) {
         f.push(`eq(SdgMatch.forbidden_context, ${queryObj.notterms[0]})`);
-    }
-
-    if (queryObj.lang.length) {
-        f.push(`eq(SdgMatch.language, ${queryObj.lang[0]})`);
     }
 
     if (f.length) {
