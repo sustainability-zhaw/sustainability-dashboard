@@ -27,7 +27,7 @@ services:
       DGRAPH_SERVER: http://db:8080
 
   db_keywords:
-    image: ghcr.io/sustainability-zhaw/keywords:sha-0c40ab7
+    image: ghcr.io/sustainability-zhaw/keywords:sha-a1342f7
     restart: 'no'
     networks:
       - dgraphnet
