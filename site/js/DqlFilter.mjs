@@ -121,8 +121,7 @@ function mainSelector(filter) {
       
     people(func: has(Person.pseudonyms))${pHelper} {
         n: count(uid)
-    }
-`;
+    }`;
 }
 
 function statSelector(category, filter) {
@@ -140,8 +139,7 @@ function statSelector(category, filter) {
     department(func:type(Department)) {
         id: Department.id
         n: count(Department.objects @filter(uid_in(InfoObject.category, uid(categ))${filter}))
-    }
-`;
+    }`;
 }
 
 function personSelector(category, limit, offset, filter) {
@@ -176,8 +174,7 @@ function personSelector(category, limit, offset, filter) {
                 id: Department.id
             }
             n: val(tmpn)
-        }
-`;
+        }`;
 }
 
 function objectSelector(category, limit, offset, filter) {
@@ -222,8 +219,7 @@ function objectSelector(category, limit, offset, filter) {
             name: PublicationClass.name 
           }
         }
-    }
-`;
+    }`;
 }
 
 function matchSelector(filter, limit, offset) {
