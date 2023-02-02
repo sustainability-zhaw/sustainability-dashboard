@@ -59,6 +59,17 @@ services:
         condition: service_completed_successfully
     env_file:
       - ./contrib/ad_config.env 
+
+  indexer: 
+    image: ghcr.io/sustainability-zhaw/sdg-indexer:sha-03384eb
+    restart: "no"
+    networks:
+      - dgraphnet
+    depends_on:
+      db_keywords:
+        condition: service_completed_successfully
+    environment:
+      DB_HOST: db:8080
       
   # DEV ENVIRONMENT COMPONENTS
   # These tools provide access to query browsers and the reverse proxy
