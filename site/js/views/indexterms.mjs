@@ -46,6 +46,7 @@ function renderIndexTerms() {
     const container = document.querySelector("#overlaycontent");
 
     container.textContent = "";
+    container.scrollTop = 0;
 
     IndexModel.getRecords().forEach(
         (rec) => {

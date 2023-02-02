@@ -45,6 +45,7 @@ function handlePeopleStats() {
     const target = document.querySelector("#contributors .peopleinner");
 
     target.innerHTML = "";
+    target.scrollTop = 0;
 
     stats
         .sort((a, b) => { 

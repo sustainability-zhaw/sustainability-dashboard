@@ -532,7 +532,6 @@ function handleDataUpdate(ev) {
         return section;
     }, targetsection);
 
-    
     if (DataModel.is_complete() && DataModel.feed().length){ 
         document.querySelector("#mainarea .EOF").removeAttribute("hidden");
     }
@@ -552,6 +551,13 @@ function handleDataUpdate(ev) {
         document.querySelector("#mainarea .intransit").setAttribute("hidden", "hidden");
         document.querySelector("#mainarea .limit-reached").removeAttribute("hidden");
     }   
+
+    if (ev.detail.reset) {
+        // this MUST be the very last, so the rendering can catch up. 
+        // if this is optimised with the earlier reset block, then some browsers will 
+        // not alter the scroll!
+        targetsection.parentNode.scrollTop = 0;
+    }
 }
 
 function handleField(tmpl, field, key, value) {
