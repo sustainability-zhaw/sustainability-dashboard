@@ -9,7 +9,7 @@
     ;
 
     &:has(.bi-layer-forward) {
-        grid-template-rows: auto auto auto 2em 2em 2em 2.5em;
+        grid-template-rows: auto auto auto auto auto 2em 2.5em;
         grid-template-areas: 
             "title title title year"
             ". authors authors tools"
