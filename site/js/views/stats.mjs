@@ -1,7 +1,7 @@
 import * as Events from "../Events.mjs";
-import * as Logger from "../Logger.mjs";
+// import * as Logger from "../Logger.mjs";
 
-import * as StatsModel from "../StatsModel.mjs";
+import * as StatsModel from "../models/Stats.mjs";
 
 Events.listen.statUpdate(handleStats);
 Events.listen.statMainUpdate(handleOverviewStats);

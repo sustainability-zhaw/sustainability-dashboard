@@ -1,9 +1,9 @@
-import * as Config from "./ConfigModel.mjs";
-import * as Logger from "./Logger.mjs";
-import * as Events from "./Events.mjs";
+import * as Config from "./Config.mjs";
+import * as Logger from "../Logger.mjs";
+import * as Events from "../Events.mjs";
 
 import * as Filter from "./DqlFilter.mjs";
-import * as QueryModel from "./QueryModel.mjs";
+import * as QueryModel from "./Query.mjs";
 
 const Model = {
     records: {},
@@ -185,32 +185,11 @@ async function mutateData(query, variables) {
         Logger.debug(`Result is ${data.result.msg}`);
     }
 
-    await fetchData();
+    await loadData();
 }
 
-async function fetchData() {
-    const body = Model.query;
-    const url = Config.initDQLUri();
-    const {signal} = RequestController;
-    const method = "POST"; // all requests are POST requests
-
-    const cache = "no-store";
-
-    const headers = {
-        'Content-Type': 'application/dql'
-    };
-
-    const response = await fetch(url, {
-        signal,
-        method,
-        headers,
-        cache,
-        body
-    });
-
-    const result = await response.json();
-
-    const data = result.data || {};
+async function loadData() {
+    const data = await Filter.indexQuery(QueryModel.query(), 100, 0, RequestController);
 
     if (data && "sdgmatch" in data) {
         Model.data = data.sdgmatch.map(parseRecord);
@@ -221,21 +200,6 @@ async function fetchData() {
     }
 
     Events.trigger.indexTermData();
-}
-
-/**
- * loads all matching terms
- */
-async function loadData() {
-    const query = QueryModel.query();
-
-    Logger.debug("load matcher data")
-
-    Model.query =  Filter.indexQuery(query, 100, 0);
-    
-    Logger.debug(Model.query);
-
-    await fetchData();
 }
 
 function parseRecord(rec) {

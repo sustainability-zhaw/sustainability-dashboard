@@ -1,7 +1,7 @@
 import * as Events from "../Events.mjs";
 import * as Logger from "../Logger.mjs";
 
-import * as IndexModel from "../IndexerModel.mjs";
+import * as IndexModel from "../models/Indexer.mjs";
 
 Events.listen.indexTermData(renderIndexTerms);
 

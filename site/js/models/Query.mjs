@@ -1,6 +1,6 @@
-import * as Config from "./ConfigModel.mjs";
-import * as Logger from "./Logger.mjs";
-import * as Events from "./Events.mjs";
+import * as Config from "./Config.mjs";
+import * as Logger from "../Logger.mjs";
+import * as Events from "../Events.mjs";
 
 
 Events.listen.queryAddItem(add);

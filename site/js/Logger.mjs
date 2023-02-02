@@ -1,4 +1,4 @@
-import * as Config from "./ConfigModel.mjs";
+import * as Config from "./models/Config.mjs";
 
 export function debug( message ) {
     if (Config.get("debug") > 1) {

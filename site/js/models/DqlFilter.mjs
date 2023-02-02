@@ -1,47 +1,109 @@
+import * as Config from "./Config.mjs";
+import * as Logger from "../Logger.mjs";
 
-export function mainQuery(queryObj) {
-    const helper = buildFilter(queryObj, "InfoObject");
+export async function fetchData(body, RequestController) {
+    const url = Config.initDQLUri();
+    const {signal} = RequestController;
+    const method = "POST"; // all requests are POST requests
 
-    return `query {
-${helper.handler}
-${mainSelector(helper.filter)}
-}`;
-}
+    const cache = "no-store";
 
-export function objectsQuery(category, limit, offset, queryObj) {
-    const helper = buildFilter(queryObj, "InfoObject");
+    const headers = {
+        'Content-Type': 'application/dql'
+    };
 
-    return `query {
-${helper.handler}
-${objectSelector(category, limit, offset, helper.filter)}
-}`;
-}
+    // Logger.debug(`fetch stats from ${url}`);
+    Logger.debug(body);
 
-export function peopleQuery(category, limit, offset, queryObj) {
-    const helper = buildFilter(queryObj, "InfoObject");
+    const response = await fetch(url, {
+        signal,
+        method,
+        headers,
+        cache,
+        body
+    });
 
-    return `query {
-${helper.handler}
-${personSelector(category, limit, offset, helper.filter)}
-}`;
-}
-
-export function statQuery(category, queryObj) {
-    const helper = buildFilter(queryObj, "InfoObject");
-
-    return `query {
-${helper.handler}
-${statSelector(category, helper.filter)}
-}`;
-}
-
-export function indexQuery(queryObj, limit, offset) {
-    const helper = buildFilter(queryObj, "SdgMatch");
+    const result = await response.json();
     
-    return `query {
-        ${helper.handler}
-        ${matchSelector(helper.filter, limit, offset)}
-}`;
+    if ("data" in result && result.data) {
+        return result.data;
+    }
+
+    Logger.info(`error response: \n ${ JSON.stringify(result, null, "  ") }`);
+
+    return {};
+}
+
+// also used by the people model that requiers independent queries
+export async function buildAndFetch(queryObj, type, RequestController, selectorFunc, options) {
+    const {filter, handler} = buildFilter(queryObj, type);
+
+    const query = `query { ${handler} ${selectorFunc(filter, options)} }`
+
+    Logger.debug(`fetch query "${query}"`);
+
+    const resultData = await fetchData(query, RequestController);
+
+    return resultData;
+}
+
+export function mainQuery(queryObj, RequestController) {
+    return buildAndFetch(
+        queryObj, 
+        "InfoObject", 
+        RequestController, 
+        mainSelector
+        );
+}
+
+export function objectsQuery(category, limit, offset, queryObj, RequestController) {
+    return buildAndFetch(
+        queryObj, 
+        "InfoObject", 
+        RequestController, 
+        objectSelector, 
+        {category, limit, offset}
+    );
+}
+
+export function peopleQuery(limit, offset, queryObj, RequestController) {
+    return buildAndFetch(
+        queryObj, 
+        "InfoObject", 
+        RequestController, 
+        peopleSelector, 
+        {limit, offset}
+    );
+}
+
+export function contributorQuery(category, limit, offset, queryObj, RequestController) {
+    return buildAndFetch(
+        queryObj, 
+        "InfoObject", 
+        RequestController, 
+        contributorSelector, 
+        {category, limit, offset}
+    );
+}
+
+export function statQuery(category, queryObj, RequestController) {
+    return buildAndFetch(
+        queryObj, 
+        "InfoObject", 
+        RequestController, 
+        statSelector, 
+        {category}
+    );
+}
+
+export function indexQuery(queryObj, limit, offset, RequestController) {
+    return buildAndFetch(
+        queryObj, 
+        "SdgMatch", 
+        RequestController, 
+        matchSelector, 
+        {limit, offset}
+    );
 }
 
 function buildFilter(queryObj, refType) {
@@ -81,7 +143,7 @@ function buildFilter(queryObj, refType) {
 
     if (refType === "SdgMatch") {
         const tf = buildMatchTermFilter(queryObj);
-        
+
         if (tf && tf.length){
              aFilter.push();
         }
@@ -112,7 +174,6 @@ function buildFilter(queryObj, refType) {
 function mainSelector(filter) {
     filter = (filter && filter.length) ? ` @filter(${filter})` : "";
 
-
     const aHelper = filter.length ? `aph as var(func: type(Author)) @cascade { Author.objects${filter} { uid } }` : "";
     const pHelper = filter.length ? " @filter(uid_in(Person.pseudonyms, uid(aph)))" : "";
 
@@ -128,7 +189,9 @@ function mainSelector(filter) {
     }`;
 }
 
-function statSelector(category, filter) {
+function statSelector(filter, options) {
+    // limit and offset are deliberately ignored in this query
+    const {category} = options || {};
     filter = (filter && filter.length) ? ` and ${filter}` : "";
     return `
     categ as var(func: type(InfoObjectType)) @filter(eq(InfoObjectType.name, ${JSON.stringify(category)})) {
@@ -146,7 +209,9 @@ function statSelector(category, filter) {
     }`;
 }
 
-function personSelector(category, limit, offset, filter) {
+function contributorSelector(filter, options) {
+    const {category, limit, offset} = options || {};
+
     filter = (filter && filter.length) ? ` and ${filter}` : "";
     return `
         categ as var(func: type(InfoObjectType)) @filter(eq(InfoObjectType.name, ${JSON.stringify(category)})) {
@@ -181,7 +246,9 @@ function personSelector(category, limit, offset, filter) {
         }`;
 }
 
-function objectSelector(category, limit, offset, filter) {
+function objectSelector(filter, options) {
+    const {category, limit, offset} = options;
+
     filter = (filter && filter.length) ? ` @filter(${filter})` : "";
 
     return `
@@ -226,7 +293,8 @@ function objectSelector(category, limit, offset, filter) {
     }`;
 }
 
-function matchSelector(filter, limit, offset) {
+function matchSelector(filter, options) {
+    const {limit, offset} = options;
 
     filter = filter && filter.length ? ` @filter(${filter})` : "";
 
@@ -240,8 +308,34 @@ function matchSelector(filter, limit, offset) {
         sdg: SdgMatch.sdg {
     			id: Sdg.id
         }
+    }`;
+}
+
+function peopleSelector(filter, options) {
+    const {limit, offset} = options;
+    filter = filter && filter.length ? ` @filter(${filter})` : ""
+
+    return `
+    pps as var(func: has(Person.pseudonyms)) {
+        Person.pseudonyms {
+    		np as count( Author.objects ${filter} )
+        }
+        tmpn as sum(val(np))
     }
-`;
+
+    person(func: uid(pps), first: ${limit}, offset: ${offset}) @filter(gt(val(tmpn), 0)) {
+        id: Person.LDAPDN
+        initials: Person.initials
+        surname: Person.surname
+        givenname: Person.givenname
+        mail: Person.mail
+        telephone: Person.ipphone
+        objects: Author.objects${filter} @normalise {
+            sdgs: InfoObject.sdgs {
+                id
+            }
+        }
+    }`;
 }
 
 function buildPersonHandler(author, id) {

@@ -1,9 +1,7 @@
-import { json_to_gql, pretty_gql } from "./gql.mjs";
-import * as Config from "./ConfigModel.mjs";
-import * as Logger from "./Logger.mjs";
+import * as Logger from "../Logger.mjs";
 import * as Filter from "./DqlFilter.mjs";
-import * as Events from "./Events.mjs";
-import * as QueryModel from "./QueryModel.mjs";
+import * as Events from "../Events.mjs";
+import * as QueryModel from "./Query.mjs";
 
 const method = "POST"; // all requests are POST requests
 const cache = "no-store";
@@ -87,17 +85,16 @@ export async function loadData(type, queryObj) {
     // const queryTerms = queryObj;
     // const objects = gqlSearchQuery(type, queryTerms);
 
-    const dqlQuery = Filter.objectsQuery(type, 20, Model.offset, queryObj);
-
-    Logger.debug("DQL Data Follows");
-    Logger.debug("------------------------------");
-    Logger.debug(dqlQuery);
-    Logger.debug("------------------------------");
-
     try {
-        Model.records = await executeDQLQuery(dqlQuery);
+        const data = await Filter.objectsQuery(type, 20, Model.offset, queryObj, RequestController);
+        // const data = await Filter.fetchData(dqlQuery, RequestController);
+        Model.records = [];
+        if( "category"  in data && data.category.length && "objects" in data.category[0]) {
+            Model.records = data.category[0].objects;
+        }
+
+        // Model.records = await executeDQLQuery(dqlQuery);
         // Model[type] = await executeQuery({objects});
-        
     }
     catch (err) {
         if (err.name == "AbortError") {
@@ -117,36 +114,4 @@ export async function loadData(type, queryObj) {
         Logger.debug("Query is complete!");
     }
     return true;
-}
-
-async function executeDQLQuery(body) {
-    const url = Config.initDQLUri();
-    const {signal} = RequestController;
-
-    const headers = {
-        'Content-Type': 'application/dql'
-    };
-
-    const response = await fetch(url, {
-        signal,
-        method,
-        headers,
-        cache,
-        body
-    });
-
-    const result = await response.json();
-
-    if ("data" in result && "category" in result.data) {
-        // Logger.info(`response: \n ${ JSON.stringify(result, null, "  ") }`);
-        if (result.data.category.length &&"objects" in result.data.category[0]) {
-            return result.data.category[0].objects;
-        }
-        return [];
-    }
-    else {
-        Logger.info(`error response: \n ${ JSON.stringify(result, null, "  ") }`);
-    }
-
-    return []
 }

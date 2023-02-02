@@ -1,12 +1,12 @@
 // more modules
 import * as Events from "./Events.mjs";
-import * as Config from "./ConfigModel.mjs";
+import * as Config from "./models/Config.mjs";
 import * as Logger from "./Logger.mjs";
 
 // models
-import * as DataModel from "./DataModel.mjs";
+import * as DataModel from "./models/Data.mjs";
 // import * as StatsModel from "./StatsModel.mjs";
-import * as QueryModel from "./QueryModel.mjs";
+import * as QueryModel from "./models/Query.mjs";
 // import * as IndexModel from "./IndexerModel.mjs";
 
 // views

@@ -1,8 +1,7 @@
-import * as Config from "./ConfigModel.mjs";
-import * as Logger from "./Logger.mjs";
+import * as Logger from "../Logger.mjs";
 import * as Filter from "./DqlFilter.mjs";
-import * as Events from "./Events.mjs";
-import * as QueryModel from "./QueryModel.mjs";
+import * as Events from "../Events.mjs";
+import * as QueryModel from "./Query.mjs";
 
 const StatsObject = {
     stats: {},
@@ -13,29 +12,6 @@ const StatsObject = {
 };
 
 const RequestController = new AbortController();
-
-function initBaseStatsUri() {
-    const buri = Config.get("staturi");
-
-    if (buri && buri.length) {
-        Logger.debug("got staturi");
-        return buri;
-    }
-
-    // Logger.debug("STATS prepare baseuri");
-
-    const proto = Config.get("proto") || "https://",
-          host  = Config.get("host") || "",
-          path  = Config.get("stats") || "";
-
-    const baseuri = `${host.length ? proto : ""}${host}${(host.length && host.at(-1) !== "/") ? "/" : ""}${path}`
-
-    // Logger.debug("STATS set stats baseuri to " + baseuri);
-
-    Config.set("staturi", baseuri);
-
-    return baseuri;
-}
 
 export function getOverviewStats() {
     return StatsObject.overview;
@@ -80,9 +56,7 @@ async function handleLoadData(ev) {
 }
 
 async function loadData(category, queryObj) {
-    let body  = Filter.statQuery(category, queryObj);
-
-    const data = await fetchData(body);
+    const data = await Filter.statQuery(category, queryObj, RequestController);
 
     StatsObject.stats =  {
         sdg: [
@@ -130,9 +104,7 @@ async function handlePeopleData(ev) {
 }
 
 async function loadPeopleData(category, queryObj) {
-    let body  = Filter.peopleQuery(category, 50, 0, queryObj);
-
-    const data = await fetchData(body);
+    const data = await Filter.contributorQuery(category, 50, 0, queryObj, RequestController);
 
     StatsObject.people =  [];
     StatsObject.contributors = 0;
@@ -152,43 +124,8 @@ async function handleOverviewLoadData(ev) {
     Events.trigger.statMainUpdate();
 }
 
-async function fetchData(body) {
-    const url = initBaseStatsUri();
-    const {signal} = RequestController;
-    const method = "POST"; // all requests are POST requests
-
-    const cache = "no-store";
-
-    const headers = {
-        'Content-Type': 'application/dql'
-    };
-
-    // Logger.debug(`fetch stats from ${url}`);
-    Logger.debug(body);
-
-    const response = await fetch(url, {
-        signal,
-        method,
-        headers,
-        cache,
-        body
-    });
-
-    const result = await response.json();
-    
-    if ("data" in result && result.data) {
-        return result.data;
-    }
-
-    Logger.info(`error response: \n ${ JSON.stringify(result, null, "  ") }`);
-
-    return {};
-}
-
 async function loadOverviewData(queryObj) {
-    let body  = Filter.mainQuery(queryObj);
-
-    const data = await fetchData(body);
+    const data = await Filter.mainQuery(queryObj, RequestController);
 
     StatsObject.overview =  {
         people: 0,
