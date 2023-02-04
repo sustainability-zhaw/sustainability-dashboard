@@ -145,7 +145,7 @@ function buildFilter(queryObj, refType) {
         const tf = buildMatchTermFilter(queryObj);
 
         if (tf && tf.length){
-             aFilter.push();
+             aFilter.push(tf);
         }
     }
     else {
@@ -306,7 +306,7 @@ function matchSelector(filter, options) {
         forbidden_context: SdgMatch.forbidden_context
         language: SdgMatch.language
         sdg: SdgMatch.sdg {
-    			id: Sdg.id
+			id: Sdg.id
         }
     }`;
 }
