@@ -334,8 +334,6 @@ function dropSearchElement(evt) {
         return;
     }
 
-    Logger.debug("drop search element");
-
     const targetParent = evt.target.parentNode;
     const type = targetParent.dataset.qtype;
     
