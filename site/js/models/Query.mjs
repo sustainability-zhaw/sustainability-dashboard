@@ -197,9 +197,9 @@ function add(ev) {
 
 function drop(ev) {
     const type = ev.detail.type;
-    const value = ev.detail.value.toString();
+    const value = ev.detail.value;
 
-    QueryModel.qterms = QueryModel.qterms.filter(t => !(type === t.type && value === t.value.toString()));
+    QueryModel.qterms = QueryModel.qterms.filter(t => !(type === t.type && value === t.value));
 
     Events.trigger.queryUpdate();
 

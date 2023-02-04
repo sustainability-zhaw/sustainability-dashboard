@@ -29,7 +29,8 @@ $deptColors: (
     "T": #CF312D,
     "W": #558FBF,
     "R": #999999,
-    "V": #636363
+    "V": #636363,
+    "X": #000000
 );
 
 // The search option MUST be first, because it overrides the mark classes otherwise
@@ -52,6 +53,13 @@ $deptColors: (
         background-color: $code;
         &::before {
             content: "#{$id}";
+        }
+    }
+    
+    .marker.cat-none {
+        background-color: #000000;
+        &::before {
+            content: "X";
         }
     }
 }

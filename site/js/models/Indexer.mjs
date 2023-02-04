@@ -206,7 +206,7 @@ function parseRecord(rec) {
         qterms: [
             {type: "term", value: rec.keyword},
             {type: "lang", value: rec.language.toUpperCase()},
-            {type: "sdg", value: rec.sdg.id.replace("sdg_", "")}
+            {type: "sdg", value: Number(rec.sdg.id.replace("sdg_", ""))}
         ]
     };
 

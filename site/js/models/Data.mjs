@@ -40,7 +40,7 @@ export function is_complete() {
 async function handleLoadData(ev) {
     if (Model.active) {
         Logger.debug("abort previous fetch!");
-        RequestController.abort();
+        await RequestController.abort();
     }
 
     Model.complete = false;
