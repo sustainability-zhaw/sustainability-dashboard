@@ -34,13 +34,11 @@ export function getRecords() {
 export function getOneRecord(id) {
     if (Model.records[id]) {
         const query = Model.records[id].qterms
-            .filter(t => t.type !== "sdg")
             .map(t => Object.assign({}, t));
         
         Events.trigger.queryReplace(query);
     }
 }
-
 
 /**
  * filter records for a specific language and/or SDG
@@ -189,7 +187,7 @@ async function mutateData(query, variables) {
 }
 
 async function loadData() {
-    const data = await Filter.indexQuery(QueryModel.query(), 100, 0, RequestController);
+    const data = await Filter.indexQuery(QueryModel.query(true), 100, 0, RequestController);
 
     if (data && "sdgmatch" in data) {
         Model.data = data.sdgmatch.map(parseRecord);
