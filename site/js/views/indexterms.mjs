@@ -10,6 +10,16 @@ export function init(target) {
     target.addEventListener("click", handleIndexDelete);
 }
 
+export function isActive() {
+    const menuitem = document.querySelector(".active #indexmatcher_menu");
+
+    if (menuitem) {
+        return true;
+    }
+
+    return false;
+}
+
 function handleIndexActivate(ev) {
     if (!ev.target.parentNode.classList.contains("indexterm") || ev.target.classList.contains("disabled")) {
         return;
@@ -36,8 +46,8 @@ function renderIndexTerms() {
     
     Logger.debug("render index terms");
 
-    const menuitem = document.querySelector("#indexmatcher_menu");
-    if(!menuitem.parentNode.classList.contains("active")) {
+    const menuitem = document.querySelector(".active #indexmatcher_menu");
+    if(!menuitem) {
         return; 
     }    
 

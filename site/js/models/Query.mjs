@@ -2,14 +2,19 @@ import * as Config from "./Config.mjs";
 import * as Logger from "../Logger.mjs";
 import * as Events from "../Events.mjs";
 
+import * as IdxView from "../views/indexterms.mjs";
 
 Events.listen.queryAddItem(add);
 Events.listen.queryClear(clear);
 Events.listen.queryDrop(drop);
 Events.listen.queryReplace(replaceQuery);
 
-export function query() {
+export function query(force) {
     const query = collectQueryTerms(QueryModel.qterms);
+
+    if (!force && IdxView.isActive()) {
+        delete query.sdgs;
+    }
 
     Logger.debug(`queryModel: ${JSON.stringify(query)}`)
     
