@@ -467,6 +467,7 @@
     grid-template-rows: 1.5rem;
 
     margin-bottom: 5px;
+    margin-right: 17px;
     cursor: pointer;
 
     &:hover .name {
@@ -485,6 +486,7 @@
         padding-right: 0;
         padding-left: 0;
         // font-size: $font-size-base * .9;
+        cursor: default;
     }
     .mark {
         grid-area: dpt;
@@ -495,6 +497,7 @@
     .initials {
         grid-area: init;
         text-align: center;
+        color: tint-color($zhawlogo, 30%);
         background-color: tint-color($zhawlogo, 80%);
     }
     .name {

@@ -72,7 +72,7 @@ function handlePeopleStats() {
 
             dnode.classList.remove("cat-none");
             dnode.classList.add(p.department.id);
-            dnode.dataset.qvalue = p.department;
+            dnode.dataset.qvalue = p.department.id.replace("department_", "");
             
             target.appendChild(result);
         });
