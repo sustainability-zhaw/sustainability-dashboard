@@ -460,6 +460,49 @@
     }
 }
 
+.peoplelist .person {
+    display: grid;
+    grid-template-columns: auto 3em 1.3em 2.5em;
+    grid-template-areas: "name init dpt cnt";
+    grid-template-rows: 1.5rem;
+
+    margin-bottom: 5px;
+    cursor: pointer;
+
+    &:hover .name {
+        background-color: tint-color($zhawlogo, 80%);
+    }
+
+    .mark,
+    .counter {
+        display: block;
+        height: inherit;
+        line-height: 1.5rem;
+    }
+
+    .counter {
+        grid-area: cnt;
+        padding-right: 0;
+        padding-left: 0;
+        // font-size: $font-size-base * .9;
+    }
+    .mark {
+        grid-area: dpt;
+        margin-left: 0;
+        width: inherit;
+        font-size: inherit;
+    }
+    .initials {
+        grid-area: init;
+        text-align: center;
+        background-color: tint-color($zhawlogo, 80%);
+    }
+    .name {
+        grid-area: name;
+        overflow: hidden;
+    }
+}
+
 #warnings {
     grid-area: content;
     z-index: 10;
