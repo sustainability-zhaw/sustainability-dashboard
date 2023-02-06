@@ -86,7 +86,7 @@
                 background-color: $zhawlogo;
             }
             .counter {
-                background-color: tint-color($zhawlogo, 80%);
+                background-color: $gray-400;;
                 color: $zhawlogo;
             }
         }
@@ -472,7 +472,7 @@
     cursor: pointer;
 
     &:hover .name {
-        background-color: tint-color($zhawlogo, 80%);
+        background-color: $gray-400;
     }
 
     .mark,
@@ -499,7 +499,7 @@
         grid-area: init;
         text-align: center;
         color: tint-color($zhawlogo, 30%);
-        background-color: tint-color($zhawlogo, 80%);
+        background-color: $gray-400;
     }
     .name {
         grid-area: name;
