@@ -109,36 +109,35 @@ function renderRecords(ev) {
                 return result;
             }          
 
-            // if (k === "matches") {
-            //     return result;
-            // }
-
             let templateId = `#${sel.slice(1)}template`;
 
             if (["sdg", "department"].includes(k)) {
                 templateId = "#cattemplate";
                 sel = ".categories";
             }
-            else if (["subtype","classification", "keywords"].includes(k)) {
+            else if (["subtype", "classification", "keywords"].includes(k)) {
                 templateId = `#listitemtemplate`;
             }
+            else if (k === "matches" && object[k].length > 1) {
+                // first sort by SDG and then by primary keyword
+                object[k] = object[k].sort((a,b) => (Number(a.mark.id.replace("sdg_", "")) - Number(b.mark.id.replace("sdg_", ""))) || a.keyword.localeCompare(b.keyword));
+            } 
 
-            Logger.debug(`run template ${templateId}`)
-
+            // Logger.debug(`run template ${templateId}`)
             const template = document.querySelector(templateId);
 
             sel += ".list";
             if (Array.isArray(object[k])) {
-                Logger.debug(`run array with selector ${sel}`)
+                // Logger.debug(`run array with selector ${sel}`);
                 object[k].reduce(
                     handleListElement(template),
                     result.querySelector(sel)
-                 );
+                );
 
                 return result;
             }
 
-            Logger.debug(`run item with selector ${sel}`)
+            // Logger.debug(`run item with selector ${sel}`);
             handleListElement(template)(result.querySelector(sel), object[k]);
 
             return result;
