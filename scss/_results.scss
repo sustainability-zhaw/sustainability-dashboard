@@ -37,6 +37,7 @@
     .abstract, 
     .keywords,
     .classification,
+    .matches,
     .subtype {
         @extend .border;
         padding-left: .5em;
@@ -46,12 +47,15 @@
     .subtype.title,
     .abstract.title, 
     .keywords.title,
+    .matches.title,
     .classification.title {        
         display: inline-block;
         color: $gray-600;
         padding-right: 1em;
         text-align: right;
     }
+
+       
 
     .title {
         @extend .border;
@@ -174,6 +178,10 @@
         grid-area: tp;
     }
 
+    .matches {
+        grid-area: match;
+    }
+
     .abstract.title{
         grid-area: absttl;
         &::before {
@@ -202,6 +210,15 @@
         }
     }
 
+    .matches {
+        display: none;
+
+        .lang {
+            padding: .2em;
+            background-color: $gray-400;
+        }
+    }
+
     .listitem {
         display: inline-block;
 
@@ -214,6 +231,34 @@
 
         .extralabel::before {
             content: ": ";
+        }
+    }
+}
+
+.indexterms .resultcontainer:has(.bi-layer-forward) {
+    grid-template-rows: auto auto auto auto auto 2em 2.5em;
+    grid-template-areas: 
+        "title title title year"
+        ". authors authors tools"
+        ". absttl abs abs"
+        ". kwttl kw kw"
+        ". clsfttl clsf clsf"
+        ". tpttl tp tp"
+        ". matchesttl match match"
+        ". categories categories extratools"
+    ;
+
+    .matches {
+        display: inline-block;
+        margin-top: 3px;
+        padding-right: 0;
+    }
+
+    .matches.title { 
+        grid-area: matchesttl;
+ 
+        &::before  {
+            content: "Index Terms:";
         }
     }
 }

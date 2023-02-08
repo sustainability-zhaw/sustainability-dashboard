@@ -192,6 +192,8 @@
             </div>
             <div class="extra subtype list" hidden>
             </div>
+            <div class="extra matches list" hidden>
+            </div>
 
             <div class="extra abstract title" hidden>
             </div>
@@ -201,12 +203,23 @@
             </div>
             <div class="extra subtype title" hidden>
             </div>
+            <div class="extra matches title" hidden>
+            </div>
         </div>
     </template>
 
     <template id="authorstemplate">
         <span class="author">
             <span class="fullname qvalue person" data-qtype="person"></span><span class="affiliation department"><span class="mark id" data-qtype="" data-qvalue=""></span><span class="counter" hidden></span></span>
+        </span>
+    </template>
+
+    <template id="matchestemplate">
+        <span class="matches">
+            <span class="keyword" data-qtype="person">
+            </span><span class="required"></span>
+            <span class="forbidden"></span>
+            <span class="mark id" data-qtype="" data-qvalue=""></span><span class="lang"></span>
         </span>
     </template>
 

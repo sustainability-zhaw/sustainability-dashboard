@@ -289,6 +289,16 @@ function objectSelector(filter, options) {
             itemid: PublicationClass.id 
             name: PublicationClass.name 
           }
+          matches: InfoObject.sdg_matches {
+            matchid: SdgMatch.construct
+            keyword: SdgMatch.keyword
+            required: SdgMatch.required_context
+            forbidden: SdgMatch.forbidden_context
+            lang: SdgMatch.language
+            mark: SdgMatch.sdg { 
+                id: Sdg.id
+            }
+          }
         }
     }`;
 }

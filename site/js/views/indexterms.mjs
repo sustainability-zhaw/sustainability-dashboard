@@ -49,7 +49,7 @@ function renderIndexTerms() {
     const menuitem = document.querySelector(".active #indexmatcher_menu");
     if(!menuitem) {
         return; 
-    }    
+    }
 
     const templateList = document.querySelector("#templateIndexTerm");
     // const templateQuery = document.querySelector("#searchoption");
