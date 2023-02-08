@@ -55,8 +55,6 @@
         text-align: right;
     }
 
-       
-
     .title {
         @extend .border;
         @extend .fw-bolder;
@@ -221,6 +219,14 @@
 
     .listitem {
         display: inline-block;
+
+        &::before {
+            content: "; ";
+        }
+
+        &:first-child::before {
+            content: "";
+        }
 
         &:has(.label.itemid:empty) {
             .label,
