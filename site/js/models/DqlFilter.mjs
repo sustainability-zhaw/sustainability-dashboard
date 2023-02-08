@@ -290,12 +290,12 @@ function objectSelector(filter, options) {
             name: PublicationClass.name 
           }
           matches: InfoObject.sdg_matches {
-            id: SdgMatch.construct
+            matchid: SdgMatch.construct
             keyword: SdgMatch.keyword
             required: SdgMatch.required_context
             forbidden: SdgMatch.forbidden_context
             lang: SdgMatch.language
-            sdg: SdgMatch.sdg { 
+            mark: SdgMatch.sdg { 
                 id: Sdg.id
             }
           }
