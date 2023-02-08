@@ -93,8 +93,6 @@ function renderRecords(ev) {
    
     const template = document.querySelector('#resultcontainer');
 
-    // Logger.debug(`update ${ category }`);
-
     DataModel.feed().reduce((section, object) => {
         const element = Object.keys(object).reduce((result, k) => {
             let sel = `.${k}`;
@@ -123,12 +121,10 @@ function renderRecords(ev) {
                 object[k] = object[k].sort((a,b) => (Number(a.mark.id.replace("sdg_", "")) - Number(b.mark.id.replace("sdg_", ""))) || a.keyword.localeCompare(b.keyword));
             } 
 
-            // Logger.debug(`run template ${templateId}`)
             const template = document.querySelector(templateId);
 
             sel += ".list";
             if (Array.isArray(object[k])) {
-                // Logger.debug(`run array with selector ${sel}`);
                 object[k].reduce(
                     handleListElement(template),
                     result.querySelector(sel)
@@ -137,7 +133,6 @@ function renderRecords(ev) {
                 return result;
             }
 
-            // Logger.debug(`run item with selector ${sel}`);
             handleListElement(template)(result.querySelector(sel), object[k]);
 
             return result;
@@ -186,8 +181,6 @@ function handleField(tmpl, field, key, value) {
         return tmpl;
     }
 
-    Logger.debug( `handle ${key} ${value}`);
-
     if (key === "id") {   
         field.classList.add(value);
 
@@ -208,7 +201,6 @@ function handleField(tmpl, field, key, value) {
     }
 
     if (typeof(value) === "object") {
-        Logger.debug(`set dataset type and value for ${key}`);
         return Object.keys(value).reduce((agg, k) => {
             return handleField(agg, agg.querySelector(`.${k}`), k, value[k]);
         }, tmpl);
