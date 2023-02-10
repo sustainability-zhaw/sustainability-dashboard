@@ -11,6 +11,9 @@
 :80 {
     redir / /dashboard/
 
+    rewrite /webhook/* /webhook/payload
+    rewrite /webhook /webhook/payload
+
     rewrite /api/* /api/graphql
     rewrite /api /api/graphql
     
@@ -21,6 +24,10 @@
 
     handle_path /dashboard/* {
         reverse_proxy app:80
+    }
+
+    handle_path /webhook/* {
+        reverse_proxy db_keywords:8090
     }
 
     handle_path /api/* {
