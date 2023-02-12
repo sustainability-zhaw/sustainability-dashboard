@@ -118,13 +118,13 @@ async function findMaxId(sdg, lang) {
 
     // this will yield different ids after a while
     if ("result" in data && data.result.length) {
-        const nextid = data.result.map(r => Number(r.id.split("_")[1].replace("c","")))
+        const nextid = data.result.map(r => Number(r.id.split("_")[2].replace("c","")))
             .reduce((a,b) => Math.max(a,b)) + 1
 
-        return `${sdg.replace("_", "")}_c${nextid}_${lang}`;
+        return `${sdg.replace("_", "")}_${lang}_c${nextid}`;
     }
     
-    return `${sdg.replace("_", "")}_c1_${lang}`;
+    return `${sdg.replace("_", "")}_${lang}_c1`;
 }
 
 /**
