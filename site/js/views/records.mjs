@@ -118,7 +118,7 @@ function renderRecords(ev) {
             }
             else if (k === "matches" && object[k].length > 1) {
                 // first sort by SDG and then by primary keyword
-                object[k] = object[k].sort((a,b) => (Number(a.mark.id.replace("sdg_", "")) - Number(b.mark.id.replace("sdg_", ""))) || a.keyword.localeCompare(b.keyword));
+                object[k] = object[k].sort((a,b) => (Number(a.mark?.id.replace("sdg_", "") || 0) - Number(b.mark?.id.replace("sdg_", "")|| 0)) || a.keyword.localeCompare(b.keyword) );
             } 
 
             const template = document.querySelector(templateId);
