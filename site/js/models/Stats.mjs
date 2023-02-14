@@ -11,7 +11,8 @@ const StatsObject = {
     category: ""
 };
 
-const RequestController = new AbortController();
+let RequestController = new AbortController();
+let OverviewAbort = new AbortController();
 
 export function getOverviewStats() {
     return StatsObject.overview;
@@ -68,11 +69,13 @@ async function handleData() {
         return;
     }
 
+    RequestController.abort();
+    RequestController = new AbortController();
+
     await Promise.all([handleLoadData(query),handlePeopleData(query)]);
 }
 
 async function handleLoadData(q) {
-    // RequestController.abort();
     Logger.debug("load stats");
     
     await loadData(StatsObject.category, q);
@@ -121,7 +124,6 @@ async function loadData(category, queryObj) {
 }
 
 async function handlePeopleData(q) {
-    // RequestController.abort();
     Logger.debug("load people stats");
     
     await loadPeopleData(StatsObject.category, q);
@@ -144,14 +146,16 @@ async function loadPeopleData(category, queryObj) {
 }
 
 async function handleOverviewLoadData(ev) {
-    // RequestController.abort();
     Logger.debug("load stats");
     await loadOverviewData(QueryModel.query());
     Events.trigger.statMainUpdate();
 }
 
 async function loadOverviewData(queryObj) {
-    const data = await Filter.mainQuery(queryObj, RequestController);
+    OverviewAbort.abort();
+    OverviewAbort = new AbortController();
+
+    const data = await Filter.mainQuery(queryObj, OverviewAbort);
 
     StatsObject.overview =  {
         people: 0,

@@ -19,7 +19,7 @@ const Model = {
 
 const queryLimit = 20;
 
-const RequestController = new AbortController();
+let RequestController = new AbortController();
 
 Events.listen.queryUpdate(handleLoadData);
 Events.listen.moreData(handleMoreData);
@@ -40,7 +40,9 @@ export function is_complete() {
 async function handleLoadData(ev) {
     if (Model.active) {
         Logger.debug("abort previous fetch!");
-        await RequestController.abort();
+        RequestController.abort();
+        // now throw away the old (aborted) controller and get a fresh one
+        RequestController = new AbortController();
     }
 
     Model.complete = false;
@@ -88,8 +90,8 @@ export async function loadData(type, queryObj) {
     
     if (Model.offset === 0 && prevQuery && QueryModel.isEqual(prevQuery, queryObj)) { 
         // if the new query is not actually new, there is nothing to do
-        await new Promise((ok) => setTimeout(ok, 0)); // wait one tick to allow the other event loop to complete :(
-            
+        await nextTick();
+
         Events.trigger.dataUpdate({reset: false, nochange: true});
         return false;
     }
@@ -125,4 +127,10 @@ export async function loadData(type, queryObj) {
         Logger.debug("Query is complete!");
     }
     return true;
+}
+
+function nextTick() {
+    // wait one tick to allow the other event loop to complete all preceeding tasks
+    // this is needed so we don't run into ourselves by executing one bit of the code too early.
+    return new Promise((ok) => setTimeout(ok, 0)); 
 }
