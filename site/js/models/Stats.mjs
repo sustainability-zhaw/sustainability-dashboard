@@ -39,8 +39,9 @@ export function getContributors() {
     return StatsObject.contributors;
 }
 
-Events.listen.queryUpdate(handleLoadData);
-Events.listen.queryUpdate(handlePeopleData);
+Events.listen.queryUpdate(handleData);
+// Events.listen.queryUpdate(handleLoadData);
+// Events.listen.queryUpdate(handlePeopleData);
 Events.listen.queryUpdate(handleOverviewLoadData);
 Events.listen.changeCategory(categoryChange);
 
@@ -60,15 +61,21 @@ function checkPrevQuery(query) {
     return true;
 }
 
-async function handleLoadData(ev) {
-    // RequestController.abort();
-    Logger.debug("load stats");
+async function handleData() {
     const query = QueryModel.query();
+
     if (checkPrevQuery(query)) {
         return;
     }
 
-    await loadData(StatsObject.category, QueryModel.query());
+    await Promise.all([handleLoadData(query),handlePeopleData(query)]);
+}
+
+async function handleLoadData(q) {
+    // RequestController.abort();
+    Logger.debug("load stats");
+    
+    await loadData(StatsObject.category, q);
     Events.trigger.statUpdate();
 }
 
@@ -113,15 +120,11 @@ async function loadData(category, queryObj) {
     }
 }
 
-async function handlePeopleData(ev) {
+async function handlePeopleData(q) {
     // RequestController.abort();
     Logger.debug("load people stats");
-    const query = QueryModel.query();
-
-    if (checkPrevQuery(query)) {
-        return;
-    }
-    await loadPeopleData(StatsObject.category, query);
+    
+    await loadPeopleData(StatsObject.category, q);
 
     Events.trigger.statPeopleUpdate();
 }
