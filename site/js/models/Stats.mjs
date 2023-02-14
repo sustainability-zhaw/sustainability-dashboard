@@ -48,9 +48,26 @@ function categoryChange(ev) {
     StatsObject.category = ev.detail.category;
 }
 
+let prevQuery;
+
+function checkPrevQuery(query) {
+    if (!(prevQuery && QueryModel.isEqual(prevQuery, query))) { 
+        prevQuery = query;
+        return false;
+    }
+
+    // if the new query is not actually new, there is nothing to do
+    return true;
+}
+
 async function handleLoadData(ev) {
     // RequestController.abort();
     Logger.debug("load stats");
+    const query = QueryModel.query();
+    if (checkPrevQuery(query)) {
+        return;
+    }
+
     await loadData(StatsObject.category, QueryModel.query());
     Events.trigger.statUpdate();
 }
@@ -99,7 +116,13 @@ async function loadData(category, queryObj) {
 async function handlePeopleData(ev) {
     // RequestController.abort();
     Logger.debug("load people stats");
-    await loadPeopleData(StatsObject.category, QueryModel.query());
+    const query = QueryModel.query();
+
+    if (checkPrevQuery(query)) {
+        return;
+    }
+    await loadPeopleData(StatsObject.category, query);
+
     Events.trigger.statPeopleUpdate();
 }
 

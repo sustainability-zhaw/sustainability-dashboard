@@ -91,57 +91,62 @@ function renderRecords(ev) {
 
     targetsection.dataset.resulttype = category;
    
-    const template = document.querySelector('#resultcontainer');
+    if (!ev.detail.nochange) {
+        // this block handles the case when the query has changed and there is something to render
+        // nochange is present, only if the model identified that two subsequent queries are equal.
 
-    DataModel.feed().reduce((section, object) => {
-        const element = Object.keys(object).reduce((result, k) => {
-            let sel = `.${k}`;
+        const template = document.querySelector('#resultcontainer');
 
-            if (k === "link") {
-                [...(result.querySelectorAll(sel))].forEach(e => e.href = object[k]);
+        DataModel.feed().reduce((section, object) => {
+            const element = Object.keys(object).reduce((result, k) => {
+                let sel = `.${k}`;
+
+                if (k === "link") {
+                    [...(result.querySelectorAll(sel))].forEach(e => e.href = object[k]);
+                    return result;
+                }
+
+                if (typeof(object[k]) !== "object") {
+                    result.querySelector(sel).innerText = object[k];
+                    return result;
+                }          
+
+                let templateId = `#${sel.slice(1)}template`;
+
+                if (["sdg", "department"].includes(k)) {
+                    templateId = "#cattemplate";
+                    sel = ".categories";
+                }
+                else if (["subtype", "classification", "keywords"].includes(k)) {
+                    templateId = `#listitemtemplate`;
+                }
+                else if (k === "matches" && object[k].length > 1) {
+                    // first sort by SDG and then by primary keyword
+                    object[k] = object[k].sort((a,b) => (Number(a.mark?.id.replace("sdg_", "") || 0) - Number(b.mark?.id.replace("sdg_", "")|| 0)) || a.keyword?.localeCompare(b.keyword || "") );
+                } 
+
+                const template = document.querySelector(templateId);
+
+                sel += ".list";
+                if (Array.isArray(object[k])) {
+                    object[k].reduce(
+                        handleListElement(template),
+                        result.querySelector(sel)
+                    );
+
+                    return result;
+                }
+
+                handleListElement(template)(result.querySelector(sel), object[k]);
+
                 return result;
-            }
+            }, template.content.cloneNode(true));
 
-            if (typeof(object[k]) !== "object") {
-                result.querySelector(sel).innerText = object[k];
-                return result;
-            }          
+            section.appendChild(element);
 
-            let templateId = `#${sel.slice(1)}template`;
-
-            if (["sdg", "department"].includes(k)) {
-                templateId = "#cattemplate";
-                sel = ".categories";
-            }
-            else if (["subtype", "classification", "keywords"].includes(k)) {
-                templateId = `#listitemtemplate`;
-            }
-            else if (k === "matches" && object[k].length > 1) {
-                // first sort by SDG and then by primary keyword
-                object[k] = object[k].sort((a,b) => (Number(a.mark?.id.replace("sdg_", "") || 0) - Number(b.mark?.id.replace("sdg_", "")|| 0)) || a.keyword?.localeCompare(b.keyword || "") );
-            } 
-
-            const template = document.querySelector(templateId);
-
-            sel += ".list";
-            if (Array.isArray(object[k])) {
-                object[k].reduce(
-                    handleListElement(template),
-                    result.querySelector(sel)
-                );
-
-                return result;
-            }
-
-            handleListElement(template)(result.querySelector(sel), object[k]);
-
-            return result;
-        }, template.content.cloneNode(true));
-
-        section.appendChild(element);
-
-        return section;
-    }, targetsection);
+            return section;
+        }, targetsection);
+    }
 
     if (DataModel.is_complete() && DataModel.feed().length){ 
         document.querySelector("#mainarea .EOF").removeAttribute("hidden");

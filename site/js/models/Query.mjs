@@ -17,7 +17,7 @@ export function query(force) {
         (query.terms?.length || query.notterms?.length)) {
         delete query.sdgs;
     }
-
+    
     Logger.debug(`queryModel: ${JSON.stringify(query)}`)
     
     return query;
@@ -25,6 +25,30 @@ export function query(force) {
 
 export function queryterms() {
     return QueryModel.qterms;
+}
+
+export function isEqual(a, b) {
+    if (!a || !b) {
+        return false;
+    }
+
+    if (a === b) { 
+        return true;
+    }
+
+    for (k in a) {
+        if (!(k in b)) {
+            return false;
+        }
+        if (a[k].length !== b[k].length) {
+            return false;
+        }
+        if (a[k].filter(t => !(b[k].includes(t))).length) {
+            return false
+        }
+    }
+
+    return true;
 }
 
 const QueryModel = {
