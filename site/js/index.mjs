@@ -86,7 +86,7 @@ function initTools() {
     const funcs = {
         "indexmatcher_menu": () => {
             Events.trigger.indexTermData(); 
-            Events.trigger.queryUpdate(); 
+            // Events.trigger.queryUpdate(); 
             Events.trigger.indexTermUpdate(QueryModel.query());
 
             if (!mainArea.classList.contains("indexterms")) {
