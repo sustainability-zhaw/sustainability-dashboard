@@ -36,7 +36,7 @@ export function isEqual(a, b) {
         return true;
     }
 
-    for (k in a) {
+    for (let k in a) {
         if (!(k in b)) {
             return false;
         }
