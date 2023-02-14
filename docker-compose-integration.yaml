@@ -27,8 +27,8 @@ services:
       DGRAPH_SERVER: http://db:8080
 
   db_keywords:
-    image: ghcr.io/sustainability-zhaw/keyword-webhook:sha-7b600a8
-    # image: sdg/keywords:t08
+    #image: ghcr.io/sustainability-zhaw/keyword-webhook:sha-7b600a8
+    image: sdg/keywords:t13
     restart: 'no'
     networks:
       - dgraphnet
@@ -68,7 +68,8 @@ services:
   #     - ./contrib/ad_config.env 
 
   indexer: 
-    image: ghcr.io/sustainability-zhaw/sdg-indexer:sha-5ecb012
+    # image: ghcr.io/sustainability-zhaw/sdg-indexer:sha-5ecb012
+    image: sdgidx:t002
     restart: "no"
     networks:
       - dgraphnet
@@ -78,6 +79,7 @@ services:
     environment:
       BATCH_INTERVAL: 20
       DB_HOST: db:8080
+      LOG_LEVEL: DEBUG
       
   # DEV ENVIRONMENT COMPONENTS
   # These tools provide access to query browsers and the reverse proxy

@@ -12,7 +12,9 @@ Events.listen.queryReplace(replaceQuery);
 export function query(force) {
     const query = collectQueryTerms(QueryModel.qterms);
 
-    if (!force && IdxView.isActive()) {
+    if (!force && 
+        IdxView.isActive() && 
+        (query.terms?.length || query.notterms?.length)) {
         delete query.sdgs;
     }
 

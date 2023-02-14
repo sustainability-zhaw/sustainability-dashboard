@@ -42,12 +42,10 @@ function handleIndexDelete(ev) {
 }
 
 function renderIndexTerms() {
-    // only render if the index terms are shown.
-    
+    // only render if the index terms match the query
     Logger.debug("render index terms");
 
-    const menuitem = document.querySelector(".active #indexmatcher_menu");
-    if(!menuitem) {
+    if(!isActive()) {
         return; 
     }
 

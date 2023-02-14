@@ -86,6 +86,7 @@ function initTools() {
     const funcs = {
         "indexmatcher_menu": () => {
             Events.trigger.indexTermData(); 
+            Events.trigger.queryUpdate(); 
             Events.trigger.indexTermUpdate(QueryModel.query());
 
             if (!mainArea.classList.contains("indexterms")) {
@@ -94,6 +95,12 @@ function initTools() {
         },
         "bookmark_menu": Events.trigger.bookmarkData,
         "configure": () => {}
+    };
+
+    const closeFuncs = {
+        "indexmatcher_menu": () => {
+            Events.trigger.queryUpdate();
+        }
     };
 
     evAnchor.addEventListener("click", (ev) => {
@@ -111,17 +118,20 @@ function initTools() {
             mainArea.classList.remove("indexterms");
 
             if (ev.target.parentNode.classList.contains("active")) {
-                // close
+                // close the same menu
                 menuAnchor.setAttribute("hidden", "hidden");
                 menuAnchor.classList.remove("mini");
 
                 ev.target.parentNode.classList.remove("active");
+
+                closeFuncs[ev.target.id]?.();
                 return;
             }
 
             if (prevActive) {
                 prevActive.classList.remove("active");
                 menuAnchor.classList.remove("mini");
+                closeFuncs[prevActive.id]?.();
             }
 
             if (overlaySize && overlaySize.length) {
@@ -136,7 +146,7 @@ function initTools() {
             menuAnchor.removeAttribute("hidden");
 
             // trigger event to load the content
-            funcs[ev.target.id]();
+            funcs[ev.target.id]?.();
         }
     });
 
