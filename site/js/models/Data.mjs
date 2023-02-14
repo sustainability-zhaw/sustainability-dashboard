@@ -86,7 +86,7 @@ export async function loadData(type, queryObj) {
     // const queryTerms = queryObj;
     // const objects = gqlSearchQuery(type, queryTerms);
     
-    if (Model.offset = 0 && prevQuery && QueryModel.isEqual(prevQuery, queryObj)) { 
+    if (Model.offset === 0 && prevQuery && QueryModel.isEqual(prevQuery, queryObj)) { 
         // if the new query is not actually new, there is nothing to do
         Events.trigger.dataUpdate({reset: false, nochange: true});
         return false;
