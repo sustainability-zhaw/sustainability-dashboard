@@ -368,7 +368,7 @@ function handleQueryUpdateIndex() {
 function handleQueryUpdate() {
     // trigger search request to the backend
     const section = document.querySelector('.nav-link.active');
-    const category = section.dataset.category;
+    // const category = section.dataset.category;
 
     document.querySelector("#searchterms").value = "";
 

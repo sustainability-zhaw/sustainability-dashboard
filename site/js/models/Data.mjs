@@ -88,6 +88,8 @@ export async function loadData(type, queryObj) {
     
     if (Model.offset === 0 && prevQuery && QueryModel.isEqual(prevQuery, queryObj)) { 
         // if the new query is not actually new, there is nothing to do
+        await new Promise((ok) => setTimeout(ok, 0)); // wait one tick to allow the other event loop to complete :(
+            
         Events.trigger.dataUpdate({reset: false, nochange: true});
         return false;
     }

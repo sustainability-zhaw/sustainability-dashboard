@@ -156,18 +156,19 @@ function renderRecords(ev) {
     document.querySelector("#warnings").setAttribute("hidden", "hidden");
     document.querySelector("#loading_data").setAttribute("hidden", "hidden");
 
-    if (!DataModel.feed().length && !DataModel.offset()) {
-        document.querySelector("#no_data").removeAttribute("hidden");
-        document.querySelector("#warnings").removeAttribute("hidden", "hidden");
-        document.querySelector("#mainarea .EOF").setAttribute("hidden", "hidden");
-        document.querySelector("#mainarea .limit-reached").setAttribute("hidden", "hidden");
+    if (!ev.detail.nochange) {
+        if (!DataModel.feed().length && !DataModel.offset()) {
+            document.querySelector("#no_data").removeAttribute("hidden");
+            document.querySelector("#warnings").removeAttribute("hidden", "hidden");
+            document.querySelector("#mainarea .EOF").setAttribute("hidden", "hidden");
+            document.querySelector("#mainarea .limit-reached").setAttribute("hidden", "hidden");
+        }
+
+        if (DataModel.offset() > maxScrollRecords && !DataModel.is_complete()) {
+            document.querySelector("#mainarea .intransit").setAttribute("hidden", "hidden");
+            document.querySelector("#mainarea .limit-reached").removeAttribute("hidden");
+        }   
     }
-
-    if (DataModel.offset() > maxScrollRecords && !DataModel.is_complete()) {
-        document.querySelector("#mainarea .intransit").setAttribute("hidden", "hidden");
-        document.querySelector("#mainarea .limit-reached").removeAttribute("hidden");
-    }   
-
     if (ev.detail.reset) {
         // this MUST be the very last, so the rendering can catch up. 
         // if this is optimised with the earlier reset block, then some browsers will 
