@@ -80,6 +80,7 @@ function categoryChange(ev) {
 }
 
 let prevQuery;
+let prevType; 
 
 export async function loadData(type, queryObj) {
     Model.message = "";
@@ -88,7 +89,10 @@ export async function loadData(type, queryObj) {
     // const queryTerms = queryObj;
     // const objects = gqlSearchQuery(type, queryTerms);
     
-    if (Model.offset === 0 && prevQuery && QueryModel.isEqual(prevQuery, queryObj)) { 
+    if (Model.offset === 0 && 
+        prevQuery && 
+        QueryModel.isEqual(prevQuery, queryObj) && 
+        type === prevType) { 
         // if the new query is not actually new, there is nothing to do
         await nextTick();
 
@@ -97,6 +101,7 @@ export async function loadData(type, queryObj) {
     }
 
     prevQuery = queryObj;
+    prevType = type;
 
     try {
         const data = await Filter.objectsQuery(type, 20, Model.offset, queryObj, RequestController);

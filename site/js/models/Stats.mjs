@@ -51,10 +51,12 @@ function categoryChange(ev) {
 }
 
 let prevQuery;
+let prevCategory;
 
 function checkPrevQuery(query) {
-    if (!(prevQuery && QueryModel.isEqual(prevQuery, query))) { 
+    if (!(prevQuery && StatsObject.category === prevCategory && QueryModel.isEqual(prevQuery, query))) { 
         prevQuery = query;
+        prevCategory = StatsObject.category;
         return false;
     }
 
@@ -164,9 +166,16 @@ async function loadOverviewData(queryObj) {
         projects: 0
     };
 
+    data.lang = data.lang?.[0]?.["@groupby"].reduce((obj, item) => { obj[item.lang] =  item.n; return obj }, {de: 0, en: 0, fr:0, it:0});
+
+    if (!data.lang) {
+        data.lang = {de: 0, en: 0, fr:0, it:0};
+    }
+
     if ("infoobjecttype" in data && data.infoobjecttype) {
         StatsObject.overview = {
-            people: data.people[0].n
+            people: data.people[0].n,
+            lang: data.lang
         }; 
 
         StatsObject.overview = data.infoobjecttype.reduce((a, o) => {

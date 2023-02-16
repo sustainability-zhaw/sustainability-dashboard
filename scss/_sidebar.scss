@@ -8,12 +8,11 @@
     grid-template-columns: 2fr 1fr 1fr 360px;
 
     // the next line prepares for issue 38
-    grid-template-rows: 65px 40px 148px 120px 1fr 55px;
+    grid-template-rows: 100px 188px 120px 1fr 55px;
     // grid-template-rows: 68px 110px 76px 120px 1fr 10px;
 
     grid-template-areas: 
         "srch srch srch menul"
-        "srch srch srch sdgs"
         "content content content sdgs"
         "content content content dept"
         "content content content pple"
@@ -416,6 +415,13 @@
     line-height: $font-size-base * 2;
     font-size: $font-size-base * 1.5;
     background-color: $gray-600;
+
+    &.de,
+    &.en,
+    &.fr,
+    &.it {
+        font-size: $font-size-base;
+    }
 
     &.searchoption {
         height: inherit;
