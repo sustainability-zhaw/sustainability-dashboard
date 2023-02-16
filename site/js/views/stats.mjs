@@ -27,7 +27,7 @@ function handleStats() {
     // display numbers
     const stats = StatsModel.getStats();
 
-    Logger.debug(`stats are: ${JSON.stringify(stats, null, "  ")}`)
+    // Logger.debug(`stats are: ${JSON.stringify(stats, null, "  ")}`)
 
     stats.sdg
         .filter(e => e.id.startsWith("sdg_") && e.id != "sdg_17")
