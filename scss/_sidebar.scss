@@ -131,7 +131,8 @@
     .peoplelist { 
         margin-right: 1em;
         grid-row: 2;
-        overflow: scroll;
+        overflow-y: scroll;
+        overflow-x: hidden;
         box-shadow: $box-shadow-inset;
     }
 
@@ -185,7 +186,7 @@
 
     &.mini {
         margin-top: 0;
-        grid-row-start: 4;
+        grid-row-start: 3;
     }
 
     #overlaytitle {
@@ -194,9 +195,9 @@
 
     #overlaycontent {
         grid-row: 2;
-        overflow: scroll;
+        overflow-x: hidden;
+        overflow-y: scroll;
         padding-right: .5em;
-        overflow: scroll;
 
         .indexterm {
             cursor: pointer;
