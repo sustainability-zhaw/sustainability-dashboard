@@ -1,3 +1,28 @@
+#mainarea {
+    grid-area: content;
+    margin-right: .5em;
+    padding-right: 1.5em;
+    margin-left: 2em;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+#warnings {
+    grid-area: content;
+    z-index: 10;
+    display: grid;
+
+    grid-template-areas: "message";
+   
+    align-items: start;
+    
+    .alert {
+        grid-area: message;
+        justify-self: center;
+        margin-top: 2em;
+    }
+}
+
 .resultcontainer {
     display: grid;
     grid-template-columns: 1em 8em auto 5em;
