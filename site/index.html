@@ -26,21 +26,26 @@
             </nav>
             <nav class="navbar-right navbar">    
             <ul class="navbar-nav">
+                <li class="nav-item fs-5" id="visualize">
+                    <a class="nav-link bi-files disabled" aria-current="page" href="#"
+                       data-bs-toggle="tooltip" title="Pub-Types" data-bs-placement="top"></a>
+                </li>  
+
+                <li class="nav-item fs-5" id="subtypes">
+                    <a class="nav-link bi-files disabled" aria-current="page" href="#" id="subtypes_menu"
+                       data-bs-toggle="tooltip" title="Pub-Types" data-bs-placement="top"></a>
+                </li>  
+
+                <li class="nav-item fs-5">
+                    <a class="nav-link bi-diagram-3 disabled" id="categories_menu" aria-current="page" href="#"
+                    data-bs-toggle="tooltip" title="Classications" data-bs-placement="top"></a>
+                </li>  
+
                 <li class="nav-item fs-5" id="download">
-                    <a class="nav-link disabled bi-download" aria-current="page" href="#"
-                       data-bs-toggle="tooltip" title="Download Results" data-bs-placement="top"></a>
                 </li>
                 
-                <li class="nav-item fs-5" id="visualize">
-                    <a class="nav-link bi-bar-chart-line disabled" aria-current="page" href="#"
-                       data-bs-toggle="tooltip" title="Visualize Results" data-bs-placement="top"></a>
-                </li>  
-
                 <li class="nav-item fs-5">
-                </li>  
-
-                <li class="nav-item fs-5">
-                  <a class="nav-link bi-journal-bookmark disabled" 
+                  <a class="nav-link bi-journal-bookmark disabled"  id="bookmarks_menu"
                      data-bs-toggle="tooltip" id="bookmark_menu" title="Bookmarked Queries" data-bs-placement="top"
                      href="#" role="button" data-title="Bookmarks"></a>
                 </li>
@@ -50,9 +55,6 @@
                        data-bs-toggle="tooltip" title="Index Terms" data-title="Index Terms" data-size="mini" data-bs-placement="top"
                        role="button"></a>
                 </li>
-                
-                <li class="nav-item fs-5">
-                </li>  
 
                 <li class="nav-item fs-5" data-title="Settings">
                     <a class="nav-link bi-wrench-adjustable-circle disabled"   id="configure" 
@@ -90,6 +92,9 @@
                     </div>
                     <div class="tool-item" id="savematcher" >
                         <span class="btn btn-outline-secondary btn-sm disabled bi-exclamation-diamond"  data-bs-toggle="tooltip" title="Save Index Match" data-bs-placement="bottom" href="#"></span>
+                    </div>
+                    <div class="tool-item" id="download_results">
+                        <span class="btn btn-outline-secondary btn-sm bi-download" aria-current="page" data-bs-toggle="tooltip" data-bs-placement="bottom" aria-label="Download Results" data-bs-original-title="Download Results"></span>
                     </div>
                 </div>
             </div>
