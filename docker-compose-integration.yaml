@@ -17,8 +17,14 @@ services:
     networks:
       - dgraphnet
 
+  mq: 
+    image: rabbitmq:3.11-management
+    restart: 'no'
+    networks:
+      - dgraphnet
+
   db_init:
-    image: ghcr.io/sustainability-zhaw/dgraph-schema:sha-3ab74a6
+    image: ghcr.io/sustainability-zhaw/dgraph-schema:sha-a719f16
     restart: 'no'
     networks:
       - dgraphnet
@@ -27,8 +33,8 @@ services:
       DGRAPH_SERVER: http://db:8080
 
   db_keywords:
-    #image: ghcr.io/sustainability-zhaw/keyword-webhook:sha-7b600a8
-    image: sdg/keywords:t13
+    image: ghcr.io/sustainability-zhaw/keyword-webhook:sha-44ddb4e
+    # image: sdg/keywords:t13
     restart: 'no'
     networks:
       - dgraphnet
@@ -42,18 +48,18 @@ services:
   #  # environment:
   #  #   DB_URI: http://db:8080/graphql
 
-  dspacer: 
-    image: ghcr.io/sustainability-zhaw/extraction-dspace:sha-e48a854
-    # image: dspacer:t00002
-    restart: "no"
-    networks:
-      - dgraphnet
-    depends_on:
-      db_init:
-        condition: service_completed_successfully 
-    configs:
-      - source: dcconfig
-        target: /etc/app/config.json
+  # dspacer: 
+  #   image: ghcr.io/sustainability-zhaw/extraction-dspace:sha-e48a854
+  #   # image: dspacer:t00002
+  #   restart: "no"
+  #   networks:
+  #     - dgraphnet
+  #   depends_on:
+  #     db_init:
+  #       condition: service_completed_successfully 
+  #   configs:
+  #     - source: dcconfig
+  #       target: /etc/app/config.json
 
   # adresolver: 
   #   image: ghcr.io/sustainability-zhaw/ad-resolver:sha-b73cba8
@@ -67,19 +73,19 @@ services:
   #   env_file:
   #     - ./contrib/ad_config.env 
 
-  indexer: 
-    # image: ghcr.io/sustainability-zhaw/sdg-indexer:sha-5ecb012
-    image: sdgidx:t002
-    restart: "no"
-    networks:
-      - dgraphnet
-    depends_on:
-      db_init:
-        condition: service_completed_successfully
-    environment:
-      BATCH_INTERVAL: 20
-      DB_HOST: db:8080
-      LOG_LEVEL: DEBUG
+  # indexer: 
+  #   # image: ghcr.io/sustainability-zhaw/sdg-indexer:sha-5ecb012
+  #   image: sdgidx:t002
+  #   restart: "no"
+  #   networks:
+  #     - dgraphnet
+  #   depends_on:
+  #     db_init:
+  #       condition: service_completed_successfully
+  #   environment:
+  #     BATCH_INTERVAL: 20
+  #     DB_HOST: db:8080
+  #     LOG_LEVEL: DEBUG
       
   # DEV ENVIRONMENT COMPONENTS
   # These tools provide access to query browsers and the reverse proxy

@@ -38,11 +38,16 @@
         reverse_proxy db:8080
     }
 
-    handle_path /gqlide/* {
+    handle_path /graphiql/* {
         reverse_proxy gql_browser:80
     }
 
     handle_path /ratel/* {
         reverse_proxy db_browser:8000
+    }
+
+    handle_path /rabbitmq/* {
+        # Expose rabbitmq management port for development
+        reverse_proxy mq:15672
     }
 }
