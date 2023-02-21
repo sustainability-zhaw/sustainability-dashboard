@@ -108,4 +108,3 @@ site/assets
 
 # local environment variables
 contrib/*.env
-contrib/kwconfig.json

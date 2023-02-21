@@ -1,0 +1,7 @@
+{
+    "apiurl": "http://db:8080/graphql",
+    "branch": "main",
+    "target_path": "data/sdgs",
+    "port": 8090,
+    "relax": "no"
+}
