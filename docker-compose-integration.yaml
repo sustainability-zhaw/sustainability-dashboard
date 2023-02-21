@@ -48,18 +48,18 @@ services:
   #  # environment:
   #  #   DB_URI: http://db:8080/graphql
 
-  # dspacer: 
-  #   image: ghcr.io/sustainability-zhaw/extraction-dspace:sha-e48a854
-  #   # image: dspacer:t00002
-  #   restart: "no"
-  #   networks:
-  #     - dgraphnet
-  #   depends_on:
-  #     db_init:
-  #       condition: service_completed_successfully 
-  #   configs:
-  #     - source: dcconfig
-  #       target: /etc/app/config.json
+  dspacer: 
+    image: ghcr.io/sustainability-zhaw/extraction-dspace:sha-e48a854
+    # image: dspacer:t00002
+    restart: "no"
+    networks:
+      - dgraphnet
+    depends_on:
+      db_init:
+        condition: service_completed_successfully 
+    configs:
+      - source: dcconfig
+        target: /etc/app/config.json
 
   # adresolver: 
   #   image: ghcr.io/sustainability-zhaw/ad-resolver:sha-b73cba8
@@ -73,19 +73,19 @@ services:
   #   env_file:
   #     - ./contrib/ad_config.env 
 
-  # indexer: 
-  #   # image: ghcr.io/sustainability-zhaw/sdg-indexer:sha-5ecb012
-  #   image: sdgidx:t002
-  #   restart: "no"
-  #   networks:
-  #     - dgraphnet
-  #   depends_on:
-  #     db_init:
-  #       condition: service_completed_successfully
-  #   environment:
-  #     BATCH_INTERVAL: 20
-  #     DB_HOST: db:8080
-  #     LOG_LEVEL: DEBUG
+  indexer: 
+    # image: ghcr.io/sustainability-zhaw/sdg-indexer:sha-5ecb012
+    image: sdgidx:t002
+    restart: "no"
+    networks:
+      - dgraphnet
+    depends_on:
+      db_init:
+        condition: service_completed_successfully
+    environment:
+      BATCH_INTERVAL: 20
+      DB_HOST: db:8080
+      LOG_LEVEL: DEBUG
       
   # DEV ENVIRONMENT COMPONENTS
   # These tools provide access to query browsers and the reverse proxy
