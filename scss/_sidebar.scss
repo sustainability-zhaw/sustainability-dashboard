@@ -354,6 +354,14 @@
                     }
                 }
             }
+
+            // If the the user enters a search term twice, mark it in the $danger (error) color.
+            // The :not() operator is used to exclude the SDG markers (which have their own distinct color that
+            // we don't want to override.
+            .error > *:not(.marker) {
+                background-color: tint-color($danger, 60%) !important;
+                color: black;
+            }
         }
 
         .searchtools {

@@ -206,9 +206,13 @@ function add(ev) {
         return;
     }
 
-    if (QueryModel.qterms.filter(obj => obj.type === type && obj.value === value).length) {
+    const offendingSearchTerms = QueryModel.qterms.filter(obj => obj.type === type && obj.value === value);
+    if (offendingSearchTerms.length > 0) {
         Logger.debug("item exists");
-        Events.trigger.queryError({message: "The query already exists."});
+        Events.trigger.queryError({
+            message: "The query already exists.",
+            offendingSearchTerms: offendingSearchTerms,
+        });
         return;
     }
 
