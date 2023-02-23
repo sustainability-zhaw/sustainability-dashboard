@@ -207,6 +207,7 @@ function add(ev) {
     }
 
     const offendingSearchTerms = QueryModel.qterms.filter(obj => obj.type === type && obj.value === value);
+
     if (offendingSearchTerms.length > 0) {
         Logger.debug("item exists");
         Events.trigger.queryError({

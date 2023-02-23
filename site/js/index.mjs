@@ -206,12 +206,9 @@ function showQueryError(ev) {
     searchTermElement.classList.add("error");
 
     // Mark the search term that caused the error with the error color.
-    for (const offendingTerm of ev.detail.offendingSearchTerms) {
-        const selectedOptions = document.querySelectorAll(`.optioncontainer[data-qvalue="${offendingTerm.value}"]`);
-        if (selectedOptions.length > 0) {
-            selectedOptions[0].classList.add("error");
-        }
-    }
+    ev.detail.offendingSearchTerms.forEach(({value}) => {
+        document.querySelector(`.optioncontainer[data-qvalue="${value}"]`)?.classList.add("error");
+    });
 
     // tell the user that something is missing
     const tooltip = bootstrap.Tooltip.getOrCreateInstance(searchButtonElement, {
@@ -231,9 +228,9 @@ function clearQueryError() {
 
     searchTermElement.classList.remove("error");
 
-    for (let option of document.querySelectorAll(`.optioncontainer.error`)) {
-        option.classList.remove('error');
-    }
+    document.querySelectorAll(".optioncontainer.error").forEach((optionElement) =>  {
+        optionElement.classList.remove("error");
+    });
 
     // tell the user that something is missing
     const ttip = bootstrap.Tooltip.getInstance(searchButtonElement);
