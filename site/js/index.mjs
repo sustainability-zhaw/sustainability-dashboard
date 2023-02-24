@@ -200,43 +200,26 @@ function addQType(evt) {
 // search query functions 
 
 function showQueryError(ev) {
-    const searchTermElement = document.querySelector("#searchterms");
-    const searchButtonElement = document.querySelector("#basic-addon2");
+    // tell the user that something is missing
+    const queryWarningElement = document.getElementById("query-warning")
 
-    searchTermElement.classList.add("error");
+    queryWarningElement.classList.remove("d-none");
+    queryWarningElement.innerText = ev.detail.message;
 
-    // Mark the search term that caused the error with the error color.
+    // Adds red border around the search term box
     ev.detail.offendingSearchTerms.forEach(({value}) => {
         document.querySelector(`.optioncontainer[data-qvalue="${value}"]`)?.classList.add("error");
     });
-
-    // tell the user that something is missing
-    const tooltip = bootstrap.Tooltip.getOrCreateInstance(searchButtonElement, {
-        title: ev.detail.message,
-        placement: "left",
-        popperConfig: {
-            placement: "left",
-        }
-    });
-
-    tooltip.show();
 }
 
 function clearQueryError() {
-    const searchTermElement = document.querySelector("#searchterms");
-    const searchButtonElement = document.querySelector("#basic-addon2");
+    const queryWarningElement = document.querySelector("#query-warning");
 
-    searchTermElement.classList.remove("error");
+    queryWarningElement.classList.add("d-none");
 
     document.querySelectorAll(".optioncontainer.error").forEach((optionElement) =>  {
         optionElement.classList.remove("error");
     });
-
-    // tell the user that something is missing
-    const ttip = bootstrap.Tooltip.getInstance(searchButtonElement);
-    if (ttip) {
-        ttip.dispose();
-    }
 }
 
 // Self registering UI Events
