@@ -16,12 +16,12 @@ For testing and development the package brings a minimal backend deployment. Thi
 
 Testing requires that [nodejs (with npm)](https://nodejs.org) and [docker](https://docker.com) are installed on the system. 
 
-On the command line runn the following commands
+On the command line run the following commands
 
 ```sh
 npm ci 
 npm run all
-docker compose -f docker-compose-integration.yaml up --force-recreate --remove-orphans
+docker compose -f docker-compose-local.yaml up --force-recreate --remove-orphans
 ```
 
 The setup takes about 30-40 seconds to fully start, because of database initialisation. After that it takes a few hours for scraping the OAI endpoint. During that time one can be amazed by observing how the data tickles into the system. 
