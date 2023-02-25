@@ -201,9 +201,9 @@ function addQType(evt) {
 
 function showQueryError(ev) {
     // tell the user that something is missing
-    const queryWarningElement = document.getElementById("query-warning")
+    const queryWarningElement = document.querySelector("#query-warning");
 
-    queryWarningElement.classList.remove("d-none");
+    queryWarningElement.classList.add("error");
     queryWarningElement.innerText = ev.detail.message;
 
     // Adds red border around the search term box
@@ -215,7 +215,7 @@ function showQueryError(ev) {
 function clearQueryError() {
     const queryWarningElement = document.querySelector("#query-warning");
 
-    queryWarningElement.classList.add("d-none");
+    queryWarningElement.classList.remove("error");
 
     document.querySelectorAll(".optioncontainer.error").forEach((optionElement) =>  {
         optionElement.classList.remove("error");

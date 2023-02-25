@@ -273,18 +273,37 @@
         .input-group-text {
             color: var(--bs-gray-600);
             cursor: pointer;
+
+            display: inline-block;
+            z-index: 0;
+
+            grid-area: inputbuttons;
         }
 
         form {
             margin-block-end: 0;
         }
 
-        // Depends on its parent (div .input-group) to be positioned relatively!
+        .input-group {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            grid-template-areas: "searchinput inputbuttons";
+        }
+
         #query-warning {
-            position: absolute;
-            right: 0;
-            height: 100%;
-            z-index: 9;
+            display: none;
+        }
+
+        #query-warning.error {
+            @extend .btn;
+            @extend .btn-danger;
+
+            display: inline-block;
+            grid-area: inputbuttons;
+        }
+
+        .form-control {
+            width: 100%;
         }
     }
 
