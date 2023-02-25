@@ -290,10 +290,6 @@
             grid-template-areas: "searchinput inputbuttons";
         }
 
-        #query-warning {
-            display: none;
-        }
-
         #query-warning.error {
             @extend .btn;
             @extend .btn-danger;

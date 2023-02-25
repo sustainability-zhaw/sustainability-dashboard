@@ -205,6 +205,7 @@ function showQueryError(ev) {
 
     queryWarningElement.classList.add("error");
     queryWarningElement.innerText = ev.detail.message;
+    queryWarningElement.removeAttribute("hidden");
 
     // Adds red border around the search term box
     ev.detail.offendingSearchTerms.forEach(({value}) => {
@@ -216,6 +217,7 @@ function clearQueryError() {
     const queryWarningElement = document.querySelector("#query-warning");
 
     queryWarningElement.classList.remove("error");
+    queryWarningElement.setAttribute("hidden", "hidden");
 
     document.querySelectorAll(".optioncontainer.error").forEach((optionElement) =>  {
         optionElement.classList.remove("error");
