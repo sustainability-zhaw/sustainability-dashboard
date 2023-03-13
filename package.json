@@ -4,14 +4,14 @@
   "description": "Fronend for The ZHAW Database Indexer",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dxiai/sustainability-dashboard.git"
+    "url": "git+https://github.com/sustainability-zhaw/sustainability-dashboard.git"
   },
   "author": "Christian Glahn",
   "license": "MIT ",
   "bugs": {
-    "url": "https://github.com/dxiai/sustainability-dashboard/issues"
+    "url": "https://github.com/sustainability-zhaw/sustainability-dashboard/issues"
   },
-  "homepage": "https://github.com/dxiai/sustainability-dashboard#readme",
+  "homepage": "https://github.com/sustainability-zhaw/sustainability-dashboard#readme",
   "scripts": {
     "build": "npm run css",
     "css-compile": "sass --load-path node_modules --style compressed --source-map scss:site/assets/css/",
