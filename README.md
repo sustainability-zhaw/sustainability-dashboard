@@ -16,7 +16,7 @@ For testing and development the package brings a minimal backend deployment. Thi
 
 Testing requires that [nodejs (with npm)](https://nodejs.org) and [docker](https://docker.com) are installed on the system. 
 
-On the command line runn the following commands
+On the command line run the following commands
 
 ```sh
 npm ci 

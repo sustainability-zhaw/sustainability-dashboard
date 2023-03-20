@@ -200,32 +200,28 @@ function addQType(evt) {
 // search query functions 
 
 function showQueryError(ev) {
-    const searchTermElement = document.querySelector("#searchterms");
-    
-    searchTermElement.classList.add("error");            
-            
     // tell the user that something is missing
-    const tooltip = bootstrap.Tooltip.getOrCreateInstance(searchTermElement, {
-       title: ev.detail.message,
-       placement: "bottom",
-       popperConfig: {
-            placement: "bottom-start",                 
-       }
-    });
+    const queryWarningElement = document.querySelector("#query-warning");
 
-    tooltip.show();
+    queryWarningElement.classList.add("error");
+    queryWarningElement.innerText = ev.detail.message;
+    queryWarningElement.removeAttribute("hidden");
+
+    // Adds red border around the search term box
+    ev.detail.offendingSearchTerms.forEach(({value}) => {
+        document.querySelector(`.optioncontainer[data-qvalue="${value}"]`)?.classList.add("error");
+    });
 }
 
 function clearQueryError() {
-    const searchTermElement = document.querySelector("#searchterms");
-    
-    searchTermElement.classList.remove("error");            
-            
-    // tell the user that something is missing
-    const ttip = bootstrap.Tooltip.getInstance(searchTermElement);
-    if (ttip) {
-        ttip.dispose();
-    }
+    const queryWarningElement = document.querySelector("#query-warning");
+
+    queryWarningElement.classList.remove("error");
+    queryWarningElement.setAttribute("hidden", "hidden");
+
+    document.querySelectorAll(".optioncontainer.error").forEach((optionElement) =>  {
+        optionElement.classList.remove("error");
+    });
 }
 
 // Self registering UI Events

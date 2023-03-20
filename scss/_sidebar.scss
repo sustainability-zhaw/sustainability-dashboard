@@ -270,18 +270,36 @@
             box-shadow: none;
         }
 
-        .form-control.error {
-            background-color: tint-color($danger, 60%);
-            color: black;
-        }
-
         .input-group-text {
             color: var(--bs-gray-600);
             cursor: pointer;
+
+            display: inline-block;
+            z-index: 0;
+
+            grid-area: inputbuttons;
         }
 
         form {
             margin-block-end: 0;
+        }
+
+        .input-group {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            grid-template-areas: "searchinput inputbuttons";
+        }
+
+        #query-warning.error {
+            @extend .btn;
+            @extend .btn-danger;
+
+            display: inline-block;
+            grid-area: inputbuttons;
+        }
+
+        .form-control {
+            width: 100%;
         }
     }
 
@@ -352,6 +370,46 @@
                     &.bi-x::before {
                         line-height: 1.5em;
                     }
+                }
+            }
+
+            .error > * {
+                $shadow-danger-color: tint-color($danger, 20%);
+                $shadow-size: 2px;
+
+                // We need to use box-shadow since css borders count as part of the object and increase their
+                // size. This would increase the height of the second parent and cause a weird jump.
+                // Also we can't simply add the border on the first parent, since the children that are being
+                // targeted overflow it for some reason.
+                &:nth-child(1) {
+                    box-shadow:
+                    // Top
+                    0 (-$shadow-size) 0 $shadow-danger-color,
+                    // Left
+                    (-$shadow-size) 0 0 $shadow-danger-color,
+                    // Bottom
+                    0 $shadow-size 0 $shadow-danger-color,
+                    // Gap in top-left corner
+                    (-$shadow-size) (-$shadow-size) 0 $shadow-danger-color,
+                    // Gap in bottom-left corner
+                    (-$shadow-size) $shadow-size 0 $shadow-danger-color;
+                }
+
+                &:nth-child(2) {
+                    box-shadow:
+                    // Top
+                    0 (-$shadow-size) 0 $shadow-danger-color,
+                    // Right
+                    $shadow-size 0 0 $shadow-danger-color,
+                    // Bottom
+                    0 $shadow-size 0 $shadow-danger-color,
+                    // Gap in top-right corner
+                    $shadow-size (-$shadow-size) 0 $shadow-danger-color,
+                    // Gap in bottom-right corner
+                    $shadow-size $shadow-size 0 $shadow-danger-color;
+
+                    border-top-right-radius: .5em;
+                    border-bottom-right-radius: .5em;
                 }
             }
         }
