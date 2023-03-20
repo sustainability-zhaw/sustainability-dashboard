@@ -1,6 +1,5 @@
 $zhawlogo: #104D7D;
-
-$sdgColors: (
+$sdgcolors: (
     1: #E4253C,
     2: #DEA73A,
     3: #4C9F45,
@@ -18,8 +17,7 @@ $sdgColors: (
     15: #5DBB47,
     16: #06699E 
 );
-
-$deptColors: (
+$deptcolors: (
     "A": #000000,
     "G": #D59544,
     "L": #1D3474,
@@ -42,8 +40,9 @@ $deptColors: (
     }
 }
 
-@each $id, $code in $sdgColors {
+@each $id, $code in $sdgcolors {
     $nullid: $id;
+
     // @if $id < 10 {
     //     $nullid: "0#{$id}";
     // }
@@ -51,6 +50,7 @@ $deptColors: (
     .mark.sdg_#{$nullid} ,
     .marker.sdg_#{$nullid} {
         background-color: $code;
+
         &::before {
             content: "#{$id}";
         }
@@ -58,16 +58,18 @@ $deptColors: (
     
     .marker.cat-none {
         background-color: #000000;
+
         &::before {
             content: "X";
         }
     }
 }
 
-@each $id, $code in $deptColors {
+@each $id, $code in $deptcolors {
     .mark.department_#{$id},
     .marker.department_#{$id} {
         background-color: $code;
+
         &::before {
             content: "#{$id}";
         }
@@ -89,7 +91,6 @@ $deptColors: (
 }
 
 .type {
-    
     background-color: $secondary;
     color: $white;
 

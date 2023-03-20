@@ -11,9 +11,7 @@
     grid-area: content;
     z-index: 10;
     display: grid;
-
     grid-template-areas: "message";
-   
     align-items: start;
     
     .alert {
@@ -65,6 +63,7 @@
     .matches,
     .subtype {
         @extend .border;
+
         padding-left: .5em;
         padding-right: .5em;
     }
@@ -85,14 +84,27 @@
         @extend .fw-bolder;
         
         grid-area: title;
-
         padding-left: .5em;
         padding-right: .5em;
     }
 
+    .categories {
+        grid-area: categories;
+        padding: .3em;
+        padding-left: .5em;
+
+        .mark {
+            width: 3em;
+
+            // text-align: center;
+            padding-right: .5em;
+            padding-left: .5em;
+            margin-right: .5em;
+        }
+    }
+
     .authors {
         grid-area: authors;
-
         padding-left: .5em;
         padding-right: .5em;
         white-space: normal;
@@ -100,7 +112,6 @@
         .author {
             margin-right: .5em;
             display: inline-block;
-            
             cursor: default;
 
             &:not(:has(.mark[data-qvalue= ""])) {
@@ -124,14 +135,17 @@
                 line-height: $font-size-base;
                 vertical-align: baseline;
             }
+
             .counter {
                 margin: 0;
                 padding-right: .4em;
                 padding-left: .4em;
                 cursor: default;
+
                 // line-height: $font-size-base;
                 // font-size: $font-size-base * .8;
             }
+
             .mark, .mark.department {
                 margin-left: 0;
                 width: 1.1rem;
@@ -158,6 +172,7 @@
         grid-area: year;
         text-align: center;
     }
+
     .tools {
         grid-area: tools;
 
@@ -174,35 +189,26 @@
             line-height: 1em;
         }
     }
-    .categories {
-        grid-area: categories;
-        padding: .3em;
-        padding-left: .5em;
-
-        .mark {
-            width: 3em;
-            // text-align: center;
-            padding-right: .5em;
-            padding-left: .5em;
-            margin-right: .5em;
-        }
-    }
 
     .abstract {
         grid-area: abs;
     }
+
     .keywords  {
         grid-area: kw;
     }
+
     .classification  {
         grid-area: clsf;
     }
+
     .subtype  {
         grid-area: tp;
     }
 
     .abstract.title{
         grid-area: absttl;
+
         &::before {
             content: "Abstract:";
         }
@@ -210,6 +216,7 @@
 
     .keywords.title {
         grid-area: kwttl;
+
         &::before  {
             content: "Keywords:";
         }
@@ -217,6 +224,7 @@
 
     .classification.title {
         grid-area: clsfttl;
+
         &::before  {
             content: "Classifiation:";
         }
@@ -224,6 +232,7 @@
 
     .subtype.title { 
         grid-area: tpttl;
+
         &::before  {
             content: "Type:";
         }
@@ -273,7 +282,6 @@
     .matches {
         grid-area: match;
         display: block;
-
         padding-top: 2px;
         padding-bottom: 2px;
     }
