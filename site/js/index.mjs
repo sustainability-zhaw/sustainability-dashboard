@@ -1,4 +1,6 @@
 // more modules
+import * as bootstrap from "../assets/js/bootstrap.min.js";
+
 import * as Events from "./Events.mjs";
 import * as Config from "./models/Config.mjs";
 import * as Logger from "./Logger.mjs";
@@ -12,6 +14,7 @@ import * as QueryModel from "./models/Query.mjs";
 import * as IndexOverlayView from "./views/indexterms.mjs";
 import * as StatsView from "./views/stats.mjs";
 import * as RecordsView from "./views/records.mjs";
+import * as QueryView from "./views/query.mjs";
 
 // pull up the System with a basic configuration
 Events.listen.queryUpdate(handleQueryUpdate);
@@ -51,6 +54,8 @@ async function init() {
 
     initTools();
     RecordsView.init();
+    QueryView.init();
+
     // initScroll()
 
     initEvents();
@@ -241,8 +246,6 @@ function addSearchTerm() {
 
         let [type, value] = currentValue.split(":").map(str => str.trim());
 
-        let info = "";
-
         if (value === undefined) {
             // if no colon is in the current value, the query is definitely a term.
             type = "term";
@@ -267,7 +270,7 @@ function addSearchElement() {
     sidebarelement.addEventListener("click", clearQueryError);
     sidebarelement.addEventListener("click", addQType);
 
-    sidebarelement.addEventListener("click", clearSearch);
+    // sidebarelement.addEventListener("click", clearSearch);
     sidebarelement.addEventListener("click", saveIndexQuery);
     sidebarelement.addEventListener("click", dropSearchElement);
     sidebarelement.addEventListener("click", editSearchElement);
@@ -330,27 +333,14 @@ function saveIndexQuery(ev) {
     Events.trigger.indexTermCreate(QueryModel.queryterms());
 }
 
-function clearSearch(ev) {
-    if (
-        ev.target.id !== "newsearch" &&
-        ev.target.parentNode.id !== "newsearch"
-    ) {
-        return;
-    }
-
-    document.querySelector("#searchcontainer .searchoptions").innerHTML = "";
-    Events.trigger.queryClear();
-}
-
-
 // QueryModel event handler
 
-function handleQueryExtraUpdate(ev) {
-    const searchterms = document.querySelector("#searchterms");
+function handleQueryExtraUpdate() {
+    // const searchterms = document.querySelector("#searchterms");
 
-    if (searchterms.value.length) {
-        extraterm = searchterms.value.trim();
-    }
+    // if (searchterms.value.length) {
+    //     extraterm = searchterms.value.trim();
+    // }
 
     const section = document.querySelector(".nav-link.active");
     const category = section.dataset.category;
@@ -374,7 +364,7 @@ function handleQueryUpdateIndex() {
 
 function handleQueryUpdate() {
     // trigger search request to the backend
-    const section = document.querySelector(".nav-link.active");
+    // const section = document.querySelector(".nav-link.active");
     // const category = section.dataset.category;
 
     document.querySelector("#searchterms").value = "";

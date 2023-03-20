@@ -7,7 +7,7 @@ Events.listen.statUpdate(handleStats);
 Events.listen.statMainUpdate(handleOverviewStats);
 Events.listen.statPeopleUpdate(handlePeopleStats);
 
-export function init(target) {}
+export function init() {}
 
 function handleOverviewStats() {
     const stats = StatsModel.getOverviewStats();
@@ -30,7 +30,7 @@ function handleStats() {
     // Logger.debug(`stats are: ${JSON.stringify(stats, null, "  ")}`)
 
     stats.sdg
-        .filter(e => e.id.startsWith("sdg_") && e.id != "sdg_17")
+        .filter(e => e.id.startsWith("sdg_") && e.id !== "sdg_17")
         .forEach((e) => {
             document.querySelector(`.cat.counter.${ e.id }`).textContent = e.n;
         });

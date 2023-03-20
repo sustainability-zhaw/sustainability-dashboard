@@ -147,7 +147,7 @@ async function loadPeopleData(category, queryObj) {
     }
 }
 
-async function handleOverviewLoadData(ev) {
+async function handleOverviewLoadData() {
     Logger.debug("load stats");
     await loadOverviewData(QueryModel.query());
     Events.trigger.statMainUpdate();

@@ -3,7 +3,7 @@ import * as Logger from "../Logger.mjs";
 
 import * as DataModel from "../models/Data.mjs";
 
-import * as IndexTerms from "./indexterms.mjs";
+// import * as IndexTerms from "./indexterms.mjs";
 
 const scrollLimit = 600;
 const maxScrollRecords = 500;
@@ -19,7 +19,7 @@ export function init() {
     document.querySelector(".scroll-limit").textContent = maxScrollRecords;
 }
 
-function scrollLoader(ev) {
+function scrollLoader() {
     const mainContent = document.querySelector("#mainarea");
 
     const vpHeight = window.visualViewport.height;

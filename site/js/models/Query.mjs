@@ -9,6 +9,8 @@ Events.listen.queryClear(clear);
 Events.listen.queryDrop(drop);
 Events.listen.queryReplace(replaceQuery);
 
+Events.listen.changeCategory(categoryChange);
+
 export function query(force) {
     const query = collectQueryTerms(QueryModel.qterms);
 
@@ -51,6 +53,10 @@ export function isEqual(a, b) {
     return true;
 }
 
+export function category() {
+    return QueryModel.category;
+}
+
 const QueryModel = {
     qterms: [],
     extra: "",
@@ -71,6 +77,10 @@ const queryTypes = {
     language: "lang",
     not: "notterm"
 };
+
+function categoryChange(ev) {
+    QueryModel.category = ev.detail.category;
+}
 
 function validateSDG(query) {
     const message = "No query term found. Please add a SDG number.";

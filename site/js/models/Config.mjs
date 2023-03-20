@@ -35,6 +35,15 @@ export function set(name, value) {
     }
 }
 
+export function getUri(path) {
+    const proto = get("proto") || "https://",
+                host  = get("host") || "";
+
+    path = path || "/";
+
+    return `${host.length ? proto : ""}${host}${host.length && host.at(-1) !== "/" ? "/" : ""}${path}`;
+}
+
 export function initDQLUri() {
     const buri = get("staturi");
 

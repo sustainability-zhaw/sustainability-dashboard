@@ -3,8 +3,8 @@ import * as Filter from "./DqlFilter.mjs";
 import * as Events from "../Events.mjs";
 import * as QueryModel from "./Query.mjs";
 
-const method = "POST"; // all requests are POST requests
-const cache = "no-store";
+// const method = "POST"; // all requests are POST requests
+// const cache = "no-store";
 
 const Message = {
     message: ""
@@ -37,7 +37,7 @@ export function is_complete() {
     return Model.complete;
 }
 
-async function handleLoadData(ev) {
+async function handleLoadData() {
     if (Model.active) {
         Logger.debug("abort previous fetch!");
         RequestController.abort();
@@ -50,7 +50,7 @@ async function handleLoadData(ev) {
     await fetchData(Model.category, true);
 }
 
-async function handleMoreData(ev) {
+async function handleMoreData() {
     if (Model.active || Model.complete) {
         return;
     }
@@ -117,7 +117,7 @@ export async function loadData(type, queryObj) {
         // Model[type] = await executeQuery({objects});
     }
     catch (err) {
-        if (err.name == "AbortError") {
+        if (err.name === "AbortError") {
             Logger.info(`error: cancel request ${err.message}`);
         }
         else {

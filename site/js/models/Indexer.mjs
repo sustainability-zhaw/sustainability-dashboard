@@ -47,7 +47,8 @@ export function getOneRecord(id) {
  *
  * the event passes `details` that inform the model, which Filter is applied.
  */
-function selectRecords(ev) {
+// function selectRecords(ev) {
+function selectRecords() {
 
 }
 

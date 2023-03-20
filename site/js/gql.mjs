@@ -7,7 +7,7 @@
 export function json_to_gql(json) {
     if (json && Object.keys(json).length) {
         const querystring = Object.entries(json)
-            .filter(([name]) => name.at(0) != "@") // at top level no at is allowed
+            .filter(([name]) => name.at(0) !== "@") // at top level no at is allowed
             .map(([name, value]) => {
                 let alias;
 
@@ -121,7 +121,7 @@ export function gql_filter(filtertype) {
         and: () => combiner("and"),
         not: () => combiner("not"),
         stringify: () => {
-            const operations = filters.filter((f) => f != null)
+            const operations = filters.filter((f) => f !== null)
                 .map(f => `{ ${f.stringify()} } `)
                 .filter(f => f.length);
 
@@ -226,11 +226,11 @@ export function gql_query(target) {
         },
         stringify: () => {
             const label = [alias, targetObj]
-                .filter(t => t != null).map(t => t.stringify()).filter(t => t.length).join(": ");
+                .filter(t => t !== null).map(t => t.stringify()).filter(t => t.length).join(": ");
             const parameters = [filter, order, ...pagination]
-                .filter(t => t != null).map(t => t.stringify()).filter(t => t.length).join(", ");
+                .filter(t => t !== null).map(t => t.stringify()).filter(t => t.length).join(", ");
             const directives = [cascade, caching]
-                .filter(t => t != null).map(t => t.stringify()).filter(t => t.length).join(" ");
+                .filter(t => t !== null).map(t => t.stringify()).filter(t => t.length).join(" ");
 
             const preamble = [
                 label,
@@ -402,7 +402,7 @@ const jsonhandlers = {
         if (!Array.isArray(val)) {
             val = [val];
         }
-        val.filter(ord => ord != null && typeof ord === "object")
+        val.filter(ord => ord !== null && typeof ord === "object")
             .map((ord) => {
                 return Object.entries(ord).shift();
             })
@@ -465,10 +465,10 @@ function handleFilterCondition(p, val) {
 
 function json_handle_selector(parent, json) {
     const singletons = Object.entries(json)
-        .filter(([name, value]) => name.at(0) != "@" && (value == null || !Object.keys(value).length))
+        .filter(([name, value]) => name.at(0) !== "@" && (value === null || !Object.keys(value).length))
         .map(([n]) => n);
     const complexitons = Object.entries(json)
-        .filter(([name, value]) => name.at(0) != "@" && value != null && Object.keys(value).length);
+        .filter(([name, value]) => name.at(0) !== "@" && value !== null && Object.keys(value).length);
     const directives = Object.entries(json)
         .filter(([name]) => name.at(0) === "@")
         .map(([name, value]) => {
