@@ -1,44 +1,46 @@
 /**
- * Transforms a JSON Object into a GraphQL query statement. 
- * 
- * @param {Object} json 
- * @returns 
+ * Transforms a JSON Object into a GraphQL query statement.
+ *
+ * @param {Object} json
+ * @returns
  */
- export function json_to_gql(json) {
+export function json_to_gql(json) {
     if (json && Object.keys(json).length) {
         const querystring = Object.entries(json)
-            .filter(([name]) => (name.at(0) != "@")) // at top level no at is allowed
+            .filter(([name]) => name.at(0) != "@") // at top level no at is allowed
             .map(([name, value]) => {
                 let alias;
+
                 if (value && value["@alias"]) {
-                    alias = name; 
+                    alias = name;
                     name = value["@alias"];
                 }
                 const q = gql_query(name);
+
                 if (alias) {
                     q.alias(alias);
                 }
-                
+
                 json_handle_selector(q, value);
                 return q;
             })
             .map(entity => entity.stringify())
             .join(" ");
-            
+
         return `{ ${querystring} }`;
     }
 
     return "";
-} 
+}
 
 /**
  * GraphQL PrettyPrinter
- * 
+ *
  * This handy function prettyprints GraphQL Queries. This is useful for debugging.
- * 
- * @param {String} gqlstring 
+ *
+ * @param {String} gqlstring
  * @param {String} indent (default: "  ")
- * @returns 
+ * @returns
  */
 export function pretty_gql(gqlstring, indent) {
     if (!indent) {
@@ -46,12 +48,12 @@ export function pretty_gql(gqlstring, indent) {
     }
 
     const tokenopen = ["{", "[", "("],
-          tokenclse = ["}", "]", ")"],
-          nobreak = tokenopen;
+                tokenclse = ["}", "]", ")"],
+                nobreak = tokenopen;
 
     return gqlstring.split( " " ).filter(t=> t.length).reduce(({result, level, pushnext}, token) => {
-        const breaktoken =  (tokenopen.includes(token.at(-1))) - (tokenclse.includes(token.at(0)));
-        
+        const breaktoken =  tokenopen.includes(token.at(-1)) - tokenclse.includes(token.at(0));
+
         if (breaktoken) {
             level += breaktoken;
             if (level < 0) {
@@ -61,6 +63,7 @@ export function pretty_gql(gqlstring, indent) {
 
         let breakprev = "\n";
         let nextindent = indent.repeat(level) + pushnext;
+
         pushnext = "";
 
         if (nobreak.includes(token.at(-1))) {
@@ -80,37 +83,39 @@ export function pretty_gql(gqlstring, indent) {
 
         return {result, level, pushnext};
     }, {
-        level : 0,
-        pushnext : "",
-        result : ""
+        level: 0,
+        pushnext: "",
+        result: ""
     }).result;
 }
 
 /**
  * Helper Function for building GraphQL Filters
- * 
+ *
  * This function is rarely used directly but accessed via gql_query().
- * 
- * @param {String} filtertype 
- * @returns 
+ *
+ * @param {String} filtertype
+ * @returns
  */
 export function gql_filter(filtertype) {
     const filters = [];
-    
+
     function combiner(cname) {
-        const combop = gql_filter(cname); 
-        filters.push(combop); 
-        return combop; 
-    };
+        const combop = gql_filter(cname);
+
+        filters.push(combop);
+        return combop;
+    }
 
     const self = {
-        has: (field) => { 
-            filters.push(filter_operator("has").condition(field)); 
+        has: (field) => {
+            filters.push(filter_operator("has").condition(field));
         },
-        attribute: ( field ) => { 
+        attribute: ( field ) => {
             const fieldOp = filter_field(field);
-            filters.push(fieldOp); 
-            return fieldOp; 
+
+            filters.push(fieldOp);
+            return fieldOp;
         },
         or: () => combiner("or"),
         and: () => combiner("and"),
@@ -135,16 +140,16 @@ export function gql_filter(filtertype) {
 }
 
 /**
- * Main Query Builder Interface 
- * 
- * This is a helper function for json_to_gql(). It allows to create GraphQL queries programmatically. 
- * 
- * @param {String}} target 
- * @returns 
+ * Main Query Builder Interface
+ *
+ * This is a helper function for json_to_gql(). It allows to create GraphQL queries programmatically.
+ *
+ * @param {String}} target
+ * @returns
  */
 export function gql_query(target) {
     const selector = [];
-    
+
     const order = orderList();
     const filter = filterList();
     const pagination = [];
@@ -152,7 +157,7 @@ export function gql_query(target) {
     const caching = {
         stringify: () => {
             if (caching.maxage > 0) {
-                return `@cacheControl(maxAge: ${caching.maxage})`
+                return `@cacheControl(maxAge: ${caching.maxage})`;
             }
             return "";
         }
@@ -173,12 +178,12 @@ export function gql_query(target) {
     };
 
     const self = {
-        alias: (newalias) => { 
+        alias: (newalias) => {
             alias.label = newalias;
             return self;
         },
-        cascade: () => { 
-            cascade = cascadeFields(); 
+        cascade: () => {
+            cascade = cascadeFields();
             return cascade;
         },
         caching: (seconds) => {
@@ -197,7 +202,7 @@ export function gql_query(target) {
         },
 
         filter: () => filter.add(),
-        order: () => order.add(), 
+        order: () => order.add(),
 
         field: (sel, bCascade) => {
             if (bCascade) {
@@ -214,21 +219,22 @@ export function gql_query(target) {
             }
 
             const q = gql_query(sel);
+
             selector.push(q);
-           
+
             return q;
         },
-        stringify: () => { 
+        stringify: () => {
             const label = [alias, targetObj]
                 .filter(t => t != null).map(t => t.stringify()).filter(t => t.length).join(": ");
-            const parameters= [filter, order, ...pagination]
+            const parameters = [filter, order, ...pagination]
                 .filter(t => t != null).map(t => t.stringify()).filter(t => t.length).join(", ");
             const directives = [cascade, caching]
-                .filter(t => t != null).map(t => t.stringify()).filter(t => t.length).join(" ");;
+                .filter(t => t != null).map(t => t.stringify()).filter(t => t.length).join(" ");
 
             const preamble = [
-                label, 
-                parameters.length ? `( ${parameters} )`: parameters,
+                label,
+                parameters.length ? `( ${parameters} )` : parameters,
                 directives
             ].filter(t => t.length).join(" ");
 
@@ -240,6 +246,7 @@ export function gql_query(target) {
             return preamble;
         }
     };
+
     return self;
 }
 
@@ -247,23 +254,26 @@ export function gql_query(target) {
 
 function cascadeFields() {
     const cascade = [];
+
     return {
-        field: (field) => { 
+        field: (field) => {
             if (!Array.isArray(field)) {
-                field = [ field ];
+                field = [field];
             }
             field = field.map(JSON.stringify);
             cascade.push(...field);
         },
-        stringify: () => { 
+        stringify: () => {
             const fields = cascade.length ? `( fields: [ ${cascade.join(", ")} ] )` : "";
-            return `@cascade${fields}`
+
+            return `@cascade${fields}`;
         }
-    }
+    };
 }
 
 function orderLiteral() {
     let orderItem = "";
+
     return {
         asc: (field) => orderItem = `asc: ${field}`,
         desc: (field) => orderItem = `desc: ${field}`,
@@ -273,10 +283,12 @@ function orderLiteral() {
 
 function orderList() {
     const orders = [];
+
     return {
         add: () => {
-            const ol = orderLiteral(); 
-            orders.push(ol)
+            const ol = orderLiteral();
+
+            orders.push(ol);
             return ol;
         },
         stringify: () => {
@@ -286,10 +298,10 @@ function orderList() {
                     .reduce((acc, order) => acc.length ? `{ ${order.stringify()}, then: ${acc} }` : `{ ${order.stringify()} }`);
             }
             if (orders.length) {
-                return `order: { ${orders[0].stringify()} }`
+                return `order: { ${orders[0].stringify()} }`;
             }
             return "";
-        } 
+        }
     };
 }
 
@@ -301,22 +313,24 @@ function selectionLiteral(lit) {
 
 function filterList() {
     const filter = gql_filter();
+
     return {
         add: () => {
             return filter;
         },
         stringify: () => {
             const strFilter = filter.stringify();
+
             if (strFilter.length) {
                 return `filter: ${strFilter}`;
             }
             return "";
         }
-    }
+    };
 }
 
 function filter_operator(op) {
-    const values = []; 
+    const values = [];
     const self = {
         condition: (value) => {
             if (!Array.isArray(value)) {
@@ -346,10 +360,11 @@ function filter_operator(op) {
 }
 
 function filter_field(name) {
-    const ops = []; 
-    
+    const ops = [];
+
     function operate(opname) {
         const op = filter_operator(opname);
+
         ops.pop();
         ops.push(op);
         return op;
@@ -366,9 +381,9 @@ function filter_field(name) {
         }
     };
 
-    [ "in", "anyofterms", "anyoftext", "allofterms", "alloftext"]
+    ["in", "anyofterms", "anyoftext", "allofterms", "alloftext"]
         .forEach((func) => {
-            handler[func] = () => operate(func)
+            handler[func] = () => operate(func);
         });
 
     return handler;
@@ -387,7 +402,7 @@ const jsonhandlers = {
         if (!Array.isArray(val)) {
             val = [val];
         }
-        val.filter(ord => ord != null && typeof(ord) === "object")
+        val.filter(ord => ord != null && typeof ord === "object")
             .map((ord) => {
                 return Object.entries(ord).shift();
             })
@@ -405,18 +420,19 @@ const jsonhandlers = {
             .filter(([dir]) => Object.hasOwn(jsonhandlers, dir))
             .forEach(([dir, value]) => {
                 jsonhandlers[dir](p, value);
-        });
+            });
     },
 
     caching: (p, val) => p.caching(val),
 
     cascade: (p, val) => {
         const cas = p.cascade();
+
         if (val && val.length) {
             if (!Array.isArray(val)) {
-                val = [ val ];
+                val = [val];
             }
-           cas.field(val);
+            cas.field(val);
         }
     }
 };
@@ -425,6 +441,7 @@ function handleFilterCondition(p, val) {
     Object.entries(val).forEach(([key, value]) => {
         if(["and", "or", "not"].includes(key)) {
             const handler = p[key]();
+
             if (!Array.isArray(value)) {
                 value = [value];
             }
@@ -433,7 +450,7 @@ function handleFilterCondition(p, val) {
         else if (key === "has") {
             p.has(value);  // stupid special case.
         }
-        else if ([ "in", "alloftext", "anyoftext", "allofterms", "anyofterms"].includes(key)) {
+        else if (["in", "alloftext", "anyoftext", "allofterms", "anyofterms"].includes(key)) {
             if (!Array.isArray(value)) {
                 value = [value];
             }
@@ -448,23 +465,24 @@ function handleFilterCondition(p, val) {
 
 function json_handle_selector(parent, json) {
     const singletons = Object.entries(json)
-        .filter(([name, value]) => (name.at(0) != "@" && (value == null || !Object.keys(value).length)))
+        .filter(([name, value]) => name.at(0) != "@" && (value == null || !Object.keys(value).length))
         .map(([n]) => n);
     const complexitons = Object.entries(json)
-        .filter(([name, value]) => (name.at(0) != "@" && value != null && Object.keys(value).length));
+        .filter(([name, value]) => name.at(0) != "@" && value != null && Object.keys(value).length);
     const directives = Object.entries(json)
-        .filter(([name]) => (name.at(0) === "@"))
-        .map(([name, value]) => { 
-            name = name.slice(1).toLowerCase(); 
+        .filter(([name]) => name.at(0) === "@")
+        .map(([name, value]) => {
+            name = name.slice(1).toLowerCase();
             return [name, value];
         })
         .filter(([dir]) => Object.hasOwn(jsonhandlers, dir));
 
     parent.field(singletons);
-    
+
     complexitons.forEach(([name, value]) => {
         if (value && value["@alias"]) {
             const handler = parent.field(value["@alias"], value && value["@required"]);
+
             handler.alias(name);
 
             json_handle_selector(handler, value);

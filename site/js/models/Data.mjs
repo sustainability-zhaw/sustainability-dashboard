@@ -65,9 +65,10 @@ async function fetchData(category, reset) {
 
     Model.offset = reset ? 0 : Model.offset + Model.records.length;
     Model.records = [];
-    
+
     Model.active = true;
     const success = await loadData(category, QueryModel.query());
+
     if (success) {
         Events.trigger.dataUpdate({reset});
     }
@@ -80,7 +81,7 @@ function categoryChange(ev) {
 }
 
 let prevQuery;
-let prevType; 
+let prevType;
 
 export async function loadData(type, queryObj) {
     Model.message = "";
@@ -88,11 +89,11 @@ export async function loadData(type, queryObj) {
 
     // const queryTerms = queryObj;
     // const objects = gqlSearchQuery(type, queryTerms);
-    
-    if (Model.offset === 0 && 
-        prevQuery && 
-        QueryModel.isEqual(prevQuery, queryObj) && 
-        type === prevType) { 
+
+    if (Model.offset === 0 &&
+        prevQuery &&
+        QueryModel.isEqual(prevQuery, queryObj) &&
+        type === prevType) {
         // if the new query is not actually new, there is nothing to do
         await nextTick();
 
@@ -106,6 +107,7 @@ export async function loadData(type, queryObj) {
     try {
         const data = await Filter.objectsQuery(type, 20, Model.offset, queryObj, RequestController);
         // const data = await Filter.fetchData(dqlQuery, RequestController);
+
         Model.records = [];
         if( "category"  in data && data.category.length && "objects" in data.category[0]) {
             Model.records = data.category[0].objects;
@@ -116,7 +118,7 @@ export async function loadData(type, queryObj) {
     }
     catch (err) {
         if (err.name == "AbortError") {
-            Logger.info(`error: cancel request ${err.message}`); 
+            Logger.info(`error: cancel request ${err.message}`);
         }
         else {
             // Model[type] = [];
@@ -137,5 +139,5 @@ export async function loadData(type, queryObj) {
 function nextTick() {
     // wait one tick to allow the other event loop to complete all preceeding tasks
     // this is needed so we don't run into ourselves by executing one bit of the code too early.
-    return new Promise((ok) => setTimeout(ok, 0)); 
+    return new Promise((ok) => setTimeout(ok, 0));
 }

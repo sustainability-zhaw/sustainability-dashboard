@@ -16,7 +16,7 @@ export function init() {
     sidebarElement.addEventListener("click", foldResults);
     sidebarElement.addEventListener("scroll", scrollLoader);
 
-    document.querySelector('.scroll-limit').textContent = maxScrollRecords;
+    document.querySelector(".scroll-limit").textContent = maxScrollRecords;
 }
 
 function scrollLoader(ev) {
@@ -28,7 +28,7 @@ function scrollLoader(ev) {
 
     // Logger.debug(`${height} - ${offset}`);
 
-    if ((height - offset) < scrollLimit) {
+    if (height - offset < scrollLimit) {
         if (!DataModel.is_complete() && DataModel.offset() < maxScrollRecords) {
             document.querySelector("#mainarea .intransit").removeAttribute("hidden");
         }
@@ -50,7 +50,7 @@ function foldResults(evt) {
             togglable.classList.toggle("bi-layer-backward");
             togglable.classList.toggle("bi-layer-forward");
         });
-        
+
         [...toggleElements].forEach(togglable => togglable.hidden = !togglable.hidden);
 
         if (evt.target.classList.contains("bi-layer-backward")) {
@@ -67,12 +67,12 @@ function foldResults(evt) {
 
 function renderRecords(ev) {
     Logger.debug("data update");
-    
-    const targetsection = document.querySelector('.results');
 
-    const section = document.querySelector('.nav-link.active');
+    const targetsection = document.querySelector(".results");
+
+    const section = document.querySelector(".nav-link.active");
     const category = section.dataset.category;
-   
+
     if (!["publications", "projects", "modules", "people"].includes(category)) {
         Logger.debug( "not in a data category. nothing to render");
         return;
@@ -80,7 +80,7 @@ function renderRecords(ev) {
 
     // set the result type
     document.querySelector("#mainarea .info").removeAttribute("hidden");
-    document.querySelector("#mainarea .intransit").setAttribute("hidden", "hidden");    
+    document.querySelector("#mainarea .intransit").setAttribute("hidden", "hidden");
 
     // when we get the first results of a fresh search, reset the results section
     // TODO Pagination
@@ -90,26 +90,26 @@ function renderRecords(ev) {
     }
 
     targetsection.dataset.resulttype = category;
-   
+
     if (!ev.detail.nochange) {
         // this block handles the case when the query has changed and there is something to render
         // nochange is present, only if the model identified that two subsequent queries are equal.
 
-        const template = document.querySelector('#resultcontainer');
+        const template = document.querySelector("#resultcontainer");
 
         DataModel.feed().reduce((section, object) => {
             const element = Object.keys(object).reduce((result, k) => {
                 let sel = `.${k}`;
 
                 if (k === "link") {
-                    [...(result.querySelectorAll(sel))].forEach(e => e.href = object[k]);
+                    [...result.querySelectorAll(sel)].forEach(e => e.href = object[k]);
                     return result;
                 }
 
-                if (typeof(object[k]) !== "object") {
+                if (typeof object[k] !== "object") {
                     result.querySelector(sel).innerText = object[k];
                     return result;
-                }          
+                }
 
                 let templateId = `#${sel.slice(1)}template`;
 
@@ -118,12 +118,12 @@ function renderRecords(ev) {
                     sel = ".categories";
                 }
                 else if (["subtype", "classification", "keywords"].includes(k)) {
-                    templateId = `#listitemtemplate`;
+                    templateId = "#listitemtemplate";
                 }
                 else if (k === "matches" && object[k].length > 1) {
                     // first sort by SDG and then by primary keyword
-                    object[k] = object[k].sort((a,b) => (Number(a.mark?.id.replace("sdg_", "") || 0) - Number(b.mark?.id.replace("sdg_", "")|| 0)) || a.keyword?.localeCompare(b.keyword || "") );
-                } 
+                    object[k] = object[k].sort((a,b) => Number(a.mark?.id.replace("sdg_", "") || 0) - Number(b.mark?.id.replace("sdg_", "") || 0) || a.keyword?.localeCompare(b.keyword || "") );
+                }
 
                 const template = document.querySelector(templateId);
 
@@ -148,10 +148,10 @@ function renderRecords(ev) {
         }, targetsection);
     }
 
-    if (DataModel.is_complete() && DataModel.feed().length){ 
+    if (DataModel.is_complete() && DataModel.feed().length){
         document.querySelector("#mainarea .EOF").removeAttribute("hidden");
     }
-    
+
     document.querySelector("#mainarea").removeAttribute("hidden", "hidden");
     document.querySelector("#warnings").setAttribute("hidden", "hidden");
     document.querySelector("#loading_data").setAttribute("hidden", "hidden");
@@ -167,11 +167,11 @@ function renderRecords(ev) {
         if (DataModel.offset() > maxScrollRecords && !DataModel.is_complete()) {
             document.querySelector("#mainarea .intransit").setAttribute("hidden", "hidden");
             document.querySelector("#mainarea .limit-reached").removeAttribute("hidden");
-        }   
+        }
     }
     if (ev.detail.reset) {
-        // this MUST be the very last, so the rendering can catch up. 
-        // if this is optimised with the earlier reset block, then some browsers will 
+        // this MUST be the very last, so the rendering can catch up.
+        // if this is optimised with the earlier reset block, then some browsers will
         // not alter the scroll!
         targetsection.parentNode.scrollTop = 0;
     }
@@ -187,7 +187,7 @@ function handleField(tmpl, field, key, value) {
         return tmpl;
     }
 
-    if (key === "id") {   
+    if (key === "id") {
         field.classList.add(value);
 
         if ("qtype" in field.dataset && field.dataset.qtype.length === 0) {
@@ -202,11 +202,11 @@ function handleField(tmpl, field, key, value) {
     }
 
     if (key === "department") {
-        field.querySelector(".id").classList.add(value.id)
+        field.querySelector(".id").classList.add(value.id);
         return tmpl;
     }
 
-    if (typeof(value) === "object") {
+    if (typeof value === "object") {
         return Object.keys(value).reduce((agg, k) => {
             return handleField(agg, agg.querySelector(`.${k}`), k, value[k]);
         }, tmpl);

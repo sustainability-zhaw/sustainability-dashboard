@@ -12,14 +12,14 @@ Events.listen.queryReplace(replaceQuery);
 export function query(force) {
     const query = collectQueryTerms(QueryModel.qterms);
 
-    if (!force && 
-        IdxView.isActive() && 
+    if (!force &&
+        IdxView.isActive() &&
         (query.terms?.length || query.notterms?.length)) {
         delete query.sdgs;
     }
-    
-    Logger.debug(`queryModel: ${JSON.stringify(query)}`)
-    
+
+    Logger.debug(`queryModel: ${JSON.stringify(query)}`);
+
     return query;
 }
 
@@ -32,7 +32,7 @@ export function isEqual(a, b) {
         return false;
     }
 
-    if (a === b) { 
+    if (a === b) {
         return true;
     }
 
@@ -43,8 +43,8 @@ export function isEqual(a, b) {
         if (a[k].length !== b[k].length) {
             return false;
         }
-        if (a[k].filter(t => !(b[k].includes(t))).length) {
-            return false
+        if (a[k].filter(t => !b[k].includes(t)).length) {
+            return false;
         }
     }
 
@@ -58,12 +58,12 @@ const QueryModel = {
 };
 
 const validators = {
-    sdg:        validateSDG,
-    person:     validatePerson,
+    sdg: validateSDG,
+    person: validatePerson,
     department: validateDepartment,
-    lang:       validateLang,
-    term:       validateTerm,
-    notterm:    validateTerm
+    lang: validateLang,
+    term: validateTerm,
+    notterm: validateTerm
 };
 
 const queryTypes = {
@@ -76,7 +76,7 @@ function validateSDG(query) {
     const message = "No query term found. Please add a SDG number.";
 
     if (validateEmpty(query)) {
-        Logger.debug("no value")
+        Logger.debug("no value");
         Events.trigger.queryError({message});
         return 0;
     }
@@ -105,7 +105,7 @@ function validateDepartment(query) {
     }
 
     query = query.toUpperCase();
-        
+
     if (!QueryModel.config.departments.includes(query)) {
         Logger.debug("dept out of bounds");
         Events.trigger.queryError({message: "Invalid Department ID."});
@@ -124,9 +124,9 @@ function validatePerson(query) {
     }
 
     query = query.toLowerCase();
-        
+
     return query;
-} 
+}
 
 function validateLang(query) {
     const message = "No langauge found. Please add a language.";
@@ -137,7 +137,7 @@ function validateLang(query) {
     }
 
     query = query.toUpperCase();
-    if (query.length !== 2 || 
+    if (query.length !== 2 ||
         !["EN", "DE", "FR", "IT"].includes(query)) {
         Events.trigger.queryError({message: "Invalid language"});
         return 0;
@@ -177,7 +177,7 @@ function validateType(type) {
     }
 
     const result = Object.hasOwn(queryTypes, type) ?
-        queryTypes[type] : 
+        queryTypes[type] :
         type;
 
     Logger.debug(`type is ${result}`);
@@ -200,7 +200,7 @@ function add(ev) {
     }
 
     const value = validators[type](ev.detail.value);
-  
+
     if (value === 0) {
         Logger.debug("bail out value");
         return;
@@ -239,9 +239,9 @@ function drop(ev) {
 
 function replaceQuery(ev) {
     QueryModel.qterms = ev.detail;
-    
+
     Events.trigger.queryUpdate();
-    
+
     checkMathingTerm(QueryModel.qterms);
 }
 
@@ -249,7 +249,7 @@ function clear() {
     if (!QueryModel.qterms.length) {
         return;
     }
-    
+
     QueryModel.qterms = [];
     Events.trigger.queryUpdate();
     checkMathingTerm(QueryModel.qterms);
@@ -276,65 +276,65 @@ function collectType(qterms, type) {
 
 function collectQueryTerms(query) {
     return {
-        sdgs:        collectType(query, "sdg"),
+        sdgs: collectType(query, "sdg"),
         departments: collectType(query, "department"),
-        persons:     collectType(query, "person"),
-        terms:       collectType(query, "term"),
-        lang:        collectType(query, "lang"),
-        notterms:    collectType(query, "notterm")
+        persons: collectType(query, "person"),
+        terms: collectType(query, "term"),
+        lang: collectType(query, "lang"),
+        notterms: collectType(query, "notterm")
     };
 }
 
 function countQueryTerms(query) {
     return {
-        sdgs:        collectType(query, "sdg").length,
+        sdgs: collectType(query, "sdg").length,
         departments: collectType(query, "department").length,
-        persons:     collectType(query, "person").length,
-        terms:       collectType(query, "term").length,
-        lang:        collectType(query, "lang").length,
-        notterms:    collectType(query, "notterm").length
+        persons: collectType(query, "person").length,
+        terms: collectType(query, "term").length,
+        lang: collectType(query, "lang").length,
+        notterms: collectType(query, "notterm").length
     };
 }
 
 function checkMathingTerm(query) {
     if (!(query && query.length)) {
         Events.trigger.invalidMatchingTerm();
-        return; 
+        return;
     }
 
     const qterms = countQueryTerms(query);
 
     if (
-        qterms.persons || 
-        qterms.departments || 
-        qterms.sdgs > 1 || 
+        qterms.persons ||
+        qterms.departments ||
+        qterms.sdgs > 1 ||
         qterms.lang > 1 ||
-        qterms.notterms > 1 || 
+        qterms.notterms > 1 ||
         qterms.terms === 0 ||
         qterms.terms > 2
     ) {
         Events.trigger.invalidMatchingTerm();
-        return; 
+        return;
     }
 
     if ((
-            qterms.sdgs < 1 || 
-            qterms.lang < 1 
-        ) &&
+        qterms.sdgs < 1 ||
+            qterms.lang < 1
+    ) &&
         qterms.terms > 0
     ) {
-        const details = []; 
+        const details = [];
 
         if (qterms.sdgs < 1) {
-            details.push("SDG")
+            details.push("SDG");
         }
 
         if (qterms.lang < 1) {
-            details.push("a language")
+            details.push("a language");
         }
 
         Events.trigger.partialMatchingTerm(details);
-        return; 
+        return;
     }
 
     Events.trigger.fullMatchingTerm();

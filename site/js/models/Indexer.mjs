@@ -23,59 +23,59 @@ Events.listen.queryUpdate(selectRecords);
  * returns the list of records for the UI
  */
 export function getRecords() {
-   return Model.data;
+    return Model.data;
 }
 
 /**
  * returns on record for being inserted in the QueryModel
- * 
- * @param {Int} id 
+ *
+ * @param {Int} id
  */
 export function getOneRecord(id) {
     if (Model.records[id]) {
         const query = Model.records[id].qterms
             .map(t => Object.assign({}, t));
-        
+
         Events.trigger.queryReplace(query);
     }
 }
 
 /**
  * filter records for a specific language and/or SDG
- * 
- * @param {Event} ev 
- * 
- * the event passes `details` that inform the model, which Filter is applied. 
+ *
+ * @param {Event} ev
+ *
+ * the event passes `details` that inform the model, which Filter is applied.
  */
 function selectRecords(ev) {
-    
+
 }
 
 /**
  * Creates a new matching term record in the backend
- * @param {Event} ev 
+ * @param {Event} ev
  */
 async function createRecord(ev) {
     Logger.debug(`create INDEX Term from ${JSON.stringify(ev.detail)}`);
 
     const sdgMatch = ev.detail.reduce((agg, {type, value}) => {
         switch(type) {
-        case "notterm":
-            agg.forbidden_context = value;
-            break;
-        case "lang":
-            agg.language = value.toLowerCase();
-            break;
-        case "sdg":
-            agg.sdg = {id: `sdg_${value}`};
-            break;
-        default:
-            if ("keyword" in agg) {
-                agg.required_context = value;
-                break;
-            }
-            agg.keyword = value;
-            break;
+                case "notterm":
+                    agg.forbidden_context = value;
+                    break;
+                case "lang":
+                    agg.language = value.toLowerCase();
+                    break;
+                case "sdg":
+                    agg.sdg = {id: `sdg_${value}`};
+                    break;
+                default:
+                    if ("keyword" in agg) {
+                        agg.required_context = value;
+                        break;
+                    }
+                    agg.keyword = value;
+                    break;
         }
         return agg;
     }, {});
@@ -119,18 +119,18 @@ async function findMaxId(sdg, lang) {
     // this will yield different ids after a while
     if ("result" in data && data.result.length) {
         const nextid = data.result.map(r => Number(r.id.split("_")[2].replace("c","")))
-            .reduce((a,b) => Math.max(a,b)) + 1
+            .reduce((a,b) => Math.max(a,b)) + 1;
 
         return `${sdg.replace("_", "")}_${lang}_c${nextid}`;
     }
-    
+
     return `${sdg.replace("_", "")}_${lang}_c1`;
 }
 
 /**
  * Deletes a single record from the matching terms in the backend
- * 
- * @param {Event} ev 
+ *
+ * @param {Event} ev
  */
 async function deleteRecord(ev) {
     Logger.debug(`delete record ${ev.detail}`);
@@ -138,7 +138,7 @@ async function deleteRecord(ev) {
     const query = "mutation deleteSdgMatch($filter: SdgMatchFilter!) { result: deleteSdgMatch(filter: $filter) { msg sdgMatch { construct language } } }";
     const variables = {
         filter: {
-            construct: { 
+            construct: {
                 eq: ev.detail
             }
         }
@@ -156,7 +156,7 @@ async function gqlQurey(query, variables) {
     const cache = "no-store";
 
     const headers = {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json"
     };
 
     const response = await fetch(url, {
@@ -166,13 +166,13 @@ async function gqlQurey(query, variables) {
         cache,
         body
     });
-    
+
     // console.log(">>> post request");
-    
+
     const result = await response.json();
 
     // Logger.debug(`error ${JSON.stringify(result, null, "  ")}`);
-    
+
     return result.data || {};
 }
 

@@ -36,6 +36,7 @@ function handleIndexDelete(ev) {
     }
 
     const id = ev.target.parentNode.id.replace("index-","");
+
     Logger.debug(`drop index ${id}`);
 
     Events.trigger.indexTermDelete(id);
@@ -46,7 +47,7 @@ function renderIndexTerms() {
     Logger.debug("render index terms");
 
     if(!isActive()) {
-        return; 
+        return;
     }
 
     const templateList = document.querySelector("#templateIndexTerm");

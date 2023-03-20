@@ -54,7 +54,7 @@ let prevQuery;
 let prevCategory;
 
 function checkPrevQuery(query) {
-    if (!(prevQuery && StatsObject.category === prevCategory && QueryModel.isEqual(prevQuery, query))) { 
+    if (!(prevQuery && StatsObject.category === prevCategory && QueryModel.isEqual(prevQuery, query))) {
         prevQuery = query;
         prevCategory = StatsObject.category;
         return false;
@@ -79,7 +79,7 @@ async function handleData() {
 
 async function handleLoadData(q) {
     Logger.debug("load stats");
-    
+
     await loadData(StatsObject.category, q);
     Events.trigger.statUpdate();
 }
@@ -121,13 +121,13 @@ async function loadData(category, queryObj) {
     if (data) {
         // Logger.info(`response data: \n ${ JSON.stringify(data, null, "  ") }`);
 
-        StatsObject.stats = data; 
+        StatsObject.stats = data;
     }
 }
 
 async function handlePeopleData(q) {
     Logger.debug("load people stats");
-    
+
     await loadPeopleData(StatsObject.category, q);
 
     Events.trigger.statPeopleUpdate();
@@ -142,7 +142,7 @@ async function loadPeopleData(category, queryObj) {
     if ("person" in data && data.person) {
         // Logger.info(`response data: \n ${ JSON.stringify(data, null, "  ") }`);
 
-        StatsObject.people = data.person; 
+        StatsObject.people = data.person;
         StatsObject.contributors = data.contributors[0].n;
     }
 }
@@ -166,17 +166,17 @@ async function loadOverviewData(queryObj) {
         projects: 0
     };
 
-    data.lang = data.lang?.[0]?.["@groupby"].reduce((obj, item) => { obj[item.lang] =  item.n; return obj }, {de: 0, en: 0, fr:0, it:0});
+    data.lang = data.lang?.[0]?.["@groupby"].reduce((obj, item) => { obj[item.lang] =  item.n; return obj; }, {de: 0, en: 0, fr: 0, it: 0});
 
     if (!data.lang) {
-        data.lang = {de: 0, en: 0, fr:0, it:0};
+        data.lang = {de: 0, en: 0, fr: 0, it: 0};
     }
 
     if ("infoobjecttype" in data && data.infoobjecttype) {
         StatsObject.overview = {
             people: data.people[0].n,
             lang: data.lang
-        }; 
+        };
 
         StatsObject.overview = data.infoobjecttype.reduce((a, o) => {
             a[o.name] = o.n;

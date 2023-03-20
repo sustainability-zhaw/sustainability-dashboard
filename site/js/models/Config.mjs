@@ -4,7 +4,7 @@ function setConfig(cfg) {
     Object.entries(cfg).forEach(([k,v]) => config[k] = v);
 }
 
-export async function init(configpath, defaults) { 
+export async function init(configpath, defaults) {
     setConfig(defaults || {});
 
     if (!configpath) {
@@ -45,10 +45,10 @@ export function initDQLUri() {
     // Logger.debug("STATS prepare baseuri");
 
     const proto = get("proto") || "https://",
-          host  = get("host") || "",
-          path  = get("stats") || "";
+                host  = get("host") || "",
+                path  = get("stats") || "";
 
-    const baseuri = `${host.length ? proto : ""}${host}${(host.length && host.at(-1) !== "/") ? "/" : ""}${path}`
+    const baseuri = `${host.length ? proto : ""}${host}${host.length && host.at(-1) !== "/" ? "/" : ""}${path}`;
 
     set("staturi", baseuri);
 
@@ -63,11 +63,11 @@ export function initGQLUri(){
     }
 
     const proto = get("proto") || "https://",
-          host  = get("host") || "",
-          path  = get("path") || "";
+                host  = get("host") || "",
+                path  = get("path") || "";
 
 
-    const baseuri = `${host.length ? proto : ""}${host}${(host.length && host.at(-1) !== "/") ? "/" : ""}${path}`
+    const baseuri = `${host.length ? proto : ""}${host}${host.length && host.at(-1) !== "/" ? "/" : ""}${path}`;
 
     set("baseuri", baseuri);
 

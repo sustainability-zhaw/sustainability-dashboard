@@ -32,17 +32,18 @@ function handleStats() {
     stats.sdg
         .filter(e => e.id.startsWith("sdg_") && e.id != "sdg_17")
         .forEach((e) => {
-            document.querySelector(`.cat.counter.${ e.id }`).textContent = e.n
+            document.querySelector(`.cat.counter.${ e.id }`).textContent = e.n;
         });
 
     stats.department
-        .filter(e => !( ["department_R", "department_V"].includes(e.id) ))
+        .filter(e => ! ["department_R", "department_V"].includes(e.id) )
         .forEach((e) => document.querySelector(`.cat.counter.${ e.id }`).textContent = e.n);
 }
 
 function handlePeopleStats() {
     // display numbers
     const ccount = StatsModel.getContributors();
+
     document.querySelector("#peoplecountvalue").textContent = ccount;
 
     const stats = StatsModel.getPeopleStats();
@@ -53,10 +54,11 @@ function handlePeopleStats() {
     target.scrollTop = 0;
 
     stats
-        .sort((a, b) => { 
+        .sort((a, b) => {
             let c = b.n - a.n;
+
             if (c === 0) {
-               c = a.displayname.toLowerCase().localeCompare(b.displayname.toLowerCase(), "de");
+                c = a.displayname.toLowerCase().localeCompare(b.displayname.toLowerCase(), "de");
             }
             return c;
         })
@@ -65,20 +67,22 @@ function handlePeopleStats() {
 
             // result.querySelector(".person").dataset.qvalue = p.initials;
             const name = result.querySelector(".person .name");
+
             name.textContent = `${p.surname}, ${p.givenname}`;
             name.dataset.qvalue = p.initials;
             const initials = result.querySelector(".person .initials");
+
             initials.textContent = p.initials;
             initials.dataset.qvalue = p.initials;
-            
+
             result.querySelector(".person .counter").textContent = p.n;
-            
+
             const dnode = result.querySelector(".person .mark");
 
             dnode.classList.remove("cat-none");
             dnode.classList.add(p.department.id);
             dnode.dataset.qvalue = p.department.id.replace("department_", "");
-            
+
             target.appendChild(result);
         });
 }
