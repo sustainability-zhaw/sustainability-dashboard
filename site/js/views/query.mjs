@@ -57,13 +57,16 @@ async function loadExportData(ev) {
             headers
         });
 
+        const dispoheader = response.headers.get("Content-Disposition");
+        const filename = dispoheader?.split(";").filter((el) => el.trim().startsWith("filename=")).pop()?.replace("filename=", "").trim();
+
         const blob = await response.blob();
 
         const hlink = document.createElement("a");
         const url = URL.createObjectURL(blob);
 
         hlink.href = url;
-        hlink.download = "foobar.xlsx";
+        hlink.download = filename ?? "data_export.xlsx";
         hlink.click();
 
         URL.revokeObjectURL(url);
