@@ -5,7 +5,7 @@ function setConfig(cfg) {
 }
 
 export async function init(configpath, defaults) {
-    setConfig(defaults || {});
+    setConfig(defaults ?? {});
 
     if (!configpath) {
         console.log("fail to find config path");
@@ -36,8 +36,8 @@ export function set(name, value) {
 }
 
 export function getUri(path) {
-    const proto = get("proto") || "https://",
-                host  = get("host") || "";
+    const proto = get("proto") ?? "https://",
+                host  = get("host") ?? "";
 
     path = path ?? "";
 
@@ -53,9 +53,9 @@ export function initDQLUri() {
 
     // Logger.debug("STATS prepare baseuri");
 
-    const proto = get("proto") || "https://",
-                host  = get("host") || "",
-                path  = get("stats") || "";
+    const proto = get("proto") ?? "https://",
+                host  = get("host") ?? "",
+                path  = get("stats") ?? "";
 
     const baseuri = `${host.length ? proto : ""}${host}${host.length && host.at(-1) !== "/" ? "/" : ""}${path}`;
 
@@ -71,9 +71,9 @@ export function initGQLUri(){
         return buri;
     }
 
-    const proto = get("proto") || "https://",
-                host  = get("host") || "",
-                path  = get("path") || "";
+    const proto = get("proto") ?? "https://",
+                host  = get("host") ?? "",
+                path  = get("path") ?? "";
 
 
     const baseuri = `${host.length ? proto : ""}${host}${host.length && host.at(-1) !== "/" ? "/" : ""}${path}`;
