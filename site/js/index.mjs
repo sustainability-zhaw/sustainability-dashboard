@@ -1,5 +1,5 @@
 // more modules
-import * as bootstrap from "../assets/js/bootstrap.min.js";
+// import * as bootstrap from "../assets/js/bootstrap.min.js";
 
 import * as Events from "./Events.mjs";
 import * as Config from "./models/Config.mjs";
@@ -45,7 +45,7 @@ async function init() {
 
     const tooltipTriggerList = document.querySelectorAll("[data-bs-toggle=\"tooltip\"]");
 
-    [...tooltipTriggerList].map((tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl));
+    [...tooltipTriggerList].map((tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl)); // eslint-disable-line no-undef
 
     addSearchElement();
     addSearchTerm();
@@ -114,7 +114,7 @@ function initTools() {
             const title = ev.target.dataset.title;
             const overlaySize = ev.target.dataset.size;
             const prevActive = evAnchor.querySelector(".active");
-            const ttip = bootstrap.Tooltip.getInstance(ev.target);
+            const ttip = bootstrap.Tooltip.getInstance(ev.target); // eslint-disable-line no-undef
 
             if (ttip) {
                 ttip.hide();
@@ -253,7 +253,7 @@ function addSearchTerm() {
         }
 
         searchTermElement.classList.remove("error");
-        bootstrap.Tooltip.getOrCreateInstance(searchTermElement).dispose();
+        bootstrap.Tooltip.getOrCreateInstance(searchTermElement).dispose(); // eslint-disable-line no-undef
 
         Events.trigger.queryAddItem({type, value});
 
@@ -430,7 +430,7 @@ function conditionalIndexButtonOff() {
     button.classList.remove("btn-outline-success");
     button.classList.remove("btn-outline-danger");
 
-    bootstrap.Tooltip.getOrCreateInstance(button).dispose();
+    bootstrap.Tooltip.getOrCreateInstance(button).dispose(); // eslint-disable-line no-undef
 }
 
 function conditionalIndexButtonOn() {
@@ -446,8 +446,8 @@ function conditionalIndexButtonOn() {
 
     button.setAttribute("title", "Save Index Match");
 
-    bootstrap.Tooltip.getOrCreateInstance(button).dispose();
-    bootstrap.Tooltip.getOrCreateInstance(button).show();
+    bootstrap.Tooltip.getOrCreateInstance(button).dispose(); // eslint-disable-line no-undef
+    bootstrap.Tooltip.getOrCreateInstance(button).show(); // eslint-disable-line no-undef
 }
 
 function conditionalIndexButtonPartial(ev) {
@@ -467,6 +467,6 @@ function conditionalIndexButtonPartial(ev) {
     const details = ev.detail;
 
     button.setAttribute("title", `Add ${details.join(" and ")} to complete index match!` );
-    bootstrap.Tooltip.getOrCreateInstance(button).dispose();
-    bootstrap.Tooltip.getOrCreateInstance(button).show();
+    bootstrap.Tooltip.getOrCreateInstance(button).dispose(); // eslint-disable-line no-undef
+    bootstrap.Tooltip.getOrCreateInstance(button).show(); // eslint-disable-line no-undef
 }

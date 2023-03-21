@@ -1,8 +1,8 @@
 import * as Events from "../Events.mjs";
 // import * as Logger from "../Logger.mjs";
-import * as Config from "./Config.mjs";
+import * as Config from "../models/Config.mjs";
 
-import * as QueryModel from "./Query.mjs";
+import * as QueryModel from "../models/Query.mjs";
 
 export function init() {
     const sidebarelement = document.querySelector(".searchtools");
@@ -31,22 +31,27 @@ async function loadExportData(ev) {
         return;
     }
 
+    if (QueryModel.isEmpty()) {
+        console.log("avoid downloading empty query");
+        return;
+    }
+
     const query = QueryModel.query();
     const category = QueryModel.category();
 
     const RequestController = new AbortController();
 
     const {signal} = RequestController;
-    const dataurl = Config.getUri("/download");
+    const dataurl = Config.getUri("download/");
     const cache = "no-store";
     const headers = {
         "Content-Type": "application/json"
     };
     const method = "POST";
-    const body = {
+    const body = JSON.stringify({
         query,
         category
-    };
+    });
 
     try {
         const response = await fetch(dataurl, {

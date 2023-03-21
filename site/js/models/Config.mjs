@@ -39,7 +39,7 @@ export function getUri(path) {
     const proto = get("proto") || "https://",
                 host  = get("host") || "";
 
-    path = path || "/";
+    path = path ?? "";
 
     return `${host.length ? proto : ""}${host}${host.length && host.at(-1) !== "/" ? "/" : ""}${path}`;
 }

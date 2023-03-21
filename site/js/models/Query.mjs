@@ -11,6 +11,10 @@ Events.listen.queryReplace(replaceQuery);
 
 Events.listen.changeCategory(categoryChange);
 
+export function isEmpty() {
+    return QueryModel.qterms.length === 0;
+}
+
 export function query(force) {
     const query = collectQueryTerms(QueryModel.qterms);
 
