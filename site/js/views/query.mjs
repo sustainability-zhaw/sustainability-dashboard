@@ -62,10 +62,14 @@ async function loadExportData(ev) {
             headers
         });
 
+        if (response.status !== 200) {
+            throw new Error("Bad response");
+        }
+
         const contentType = response.headers.get("Content-Type");
 
         // protect against backdoor logouts
-        if (!(contentType && contentType !== "application/vnd.ms-excel")) {
+        if (!(contentType && contentType === "application/vnd.ms-excel")) {
             throw new Error("EXCEL file expected");
         }
 
@@ -73,7 +77,7 @@ async function loadExportData(ev) {
         const filename = dispoheader?.split(";").filter((el) => el.trim().startsWith("filename=")).pop()?.replace("filename=", "").trim();
 
         if (!(filename && filename.length)) {
-            throw new Error("filename expected")
+            throw new Error("filename expected");
         }
 
         const blob = await response.blob();
@@ -88,6 +92,6 @@ async function loadExportData(ev) {
         URL.revokeObjectURL(url);
     }
     catch (err) {
-        console.log(`failed to load data ${err.message}`);
+        console.log(`failed to load data: ${err.message}`);
     }
 }
