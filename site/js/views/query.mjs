@@ -62,16 +62,27 @@ async function loadExportData(ev) {
             headers
         });
 
+        const contentType = response.headers.get("Content-Type");
+
+        // protect against backdoor logouts
+        if (!(contentType && contentType !== "application/vnd.ms-excel")) {
+            throw new Error("EXCEL file expected");
+        }
+
         const dispoheader = response.headers.get("Content-Disposition");
         const filename = dispoheader?.split(";").filter((el) => el.trim().startsWith("filename=")).pop()?.replace("filename=", "").trim();
 
-        const blob = await response.blob();
+        if (!(filename && filename.length)) {
+            throw new Error("filename expected")
+        }
 
-        const hlink = document.createElement("a");
+        const blob = await response.blob();
         const url = URL.createObjectURL(blob);
 
+        const hlink = document.createElement("a");
+
         hlink.href = url;
-        hlink.download = filename ?? "data_export.xlsx";
+        hlink.download = filename;
         hlink.click();
 
         URL.revokeObjectURL(url);
