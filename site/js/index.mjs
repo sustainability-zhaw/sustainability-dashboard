@@ -164,7 +164,7 @@ function handleCategoryChange(ev) {
     const category = ev.currentTarget.dataset.category;
     const value = ev.currentTarget.dataset.lang;
 
-    if (!category && ["de", "en", "fr", "id"].includes(value)) {
+    if (!category && ["de", "en", "fr", "it"].includes(value)) {
         const type = "lang";
 
         Events.trigger.queryAddItem({type, value});
