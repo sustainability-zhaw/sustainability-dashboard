@@ -62,8 +62,48 @@ function foldResults(evt) {
     }
 }
 
-// FLCH
+function renderOneRecord(result, [k, value]) {
+    let sel = `.${k}`;
 
+    if (k === "link") {
+        [...result.querySelectorAll(sel)].forEach(e => e.href = value);
+        return result;
+    }
+
+    if (typeof value !== "object") {
+        result.querySelector(sel).innerText = value;
+        return result;
+    }
+
+    let templateId = `#${sel.slice(1)}template`;
+
+    if (["sdg", "department"].includes(k)) {
+        templateId = "#cattemplate";
+        sel = ".categories";
+    }
+    else if (["subtype", "classification", "keywords"].includes(k)) {
+        templateId = "#listitemtemplate";
+    }
+    else if (k === "matches" && value?.length > 1) {
+        // first sort by SDG and then by primary keyword
+        value = value.sort((a,b) => Number(a.mark?.id.replace("sdg_", "") || 0) - Number(b.mark?.id.replace("sdg_", "") || 0) || a.keyword?.localeCompare(b.keyword || "") );
+    }
+
+    const template = document.querySelector(templateId);
+
+    sel += ".list";
+
+    if (!Array.isArray(value)) {
+        value = [value];
+    }
+
+    value.reduce(
+        handleListElement(template),
+        result.querySelector(sel)
+    );
+
+    return result;
+}
 
 function renderRecords(ev) {
     Logger.debug("data update");
@@ -83,7 +123,6 @@ function renderRecords(ev) {
     document.querySelector("#mainarea .intransit").setAttribute("hidden", "hidden");
 
     // when we get the first results of a fresh search, reset the results section
-    // TODO Pagination
     if (ev.detail.reset) {
         Logger.debug("reset data section");
         targetsection.innerHTML = "";
@@ -92,55 +131,17 @@ function renderRecords(ev) {
     targetsection.dataset.resulttype = category;
 
     if (!ev.detail.nochange) {
-        // this block handles the case when the query has changed and there is something to render
+        // this block handles the case when the query has changed and there is something to render.
         // nochange is present, only if the model identified that two subsequent queries are equal.
 
-        const template = document.querySelector("#resultcontainer");
+        const templateId = category === "people" ? "#resultpeoplecontainer" : "#resultcontainer";
+        const template = document.querySelector(templateId);
 
         DataModel.feed().reduce((section, object) => {
-            const element = Object.keys(object).reduce((result, k) => {
-                let sel = `.${k}`;
-
-                if (k === "link") {
-                    [...result.querySelectorAll(sel)].forEach(e => e.href = object[k]);
-                    return result;
-                }
-
-                if (typeof object[k] !== "object") {
-                    result.querySelector(sel).innerText = object[k];
-                    return result;
-                }
-
-                let templateId = `#${sel.slice(1)}template`;
-
-                if (["sdg", "department"].includes(k)) {
-                    templateId = "#cattemplate";
-                    sel = ".categories";
-                }
-                else if (["subtype", "classification", "keywords"].includes(k)) {
-                    templateId = "#listitemtemplate";
-                }
-                else if (k === "matches" && object[k].length > 1) {
-                    // first sort by SDG and then by primary keyword
-                    object[k] = object[k].sort((a,b) => Number(a.mark?.id.replace("sdg_", "") || 0) - Number(b.mark?.id.replace("sdg_", "") || 0) || a.keyword?.localeCompare(b.keyword || "") );
-                }
-
-                const template = document.querySelector(templateId);
-
-                sel += ".list";
-                if (Array.isArray(object[k])) {
-                    object[k].reduce(
-                        handleListElement(template),
-                        result.querySelector(sel)
-                    );
-
-                    return result;
-                }
-
-                handleListElement(template)(result.querySelector(sel), object[k]);
-
-                return result;
-            }, template.content.cloneNode(true));
+            const element = Object.entries(object).reduce(
+                renderOneRecord, 
+                template.content.cloneNode(true)
+            );
 
             section.appendChild(element);
 
@@ -169,6 +170,7 @@ function renderRecords(ev) {
             document.querySelector("#mainarea .limit-reached").removeAttribute("hidden");
         }
     }
+    
     if (ev.detail.reset) {
         // this MUST be the very last, so the rendering can catch up.
         // if this is optimised with the earlier reset block, then some browsers will
@@ -207,8 +209,8 @@ function handleField(tmpl, field, key, value) {
     }
 
     if (typeof value === "object") {
-        return Object.keys(value).reduce((agg, k) => {
-            return handleField(agg, agg.querySelector(`.${k}`), k, value[k]);
+        return Object.entries(value).reduce((agg, [k, v]) => {
+            return handleField(agg, agg.querySelector(`.${k}`), k, v);
         }, tmpl);
     }
 
@@ -218,8 +220,8 @@ function handleField(tmpl, field, key, value) {
 
 function handleListElement(template) {
     return (a, e) => {
-        const element = Object.keys(e).reduce((tmpl, k) => {
-            return handleField(tmpl, tmpl.querySelector(`.${k}`), k,  e[k]);
+        const element = Object.entries(e).reduce((tmpl, [k, v]) => {
+            return handleField(tmpl, tmpl.querySelector(`.${k}`), k, v);
         }, template.content.cloneNode(true));
 
         a.appendChild(element);
