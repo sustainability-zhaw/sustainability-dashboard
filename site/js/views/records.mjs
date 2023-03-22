@@ -139,7 +139,7 @@ function renderRecords(ev) {
 
         DataModel.feed().reduce((section, object) => {
             const element = Object.entries(object).reduce(
-                renderOneRecord, 
+                renderOneRecord,
                 template.content.cloneNode(true)
             );
 
@@ -170,7 +170,7 @@ function renderRecords(ev) {
             document.querySelector("#mainarea .limit-reached").removeAttribute("hidden");
         }
     }
-    
+
     if (ev.detail.reset) {
         // this MUST be the very last, so the rendering can catch up.
         // if this is optimised with the earlier reset block, then some browsers will
