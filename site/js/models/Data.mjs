@@ -83,6 +83,20 @@ function categoryChange(ev) {
 let prevQuery;
 let prevType;
 
+const dataLoader = {
+    people: async (count, offset, qObject, RequestController)  => {
+        const data = await Filter.peopleQuery(count, offset, qObject, RequestController);
+
+        return data.person ?? [];
+    },
+    default: async (count, offset, qObject, RequestController, type)  => {
+        const data = await Filter.objectsQuery(type, count, offset, qObject, RequestController);
+        // const data = await Filter.fetchData(dqlQuery, RequestController);
+
+        return data.category?.[0]?.objects ?? [];
+    },
+};
+
 export async function loadData(type, queryObj) {
     Model.message = "";
     Model[type] = [];
@@ -101,17 +115,15 @@ export async function loadData(type, queryObj) {
         return false;
     }
 
+    const loader = dataLoader[type] ?? dataLoader.default;
+
     prevQuery = queryObj;
     prevType = type;
 
-    try {
-        const data = await Filter.objectsQuery(type, 20, Model.offset, queryObj, RequestController);
-        // const data = await Filter.fetchData(dqlQuery, RequestController);
+    Model.records = [];
 
-        Model.records = [];
-        if( "category"  in data && data.category.length && "objects" in data.category[0]) {
-            Model.records = data.category[0].objects;
-        }
+    try {
+        Model.records = await loader(20, Model.offset, queryObj, RequestController, type);
 
         // Model.records = await executeDQLQuery(dqlQuery);
         // Model[type] = await executeQuery({objects});

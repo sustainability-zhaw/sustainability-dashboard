@@ -65,12 +65,20 @@ function foldResults(evt) {
 function renderOneRecord(result, [k, value]) {
     let sel = `.${k}`;
 
+    console.log(`selector: ${sel}`);
+
     if (k === "link") {
         [...result.querySelectorAll(sel)].forEach(e => e.href = value);
         return result;
     }
 
     if (typeof value !== "object") {
+        const elem = result.querySelector(sel);
+
+        if (!elem) {
+            return result;
+        }
+
         result.querySelector(sel).innerText = value;
         return result;
     }
@@ -96,6 +104,9 @@ function renderOneRecord(result, [k, value]) {
     if (!Array.isArray(value)) {
         value = [value];
     }
+
+    console.log(template);
+    console.log(sel);
 
     value.reduce(
         handleListElement(template),
@@ -134,7 +145,7 @@ function renderRecords(ev) {
         // this block handles the case when the query has changed and there is something to render.
         // nochange is present, only if the model identified that two subsequent queries are equal.
 
-        const templateId = category === "people" ? "#resultpeoplecontainer" : "#resultcontainer";
+        const templateId = category === "people" ? "#resultpersoncontainer" : "#resultcontainer";
         const template = document.querySelector(templateId);
 
         DataModel.feed().reduce((section, object) => {

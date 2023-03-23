@@ -344,12 +344,16 @@ function peopleSelector(filter, options) {
         initials: Person.initials
         surname: Person.surname
         givenname: Person.givenname
+        title: Person.title
         mail: Person.mail
         telephone: Person.ipphone
-        objects: Author.objects${filter} @normalise {
-            sdgs: InfoObject.sdgs {
-                id
-            }
+        department: Person.department {
+            id: Department.id
+        }
+        office: Person.physicaldeliveryofficename
+        gender: Person.gender
+        team: Person.team {
+            teamname: LDAPDN
         }
     }`;
 }
