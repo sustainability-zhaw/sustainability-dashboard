@@ -234,7 +234,7 @@
     .navbar-right, 
     .navbar-left,
     .sdg,
-    .department,
+    > .department,
     .people {
         padding-left: 0.5em;
         background-color: var(--bs-white);

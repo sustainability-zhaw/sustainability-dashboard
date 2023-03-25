@@ -266,6 +266,77 @@
     }
 }
 
+.resultcontainer.person {
+    &:hover {
+        background-color: var(--bs-gray-200);
+    }
+
+    grid-template-columns: 3em 1fr 3em 3em 3em 3em;
+    grid-template-rows: auto auto auto auto auto;
+    grid-template-areas: 
+        "name name gender email fon homepage"
+        "department affiliation address address address address"
+        "staff staff staff staff staff staff"
+        "pseudonyms pseudonyms pseudonyms pseudonyms pseudonyms pseudonyms"
+        "categories categories categories categories categories categories"
+    ;
+
+    .name {
+        @extend .fw-bolder;
+
+        grid-area: name;
+
+        .initials::before {
+            content: "(";
+        }
+        .initials::after {
+            content: ")";
+        }
+    }
+    
+    .affiliation {
+        grid-area: affiliation;
+
+
+        .title {
+            @extend .fw-normal;
+
+            &::after {
+                content: ";";
+            }
+            
+            padding: 0;
+            border: none !important;
+        }
+    }
+
+    .tool.department {
+        grid-area: department;
+    }
+    .tool.mail {
+        grid-area: email;
+    }
+    .tool.telephone {
+        grid-area: fon;
+    }
+    .tool.www {
+        grid-area: homepage;
+    }
+    .office {
+        grid-area: address;
+        text-align: center;
+    }
+  
+
+    .staffmembers {
+        grid-area: staff;
+    }
+    .pseudonyms {
+        grid-area: pseudonyms;
+    }
+}
+
+
 .indexterms .resultcontainer:has(.bi-layer-forward) {
     grid-template-rows: auto auto auto auto auto 2em auto 2.5em;
     grid-template-areas: 

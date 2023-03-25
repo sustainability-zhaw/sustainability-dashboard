@@ -62,6 +62,21 @@ function foldResults(evt) {
     }
 }
 
+const objHandler = {
+    "class.gender": (value, e) => e.querySelector(".tool.gender").classList.add(`bi-gender-${value === "F" ? "female" : "male"}`),
+    "attr.mail": (value, e) => e.querySelector(".link.mail").href = `mailto:${value}`,
+    "attr.telephone": (value, e) => e.querySelector(".link.telephone").href = `tel:${value}`,
+    "attr.www": (value, e) => e.querySelector(".link.www").href = `https://www.zhaw.ch/de/ueber-uns/person/${value}`,
+    "department.id": (value, e) => {
+        const [qtype, qvalue] = value.split("_");
+        const field = e.querySelector(".mark.department.id");
+        
+        field.classList.add(value);
+        field.dataset.qtype = qtype;
+        field.dataset.qvalue = qvalue;
+    }
+};
+
 function renderOneRecord(result, [k, value]) {
     let sel = `.${k}`;
 
@@ -71,15 +86,18 @@ function renderOneRecord(result, [k, value]) {
         [...result.querySelectorAll(sel)].forEach(e => e.href = value);
         return result;
     }
+    
+    const elem = result.querySelector(sel);
 
     if (typeof value !== "object") {
-        const elem = result.querySelector(sel);
-
-        if (!elem) {
-            return result;
+        if (k in objHandler) {
+            Logger.log("use object handler");
+            objHandler[k](value, result);
         }
-
-        result.querySelector(sel).innerText = value;
+        else if (elem) {
+            elem.innerText = value;
+        }
+        
         return result;
     }
 
@@ -95,6 +113,13 @@ function renderOneRecord(result, [k, value]) {
     else if (k === "matches" && value?.length > 1) {
         // first sort by SDG and then by primary keyword
         value = value.sort((a,b) => Number(a.mark?.id.replace("sdg_", "") || 0) - Number(b.mark?.id.replace("sdg_", "") || 0) || a.keyword?.localeCompare(b.keyword || "") );
+    }
+    else if (!elem) {
+        Logger.log(`sub data for ${k}`);
+        return Object.entries(value).reduce(
+            renderOneRecord,
+            result
+        );
     }
 
     const template = document.querySelector(templateId);

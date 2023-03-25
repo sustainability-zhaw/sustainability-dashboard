@@ -340,20 +340,21 @@ function peopleSelector(filter, options) {
     }
 
     person(func: uid(pps), first: ${limit}, offset: ${offset}) @filter(gt(val(tmpn), 0)) {
-        id: Person.LDAPDN
+        person.id: Person.LDAPDN
         initials: Person.initials
+        attr.www: Person.initials
         surname: Person.surname
         givenname: Person.givenname
         title: Person.title
-        mail: Person.mail
-        telephone: Person.ipphone
-        department: Person.department {
-            id: Department.id
+        attr.mail: Person.mail
+        attr.telephone: Person.ipphone
+        person.department: Person.department {
+            department.id: Department.id
         }
         office: Person.physicaldeliveryofficename
-        gender: Person.gender
+        class.gender: Person.gender
         team: Person.team {
-            teamname: LDAPDN
+            teamname: Team.LDAPDN
         }
     }`;
 }
