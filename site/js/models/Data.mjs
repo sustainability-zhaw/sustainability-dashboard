@@ -87,7 +87,17 @@ const dataLoader = {
     people: async (count, offset, qObject, RequestController)  => {
         const data = await Filter.peopleQuery(count, offset, qObject, RequestController);
 
-        return data.person ?? [];
+        const result = data.person ?? [];
+        const sdgs = data.sdg ?? [];
+
+        // fix pcounts
+        const sdgMap = Object.fromEntries(sdgs.map(({uid, id}) => [uid, id]));
+
+        result.forEach((element) => {
+            element.sdg = element.sdg?.[0]?.counts?.[0]?.["@groupby"]?.map(celement => { celement["id"] = sdgMap[celement["id"]]; return celement; });
+        });
+
+        return result;
     },
     default: async (count, offset, qObject, RequestController, type)  => {
         const data = await Filter.objectsQuery(type, count, offset, qObject, RequestController);
@@ -145,6 +155,7 @@ export async function loadData(type, queryObj) {
     if (Model.complete) {
         Logger.debug("Query is complete!");
     }
+
     return true;
 }
 

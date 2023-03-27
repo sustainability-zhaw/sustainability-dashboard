@@ -111,7 +111,7 @@ function renderOneRecord(result, [k, value]) {
         // first sort by SDG and then by primary keyword
         value = value.sort((a,b) => Number(a.mark?.id.replace("sdg_", "") || 0) - Number(b.mark?.id.replace("sdg_", "") || 0) || a.keyword?.localeCompare(b.keyword || "") );
     }
-    else if (!elem) {
+    else if (!elem && !Array.isArray(value)) {
         return Object.entries(value).reduce(
             renderOneRecord,
             result

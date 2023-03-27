@@ -14,7 +14,7 @@ export async function fetchData(body, RequestController) {
     };
 
     // Logger.debug(`fetch stats from ${url}`);
-    Logger.debug(body);
+    // Logger.debug(body);
 
     const response = await fetch(url, {
         signal,
@@ -380,7 +380,8 @@ function peopleSelector(filter, options) {
         tmpn as sum(val(np))
     }
 
-    person(func: uid(pps), first: ${limit}, offset: ${offset}, orderasc: Person.surname) @filter(gt(val(tmpn), 0)) {
+    person(func: uid(pps), first: ${limit}, offset: ${offset}, orderasc: Person.surname) 
+    @filter(gt(val(tmpn), 0)) {
         person.id: Person.LDAPDN
         initials: Person.initials
         attr.www: Person.initials
@@ -397,7 +398,18 @@ function peopleSelector(filter, options) {
         team: Person.team {
             teamname: Team.LDAPDN
         }
-    }`;
+        sdg: Person.pseudonyms {
+            counts: Author.objects @groupby(id: InfoObject.sdgs) {
+                n: count(uid)
+            }
+        }
+    }
+
+    sdg(func: type(Sdg)) {
+        id: Sdg.id
+        uid
+    } 
+`;
 }
 
 function buildPersonHandler(author, id) {
