@@ -128,6 +128,10 @@ async function loadData(category, queryObj) {
 async function handlePeopleData(q) {
     Logger.debug("load people stats");
 
+    if (StatsObject.category === "people") {
+        return;
+    }
+
     await loadPeopleData(StatsObject.category, q);
 
     Events.trigger.statPeopleUpdate();

@@ -289,12 +289,13 @@
         .initials::before {
             content: "(";
         }
+
         .initials::after {
             content: ")";
         }
     }
     
-    .affiliation {
+    .affiliation { /* stylelint-disable-line  no-descending-specificity */
         grid-area: affiliation;
 
 
@@ -313,15 +314,19 @@
     .tool.department {
         grid-area: department;
     }
+
     .tool.mail {
         grid-area: email;
     }
+
     .tool.telephone {
         grid-area: fon;
     }
+
     .tool.www {
         grid-area: homepage;
     }
+
     .office {
         grid-area: address;
         text-align: center;
@@ -331,6 +336,7 @@
     .staffmembers {
         grid-area: staff;
     }
+
     .pseudonyms {
         grid-area: pseudonyms;
     }

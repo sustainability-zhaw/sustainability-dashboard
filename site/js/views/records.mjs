@@ -70,7 +70,7 @@ const objHandler = {
     "department.id": (value, e) => {
         const [qtype, qvalue] = value.split("_");
         const field = e.querySelector(".mark.department.id");
-        
+
         field.classList.add(value);
         field.dataset.qtype = qtype;
         field.dataset.qvalue = qvalue;
@@ -80,24 +80,21 @@ const objHandler = {
 function renderOneRecord(result, [k, value]) {
     let sel = `.${k}`;
 
-    console.log(`selector: ${sel}`);
-
     if (k === "link") {
         [...result.querySelectorAll(sel)].forEach(e => e.href = value);
         return result;
     }
-    
+
     const elem = result.querySelector(sel);
 
     if (typeof value !== "object") {
         if (k in objHandler) {
-            Logger.log("use object handler");
             objHandler[k](value, result);
         }
         else if (elem) {
             elem.innerText = value;
         }
-        
+
         return result;
     }
 
@@ -115,7 +112,6 @@ function renderOneRecord(result, [k, value]) {
         value = value.sort((a,b) => Number(a.mark?.id.replace("sdg_", "") || 0) - Number(b.mark?.id.replace("sdg_", "") || 0) || a.keyword?.localeCompare(b.keyword || "") );
     }
     else if (!elem) {
-        Logger.log(`sub data for ${k}`);
         return Object.entries(value).reduce(
             renderOneRecord,
             result
@@ -129,9 +125,6 @@ function renderOneRecord(result, [k, value]) {
     if (!Array.isArray(value)) {
         value = [value];
     }
-
-    console.log(template);
-    console.log(sel);
 
     value.reduce(
         handleListElement(template),
