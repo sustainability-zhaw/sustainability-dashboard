@@ -1,5 +1,6 @@
 import * as Config from "./Config.mjs";
 import * as Logger from "../Logger.mjs";
+import { category } from "./Query.mjs";
 
 export async function fetchData(body, RequestController) {
     const url = Config.initDQLUri();
@@ -13,7 +14,7 @@ export async function fetchData(body, RequestController) {
     };
 
     // Logger.debug(`fetch stats from ${url}`);
-    Logger.debug(body);
+    // Logger.debug(body);
 
     const response = await fetch(url, {
         signal,
@@ -87,11 +88,28 @@ export function contributorQuery(category, limit, offset, queryObj, RequestContr
 }
 
 export function statQuery(category, queryObj, RequestController) {
+    console.log(`stat query ${category}`);
+
+    if (category === "people") {
+        console.log("stat people query");
+        return statPeopleQuery(queryObj, RequestController);
+    }
+
     return buildAndFetch(
         queryObj,
         "InfoObject",
         RequestController,
         statSelector,
+        {category}
+    );
+}
+
+export function statPeopleQuery(queryObj, RequestController) {
+    return buildAndFetch(
+        queryObj,
+        "InfoObject",
+        RequestController,
+        statPeopleSelector,
         {category}
     );
 }
@@ -211,6 +229,29 @@ function statSelector(filter, options) {
     department(func:type(Department)) {
         id: Department.id
         n: count(Department.objects @filter(uid_in(InfoObject.category, uid(categ))${filter}))
+    }`;
+}
+
+function statPeopleSelector(filter) {
+    filter = filter && filter.length ? ` @filter(${filter})` : "";
+
+    return `
+    categ as var(func: type(InfoObject)) ${filter} {
+        uid
+    }
+
+    authors as var(func: type(Author)) @filter(has(Author.person) and uid_in(Author.objects, uid(categ))) {
+        uid
+    }
+
+    sdg(func: type(Sdg)) {
+        id: Sdg.id
+        n: count(Sdg.objects @filter(uid_in(InfoObject.authors, uid(authors))))
+    }
+
+    department(func:type(Department)) {
+        id: Department.id
+        n: count(Department.persons @filter(uid_in(Person.pseudonyms, uid(authors))))
     }`;
 }
 
@@ -339,19 +380,36 @@ function peopleSelector(filter, options) {
         tmpn as sum(val(np))
     }
 
-    person(func: uid(pps), first: ${limit}, offset: ${offset}) @filter(gt(val(tmpn), 0)) {
-        id: Person.LDAPDN
+    person(func: uid(pps), first: ${limit}, offset: ${offset}, orderasc: Person.surname) 
+    @filter(gt(val(tmpn), 0)) {
+        person.id: Person.LDAPDN
         initials: Person.initials
+        attr.www: Person.initials
         surname: Person.surname
         givenname: Person.givenname
-        mail: Person.mail
-        telephone: Person.ipphone
-        objects: Author.objects${filter} @normalise {
-            sdgs: InfoObject.sdgs {
-                id
+        title: Person.title
+        attr.mail: Person.mail
+        attr.telephone: Person.ipphone
+        person.department: Person.department {
+            department.id: Department.id
+        }
+        office: Person.physicaldeliveryofficename
+        class.gender: Person.gender
+        team: Person.team {
+            teamname: Team.LDAPDN
+        }
+        sdg: Person.pseudonyms {
+            counts: Author.objects @groupby(id: InfoObject.sdgs) {
+                n: count(uid)
             }
         }
-    }`;
+    }
+
+    sdg(func: type(Sdg)) {
+        id: Sdg.id
+        uid
+    } 
+`;
 }
 
 function buildPersonHandler(author, id) {
