@@ -103,6 +103,7 @@ function renderOneRecord(result, [k, value]) {
     if (["sdg", "department"].includes(k)) {
         templateId = "#cattemplate";
         sel = ".categories";
+        value = value.sort((a,b) => Number(a.id.replace("sdg_", "") || 0) - Number(b.id.replace("sdg_", "") || 0));
     }
     else if (["subtype", "classification", "keywords"].includes(k)) {
         templateId = "#listitemtemplate";
