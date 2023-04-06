@@ -103,14 +103,17 @@ function renderOneRecord(result, [k, value]) {
     if (["sdg", "department"].includes(k)) {
         templateId = "#cattemplate";
         sel = ".categories";
-        value = value.sort((a,b) => Number(a.id.replace("sdg_", "") || 0) - Number(b.id.replace("sdg_", "") || 0));
+
+        if (Array.isArray(value)) {
+            value = value.sort((a,b) => Number(a.id.replace("sdg_", "") || 0) - Number(b.id.replace("sdg_", "") || 0) || a.id.localeCompare(b.id ?? ""));
+        }
     }
     else if (["subtype", "classification", "keywords"].includes(k)) {
         templateId = "#listitemtemplate";
     }
     else if (k === "matches" && value?.length > 1) {
         // first sort by SDG and then by primary keyword
-        value = value.sort((a,b) => Number(a.mark?.id.replace("sdg_", "") || 0) - Number(b.mark?.id.replace("sdg_", "") || 0) || a.keyword?.localeCompare(b.keyword || "") );
+        value = value.sort((a,b) => Number(a.mark?.id.replace("sdg_", "") || 0) - Number(b.mark?.id.replace("sdg_", "") || 0) || a.keyword?.localeCompare(b.keyword ?? "") );
     }
     else if (!elem && !Array.isArray(value)) {
         return Object.entries(value).reduce(
