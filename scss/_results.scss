@@ -348,6 +348,10 @@
         border-bottom: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color);
         border-right: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color);
     }
+
+    .tool > .tool {
+        border: none;
+    }
   
 
     .staffmembers {
