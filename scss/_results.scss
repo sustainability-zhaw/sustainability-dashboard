@@ -286,6 +286,12 @@
 
         grid-area: name;
 
+        padding-left: 0.5em;
+        padding-right: 0.5em;
+
+        border-top: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color);
+        border-left: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color);
+
         .initials::before {
             content: "(";
         }
@@ -297,7 +303,7 @@
     
     .affiliation { /* stylelint-disable-line  no-descending-specificity */
         grid-area: affiliation;
-
+        border-bottom: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color);
 
         .title {
             @extend .fw-normal;
@@ -313,23 +319,31 @@
 
     .tool.department {
         grid-area: department;
+        border-bottom: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color);
+        border-left: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color);
     }
 
     .tool.mail {
         grid-area: email;
+        border-top: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color);
     }
 
     .tool.telephone {
         grid-area: fon;
+        border-top: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color);
     }
 
     .tool.www {
         grid-area: homepage;
+        border-top: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color);
+        border-right: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color);
     }
 
     .office {
         grid-area: address;
         text-align: center;
+        border-bottom: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color);
+        border-right: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color);
     }
   
 
