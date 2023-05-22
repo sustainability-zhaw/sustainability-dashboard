@@ -285,10 +285,8 @@
         @extend .fw-bolder;
 
         grid-area: name;
-
         padding-left: 0.5em;
         padding-right: 0.5em;
-
         border-top: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color);
         border-left: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color);
 
