@@ -337,6 +337,11 @@
         border-right: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color);
     }
 
+    .tool.gender {
+        grid-area: gender;
+        border-top: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color);
+    }
+
     .office {
         grid-area: address;
         text-align: center;
