@@ -77,3 +77,9 @@ div:lang(en) {
         }
     }
 }
+
+.tooltip {
+    newsearch::before {
+        content: "New Search";
+    }
+}

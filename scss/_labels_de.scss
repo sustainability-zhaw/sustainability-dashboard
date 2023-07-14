@@ -76,4 +76,10 @@ div:lang(de) {
             content: "Personen ";
         }
     }
+
+    .tooltip {
+        newsearch::before {
+            content: "Neue Suche";
+        }
+    }
 }
