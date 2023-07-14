@@ -35,23 +35,23 @@ div:lang(de) {
         }
 
         .scroll-limit::after {
-            content: " Dokumente erhalten. Versuchen Sie eine genauere Suche.";
+            content: " Einträge angesehen. Versuchen Sie eine präziserere Suche.";
         }
     }
 
     .searchform {
         .input-group-text::before {
-            content: "Return zum hinzufügen";
+            content: "Hinzufügen mit Eingabetaste";
         }
 
         #query-warning::before {
-           content: "Das Schlagwort existiert bereits.";
+           content: "Das Indexsuche existiert bereits.";
         }
     }
 
     .warnings {
         #loading_data::before { // stylelint-disable-line 
-            content: "Die Ergebnisse sind auf dem Weg. Bitte haben sie noch etwas Geduld...";
+            content: "Die Ergebnisse sind auf dem Weg. Bitte haben sie noch etwas Geduld ...";
         }
 
         #no_data::before { // stylelint-disable-line 
@@ -73,17 +73,7 @@ div:lang(de) {
 
     .people {
         h3::before{
-            content: "People ";
-        }
-
-        #peoplecountvalue {
-            &::before {
-                content: " (";
-            }
-            
-            &::after {
-                content: ")";
-            }
+            content: "Personen ";
         }
     }
 }

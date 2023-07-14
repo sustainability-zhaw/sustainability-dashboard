@@ -75,15 +75,5 @@ div:lang(en) {
         h3::before{
             content: "Persons ";
         }
-
-        #peoplecountvalue {
-            &::before {
-                content: " (";
-            }
-
-            &::after {
-                content: ")";
-            }
-        }
     }
 }
