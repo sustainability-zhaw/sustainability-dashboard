@@ -89,6 +89,10 @@ async function loadData(category, queryObj) {
 
     data.lang = data.lang?.[0]?.["@groupby"].reduce((obj, item) => { obj[item.lang] =  item.n; return obj; }, {de: 0, en: 0, fr: 0, it: 0});
 
+    if (!data.lang) {
+        data.lang = {de: 0, en: 0, fr: 0, it: 0};
+    }
+
     StatsObject.stats =  {
         lang: {de: 0, en: 0, fr: 0, it: 0},
         sdg: [
