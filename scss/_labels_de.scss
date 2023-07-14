@@ -78,7 +78,7 @@ div:lang(de) {
     }
 
     .tooltip {
-        newsearch::before {
+        #newsearch::before {
             content: "Neue Suche";
         }
     }
