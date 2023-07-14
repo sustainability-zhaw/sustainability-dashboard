@@ -14,6 +14,7 @@ export function init() {
     const sidebarElement = document.querySelector("#mainarea");
 
     sidebarElement.addEventListener("click", foldResults);
+    sidebarElement.addEventListener("click", addPerson);
     sidebarElement.addEventListener("scroll", scrollLoader);
 
     document.querySelector(".scroll-limit").textContent = maxScrollRecords;
@@ -59,6 +60,17 @@ function foldResults(evt) {
         else {
             evt.target.setAttribute("data-bs-original-title", "Hide Details");
         }
+    }
+}
+
+function addPerson(evt) {
+    if (evt.target.classList.contains("name") &&
+        evt.target.parentNode.classList.contains("person")) {
+        const targetParent = evt.target.parentNode;
+        const value = targetParent.querySelector(".initials").textContent;
+        const type = "person";
+
+        Events.trigger.queryAddItem({type, value});
     }
 }
 
