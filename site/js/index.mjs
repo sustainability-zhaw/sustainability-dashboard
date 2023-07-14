@@ -203,6 +203,12 @@ function addQType(evt) {
         // console.log(`${type} -> ${value} `);
         Events.trigger.queryAddItem({type, value});
     }
+    else if (evt.target.classList.contains("name") &&
+             evt.target.parentNode.classList.contains("person")) {
+        const person = evt.target.querySelector(".initials").textContent.trim();
+
+        Events.trigger.queryAddItem({person});
+    }
 }
 
 // search query functions
