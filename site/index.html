@@ -7,7 +7,7 @@
         <script type="module" src="js/index.mjs" defer></script>
     </head>
     <body>
-        <div class="widgets">
+        <div class="widgets" lang="en">
             <nav class="navbar-left navbar">    
                 <div class="listgrid">
                     <div class="cat box nav-link active" data-category="publications" data-bs-toggle="tooltip" title="Publications" data-bs-placement="bottom"><span class="menu marker bi-journal-richtext"></span><span class="menu counter" id="publication-counter"></span></div>
@@ -76,10 +76,10 @@
                 <form id="liveinput">
                     <div class="input-group">
                         <input type="text" class="form-control" id="searchterms">
-                        <span class="input-group-text" id="basic-addon2">Press Return to add</span>
+                        <span class="input-group-text" id="basic-addon2"></span>
 
                         <!-- Content is overwritten by showQueryError() function  -->
-                        <span id="query-warning" hidden>The query exists already</span>
+                        <span id="query-warning" hidden></span>
                     </div>
                 </form>
             </div>
@@ -104,7 +104,7 @@
         </div>  
 
         <div class="sdg">
-            <h3>Sustainable Development Goals</h3>
+            <h3></h3>
             <div class="listgrid">
                 <div class="cat box sdg_1" data-qtype="sdg" data-qvalue="1" data-bs-toggle="tooltip" title="No Poverty" data-bs-placement="bottom"><span class="cat marker sdg_1"></span><span class="cat counter sdg_1"></span></div>
                 <div class="cat box sdg_2" data-qtype="sdg" data-qvalue="2" data-bs-toggle="tooltip" title="Zero Hunger" data-bs-placement="bottom"><span class="cat marker sdg_2"></span><span class="cat counter sdg_2"></span></div>
@@ -126,7 +126,7 @@
         </div>
 
         <div class="department">
-            <h3>Departments</h3>
+            <h3></h3>
             <div class="listgrid">
                 <div class="cat box department_A" data-qtype="department" data-qvalue="A"><span class="cat marker department_A"></span><span class="cat counter department_A"></span></div>
                 <div class="cat box department_G" data-qtype="department" data-qvalue="G"><span class="cat marker department_G"></span><span class="cat counter department_G"></span></div>
@@ -140,7 +140,7 @@
         </div>
 
         <div class="people">
-            <h3>People (<span id="peoplecountvalue"></span>)</h3>
+            <h3><span id="peoplecountvalue"></span></h3>
             <div class="peoplelist" id="contributors">
                 <div class="peopleinner">
                 </div>
@@ -156,27 +156,19 @@
         <div id="mainarea" hidden>
             <div class="results"></div>
             <div class="info">
-                <div class="alert alert-warning intransit" hidden>
-                    Your network is slow. More results are on their way.
-                </div>
-                <div class="alert alert-success EOF" hidden>
-                    The query has no more results.
-                </div>
+                <div class="alert alert-warning intransit" hidden></div>
+                <div class="alert alert-success EOF" hidden></div>
                 <div class="alert alert-warning limit-reached" hidden>
-                    You have looked at <span class="scroll-limit"></span> documents. Try using a more specific search. 
+                    <span class="scroll-limit"></span> 
                 </div>
             </div>
         </div>
 
         <div id="warnings">
-            <div id="loading_data" class="alert alert-secondary">
-                The results are in transit. Please wait...
-            </div>
-            <div id="no_data" class="alert alert-warning" hidden>
-                Sorry, the query has no results.
-            </div>
+            <div id="loading_data" class="alert alert-secondary"></div>
+            <div id="no_data" class="alert alert-warning" hidden></div>
             <div id="request_error" class="alert alert-danger" hidden>
-                <p>The query resulted in an error.</p>
+                <p class="message"></p>
                 <p id="request_error_message"></p>
             </div>
         </div>

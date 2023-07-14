@@ -209,33 +209,33 @@
     .abstract.title{
         grid-area: absttl;
 
-        &::before {
-            content: "Abstract:";
-        }
+        // &::before {
+        //     content: "Abstract:";
+        // }
     }
 
     .keywords.title {
         grid-area: kwttl;
 
-        &::before  {
-            content: "Keywords:";
-        }
+        // &::before  {
+        //     content: "Keywords:";
+        // }
     }
 
     .classification.title {
         grid-area: clsfttl;
 
-        &::before  {
-            content: "Classifiation:";
-        }
+        // &::before  {
+        //     content: "Classifiation:";
+        // }
     }
 
     .subtype.title { 
         grid-area: tpttl;
 
-        &::before  {
-            content: "Type:";
-        }
+        // &::before  {
+        //     content: "Type:";
+        // }
     }
 
     .matches {
@@ -422,8 +422,8 @@
     .matches.title { 
         grid-area: matchesttl;
  
-        &::before  {
-            content: "Index Terms:";
-        }
+        // &::before  {
+        //     content: "Index Terms:";
+        // }
     }
 }

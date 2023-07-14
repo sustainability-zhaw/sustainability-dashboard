@@ -58,7 +58,7 @@ div:lang(de) {
             content: "Die Suche hat leider keine Ergebnisse.";
         }
 
-        #request_error p::before { // stylelint-disable-line 
+        #request_error .message::before { // stylelint-disable-line 
             content: "Bei der Suche gab es einen Fehler.";
         }
     }
@@ -68,7 +68,7 @@ div:lang(de) {
     }
 
     .department h3::before{
-        content: "Departments";
+        content: "Departemente";
     }
 
     .people {

@@ -58,7 +58,7 @@ div:lang(en) {
             content: "Sorry, the query has no results.";
         }
 
-        #request_error p::before { // stylelint-disable-line 
+        #request_error .message::before { // stylelint-disable-line 
             content: "The query resulted in an error.";
         }
     }
@@ -68,12 +68,12 @@ div:lang(en) {
     }
 
     .department h3::before{
-        content: "Departemente";
+        content: "Departments";
     }
 
     .people {
         h3::before{
-            content: "Personen ";
+            content: "Persons ";
         }
 
         #peoplecountvalue {
