@@ -17,10 +17,10 @@ function handleOverviewStats() {
     document.querySelector("#education-counter").textContent = stats.modules;
     document.querySelector("#people-counter").textContent = stats.people;
 
-    document.querySelector("#de-counter").textContent = stats.lang.de;
-    document.querySelector("#en-counter").textContent = stats.lang.en;
-    document.querySelector("#fr-counter").textContent = stats.lang.fr;
-    document.querySelector("#it-counter").textContent = stats.lang.it;
+    // document.querySelector("#de-counter").textContent = stats.lang.de;
+    // document.querySelector("#en-counter").textContent = stats.lang.en;
+    // document.querySelector("#fr-counter").textContent = stats.lang.fr;
+    // document.querySelector("#it-counter").textContent = stats.lang.it;
 }
 
 function handleStats() {
@@ -28,6 +28,11 @@ function handleStats() {
     const stats = StatsModel.getStats();
 
     // Logger.debug(`stats are: ${JSON.stringify(stats, null, "  ")}`)
+
+    document.querySelector("#de-counter").textContent = stats.lang.de;
+    document.querySelector("#en-counter").textContent = stats.lang.en;
+    document.querySelector("#fr-counter").textContent = stats.lang.fr;
+    document.querySelector("#it-counter").textContent = stats.lang.it;
 
     stats.sdg
         .filter(e => e.id.startsWith("sdg_") && e.id !== "sdg_17")

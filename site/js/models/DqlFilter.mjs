@@ -201,10 +201,6 @@ function mainSelector(filter) {
         name: InfoObjectType.name
         n: count(InfoObjectType.objects${filter})
     }
-    
-    lang(func: type(InfoObject)) ${filter} @groupby(lang: InfoObject.language) {
-        n: count(uid)
-    }
 
     people(func: has(Person.pseudonyms))${pHelper} {
         n: count(uid)
@@ -219,6 +215,10 @@ function statSelector(filter, options) {
     return `
     categ as var(func: type(InfoObjectType)) @filter(eq(InfoObjectType.name, ${JSON.stringify(category)})) {
         uid
+    }
+
+    lang(func: type(InfoObject)) @filter(uid_in(InfoObject.category, uid(categ))${filter}) @groupby(lang: InfoObject.language) {
+        n: count(uid)
     }
 
     sdg(func: type(Sdg)) {

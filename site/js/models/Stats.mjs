@@ -87,7 +87,10 @@ async function handleLoadData(q) {
 async function loadData(category, queryObj) {
     const data = await Filter.statQuery(category, queryObj, RequestController);
 
+    data.lang = data.lang?.[0]?.["@groupby"].reduce((obj, item) => { obj[item.lang] =  item.n; return obj; }, {de: 0, en: 0, fr: 0, it: 0});
+
     StatsObject.stats =  {
+        lang: {de: 0, en: 0, fr: 0, it: 0},
         sdg: [
             { id: "sdg_1", n: 0 },
             { id: "sdg_2", n: 0 },
@@ -170,16 +173,16 @@ async function loadOverviewData(queryObj) {
         projects: 0
     };
 
-    data.lang = data.lang?.[0]?.["@groupby"].reduce((obj, item) => { obj[item.lang] =  item.n; return obj; }, {de: 0, en: 0, fr: 0, it: 0});
+    // data.lang = data.lang?.[0]?.["@groupby"].reduce((obj, item) => { obj[item.lang] =  item.n; return obj; }, {de: 0, en: 0, fr: 0, it: 0});
 
-    if (!data.lang) {
-        data.lang = {de: 0, en: 0, fr: 0, it: 0};
-    }
+    // if (!data.lang) {
+    //     data.lang = {de: 0, en: 0, fr: 0, it: 0};
+    // }
 
     if ("infoobjecttype" in data && data.infoobjecttype) {
         StatsObject.overview = {
             people: data.people[0].n,
-            lang: data.lang
+            // lang: data.lang
         };
 
         StatsObject.overview = data.infoobjecttype.reduce((a, o) => {
