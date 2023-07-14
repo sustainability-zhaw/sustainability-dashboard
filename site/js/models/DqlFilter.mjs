@@ -240,6 +240,10 @@ function statPeopleSelector(filter) {
         uid
     }
 
+    lang(func: type(InfoObject)) @filter(uid_in(InfoObject.category, uid(categ))) @groupby(lang: InfoObject.language) {
+        n: count(uid)
+    } 
+
     authors as var(func: type(Author)) @filter(has(Author.person) and uid_in(Author.objects, uid(categ))) {
         uid
     }
