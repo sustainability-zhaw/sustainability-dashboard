@@ -1,75 +1,89 @@
-div:lang(en) { 
+div:lang(de) { 
     .resultcontainer {
         .abstract.title::before {
-            content: "Abstract";
+            content: "Zusammenfassung";
         }
+
         .classification.title::before {
-            content: "Classification";
+            content: "Klassifikation";
         }
+
         .matches.title::before {
-            content: "Index Terms";
+            content: "Indexbegriffe";
         }
+
         .keywords.title::before {
-            content: "Keywords";
+            content: "Schlagworte";
         }
+
         .subtype.title::before {
-            content: "Type";
+            content: "Typ";
         }
     }
+
     .info .alert {
         &.intransit::before {
-                content: "Your network is slow. More results are on their way.";
+                content: "Ihr Netzwerk ist langsam. Weitere Ergebnisse sind auf dem Weg.";
         }
-        &.EOF::before {
-                content: "The query has no more results.";
+
+        &.EOF::before { // stylelint-disable-line 
+                content: "Die Suche hat nicht mehr Ergebnisse.";
         }
+
         .scroll-limit::before {
-                content: "You have looked at ";
+                content: "Sie haben ";
         }
+
         .scroll-limit::after {
-            content: " documents. Try using a more specific search.";
+            content: " Dokumente erhalten. Versuchen Sie eine genauere Suche.";
         }
     }
+
     .searchform {
         .input-group-text::before {
-            content: "Press Return to add";
+            content: "Return zum hinzufügen";
         }
+
         #query-warning::before {
-           content: "The query exists already.";
+           content: "Das Schlagwort existiert bereits.";
         }
     }
 
     .warnings {
-        #loading_data::before {
-            content: "The results are in transit. Please wait...";
+        #loading_data::before { // stylelint-disable-line 
+            content: "Die Ergebnisse sind auf dem Weg. Bitte haben sie noch etwas Geduld...";
         }
-        #no_data::before {
-            content: "Sorry, the query has no results.";
+
+        #no_data::before { // stylelint-disable-line 
+            content: "Die Suche hat leider keine Ergebnisse.";
         }
-        #request_error p::before {
-            content: "The query resulted in an error.";
+
+        #request_error p::before { // stylelint-disable-line 
+            content: "Bei der Suche gab es einen Fehler.";
         }
     }
 
     .sdg h3::before{
         content: "Sustainable Development Goals";
     }
+
     .department h3::before{
-        content: "Departemente";
+        content: "Departments";
     }
 
     .people {
         h3::before{
-            content: "Personen ";
+            content: "People ";
         }
+
         #peoplecountvalue {
             &::before {
                 content: " (";
             }
+            
             &::after {
                 content: ")";
             }
         }
     }
-
 }

@@ -59,6 +59,5 @@ $utilities-bg-colors: map-loop($utilities-colors, rgba-css-var, "$key", "bg");
 @import "zhaw_font";
 @import "sidebar";
 @import "results";
-
 @import "labels_de";
 @import "labels_en";
