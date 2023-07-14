@@ -64,11 +64,18 @@ function foldResults(evt) {
 }
 
 function addPerson(evt) {
-    if (evt.target.classList.contains("name") &&
-        evt.target.parentNode.classList.contains("person")) {
-        const targetParent = evt.target.parentNode;
-        const value = targetParent.querySelector(".initials").textContent;
-        const type = "person";
+    const type = "person";
+
+    if (evt.target.classList.contains("name") ||
+        evt.target.parentNode.classList.contains("name") &&
+        evt.target.parentNode.parentNode.classList.contains(type)) {
+        let target = evt.target.parentNode;
+
+        if (!target.classList.contains(type)) {
+            target = target.parentNode;
+        }
+
+        const value = target.querySelector(".initials").textContent.trim();
 
         Events.trigger.queryAddItem({type, value});
     }
