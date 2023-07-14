@@ -1,0 +1,75 @@
+div:lang(en) { 
+    .resultcontainer {
+        .abstract.title::before {
+            content: "Abstract";
+        }
+        .classification.title::before {
+            content: "Classification";
+        }
+        .matches.title::before {
+            content: "Index Terms";
+        }
+        .keywords.title::before {
+            content: "Keywords";
+        }
+        .subtype.title::before {
+            content: "Type";
+        }
+    }
+    .info .alert {
+        &.intransit::before {
+                content: "Your network is slow. More results are on their way.";
+        }
+        &.EOF::before {
+                content: "The query has no more results.";
+        }
+        .scroll-limit::before {
+                content: "You have looked at ";
+        }
+        .scroll-limit::after {
+            content: " documents. Try using a more specific search.";
+        }
+    }
+    .searchform {
+        .input-group-text::before {
+            content: "Press Return to add";
+        }
+        #query-warning::before {
+           content: "The query exists already.";
+        }
+    }
+
+    .warnings {
+        #loading_data::before {
+            content: "The results are in transit. Please wait...";
+        }
+        #no_data::before {
+            content: "Sorry, the query has no results.";
+        }
+        #request_error p::before {
+            content: "The query resulted in an error.";
+        }
+    }
+
+    .sdg h3::before{
+        content: "Sustainable Development Goals";
+    }
+    .department h3::before{
+        content: "Departemente";
+    }
+
+    .people {
+        h3::before{
+            content: "Personen ";
+        }
+        #peoplecountvalue {
+            &::before {
+                content: " (";
+            }
+            &::after {
+                content: ")";
+            }
+        }
+    }
+
+}

@@ -1,0 +1,74 @@
+div:lang(en) { 
+    .resultcontainer {
+        .abstract.title::before {
+            content: "Zusammenfassung";
+        }
+        .classification.title::before {
+            content: "Klassifikation";
+        }
+        .matches.title::before {
+            content: "Indexbegriffe";
+        }
+        .keywords.title::before {
+            content: "Schlagworte";
+        }
+        .subtype.title::before {
+            content: "Typ";
+        }
+    }
+    .info .alert {
+        &.intransit::before {
+                content: "Ihr Netzwerk ist langsam. Weitere Ergebnisse sind auf dem Weg.";
+        }
+        &.EOF::before {
+                content: "Die Suche hat nicht mehr Ergebnisse.";
+        }
+        .scroll-limit::before {
+                content: "Sie haben ";
+        }
+        .scroll-limit::after {
+            content: " Dokumente erhalten. Versuchen Sie eine genauere Suche.";
+        }
+    }
+    .searchform {
+        .input-group-text::before {
+            content: "Return zum hinzufügen";
+        }
+        #query-warning::before {
+           content: "Das Schlagwort existiert bereits.";
+        }
+    }
+
+    .warnings {
+        #loading_data::before {
+            content: "Die Ergebnisse sind auf dem Weg. Bitte haben sie noch etwas Geduld...";
+        }
+        #no_data::before {
+            content: "Die Suche hat leider keine Ergebnisse.";
+        }
+        #request_error p::before {
+            content: "Bei der Suche gab es einen Fehler.";
+        }
+    }
+
+    .sdg h3::before{
+        content: "Sustainable Development Goals";
+    }
+    .department h3::before{
+        content: "Departments";
+    }
+
+    .people {
+        h3::before{
+            content: "People ";
+        }
+        #peoplecountvalue {
+            &::before {
+                content: " (";
+            }
+            &::after {
+                content: ")";
+            }
+        }
+    }
+}
