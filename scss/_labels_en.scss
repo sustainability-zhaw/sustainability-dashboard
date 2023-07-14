@@ -49,7 +49,7 @@ div:lang(en) {
         }
     }
 
-    .warnings {
+    #warnings {
         #loading_data::before { // stylelint-disable-line 
             content: "The results are in transit. Please wait...";
         }

@@ -49,7 +49,7 @@ div:lang(de) {
         }
     }
 
-    .warnings {
+    #warnings {
         #loading_data::before { // stylelint-disable-line 
             content: "Die Ergebnisse sind auf dem Weg. Bitte haben sie noch etwas Geduld ...";
         }
