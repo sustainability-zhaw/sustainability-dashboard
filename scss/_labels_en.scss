@@ -79,7 +79,11 @@ div:lang(en) {
 }
 
 .tooltip {
-    #newsearch::before {
-        content: "New Search";
+    #newsearch {
+        color:red;
+
+        .tooltip-inner::before {
+            content: "New Search";
+        }
     }
 }
