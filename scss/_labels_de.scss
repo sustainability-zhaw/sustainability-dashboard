@@ -76,10 +76,21 @@ div:lang(de) {
             content: "Personen ";
         }
     }
-
-    .tooltip {
-        #newsearch::before {
-            content: "Neue Suche";
-        }
-    }
 }
+
+.tooltip.newsearch .tooltip-inner::before {
+    content: "Neue Suche";
+}
+
+.tooltip.savematcher .tooltip-inner::before {
+    content: "Als Indexsuche speichern";
+}
+
+.tooltip.addbookmark .tooltip-inner::before {
+    content: "Suche als Lesezeichen speichern";
+}
+
+.tooltip.downloadresults .tooltip-inner::before {
+    content: "Ergebnisse herunterladen";
+}
+

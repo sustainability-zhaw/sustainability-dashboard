@@ -78,12 +78,18 @@ div:lang(en) {
     }
 }
 
-.tooltip {
-    #newsearch {
-        color: #f00000;
+.tooltip.newsearch .tooltip-inner::before {
+    content: "New Search";
+}
 
-        .tooltip-inner::before {
-            content: "New Search";
-        }
-    }
+.tooltip.savematcher .tooltip-inner::before {
+    content: "Save as index term";
+}
+
+.tooltip.addbookmark .tooltip-inner::before {
+    content: "Bookmark search";
+}
+
+.tooltip.downloadresults .tooltip-inner::before {
+    content: "Download results";
 }
