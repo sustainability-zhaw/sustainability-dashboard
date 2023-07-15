@@ -76,20 +76,20 @@ div:lang(en) {
             content: "Persons ";
         }
     }
-}
 
-.tooltip.newsearch .tooltip-inner::before {
-    content: "New Search";
-}
+    .tooltip.newsearch .tooltip-inner::before {
+        content: "New Search";
+    }
 
-.tooltip.savematcher .tooltip-inner::before {
-    content: "Save as index term";
-}
+    .tooltip.savematcher .tooltip-inner::before {
+        content: "Save as index term";
+    }
 
-.tooltip.addbookmark .tooltip-inner::before {
-    content: "Bookmark search";
-}
+    .tooltip.addbookmark .tooltip-inner::before {
+        content: "Bookmark search";
+    }
 
-.tooltip.downloadresults .tooltip-inner::before {
-    content: "Download results";
+    .tooltip.downloadresults .tooltip-inner::before {
+        content: "Download results";
+    }
 }
