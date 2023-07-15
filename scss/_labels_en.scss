@@ -82,15 +82,15 @@
     }
 
     .tooltip.savematcher .tooltip-inner::before {
-        content: "Save as index term";
+        content: "Save as Index Term";
     }
 
     .tooltip.addbookmark .tooltip-inner::before {
-        content: "Bookmark search";
+        content: "Bookmark Search";
     }
 
     .tooltip.downloadresults .tooltip-inner::before {
-        content: "Download results";
+        content: "Download Results";
     }
 
     .tooltip.overviewpublications .tooltip-inner::before {
@@ -108,5 +108,33 @@
 
     .tooltip.overviewmodules .tooltip-inner::before {
         content: "Modules";
+    }
+
+    .tooltip.menulogout .tooltip-inner::before {
+        content: "Logout";
+    }
+
+    .tooltip.menusettings .tooltip-inner::before {
+        content: "Settings";
+    }
+
+    .tooltip.menuindexterms .tooltip-inner::before {
+        content: "Index Terms";
+    }
+
+    .tooltip.menuvisualisation .tooltip-inner::before {
+        content: "Visualisations";
+    }
+
+    .tooltip.menupubtypes .tooltip-inner::before {
+        content: "Publication Types";
+    }
+
+    .tooltip.menuclassifications .tooltip-inner::before {
+        content: "Classifications";
+    }
+
+    .tooltip.menubookmarks .tooltip-inner::before {
+        content: "Bookmarks";
     }
 }

@@ -108,4 +108,32 @@
     .tooltip.overviewmodules .tooltip-inner::before {
         content: "Module";
     }
+
+    .tooltip.menulogout .tooltip-inner::before {
+        content: "Abmelden";
+    }
+
+    .tooltip.menusettings .tooltip-inner::before {
+        content: "Einstellungen";
+    }
+
+    .tooltip.menuindexterms .tooltip-inner::before {
+        content: "Index Begriffe";
+    }
+
+    .tooltip.menuvisualisation .tooltip-inner::before {
+        content: "Visualisierung";
+    }
+
+    .tooltip.menupubtypes .tooltip-inner::before {
+        content: "Publikationsarten";
+    }
+
+    .tooltip.menuclassifications .tooltip-inner::before {
+        content: "Klassifikationen";
+    }
+
+    .tooltip.menubookmarks .tooltip-inner::before {
+        content: "Lesezeichen";
+    }
 }
