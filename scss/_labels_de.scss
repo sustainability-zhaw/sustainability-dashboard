@@ -136,4 +136,68 @@
     .tooltip.menubookmarks .tooltip-inner::before {
         content: "Lesezeichen";
     }
+
+    .tooltip.sdg_1 .tooltip-inner::before {
+        content: "Keine Armut";
+    }
+
+    .tooltip.sdg_2 .tooltip-inner::before {
+        content: "Hunger beenden";
+    }
+
+    .tooltip.sdg_3 .tooltip-inner::before {
+        content: "Gute Gesundheit und Wohlbefinden";
+    }
+
+    .tooltip.sdg_4 .tooltip-inner::before {
+        content: "Qualität in der Bildung";
+    }
+
+    .tooltip.sdg_5 .tooltip-inner::before {
+        content: "Gleichheit der Geschlechter";
+    }
+
+    .tooltip.sdg_6 .tooltip-inner::before {
+        content: "Sauberes Wasser und sanitäre Einrichtungen";
+    }
+
+    .tooltip.sdg_7 .tooltip-inner::before {
+        content: "Günstige und saubere Energie";
+    }
+
+    .tooltip.sdg_8 .tooltip-inner::before {
+        content: "Menschenwürdige Arbeit und Wirtschaftswachstum";
+    }
+
+    .tooltip.sdg_9 .tooltip-inner::before {
+        content: "Industrie, Innvation und Infrastruktur";
+    }
+
+    .tooltip.sdg_10 .tooltip-inner::before {
+        content: "Abbau von Ungleichheiten";
+    }
+
+    .tooltip.sdg_11 .tooltip-inner::before {
+        content: "Nachhaltige Städte und Gemeinden";
+    }
+
+    .tooltip.sdg_12 .tooltip-inner::before {
+        content: "Veranwortungsvoll Konsumieren und Produzieren";
+    }
+
+    .tooltip.sdg_13 .tooltip-inner::before {
+        content: "Handeln für den Klimaschutz";
+    }
+
+    .tooltip.sdg_14 .tooltip-inner::before {
+        content: "Leben unter Wasser";
+    }
+
+    .tooltip.sdg_15 .tooltip-inner::before {
+        content: "Leben an Land";
+    }
+
+    .tooltip.sdg_16 .tooltip-inner::before {
+        content: "Frieden, Gerechtigkeit und starke Institutionen";
+    }
 }
