@@ -92,4 +92,20 @@
     .tooltip.downloadresults .tooltip-inner::before {
         content: "Ergebnisse herunterladen";
     }
+
+    .tooltip.overviewpublications .tooltip-inner::before {
+        content: "Publikationen";
+    }
+
+    .tooltip.overviewprojects .tooltip-inner::before {
+        content: "Projekte";
+    }
+
+    .tooltip.overviewpeople .tooltip-inner::before {
+        content: "Personen";
+    }
+
+    .tooltip.overviewmodules .tooltip-inner::before {
+        content: "Module";
+    }
 }
