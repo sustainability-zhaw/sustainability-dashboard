@@ -202,11 +202,7 @@
     }
 
     .tooltip.resultunfold .tooltip-inner::before {
-        content: "Details öffnen";
-    }
-
-    .tooltip.resultfold .tooltip-inner::after {
-        content: "Details schliessen";
+        content: "Details öffnen/schliessen";
     }
 
     .tooltip.tooldownload .tooltip-inner::after {
