@@ -207,19 +207,11 @@ function renderRecords(ev) {
                 template.content.cloneNode(true)
             );
 
-            section.appendChild(element);
-
             const tooltipTriggerList = element.querySelectorAll("[data-bs-toggle=\"tooltip\"]");
-
-            console.log("add tooltips");
-            console.log(tooltipTriggerList);
-
-            if (!tooltipTriggerList.length) {
-                console.log(element.children);
-            }
 
             [...tooltipTriggerList].map(addTooltip);
 
+            section.appendChild(element);
             return section;
         }, targetsection);
     }
