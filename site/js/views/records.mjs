@@ -213,6 +213,9 @@ function renderRecords(ev) {
 
             console.log("add tooltips");
             console.log(tooltipTriggerList);
+            if (!tooltipTriggerList.length) {
+                console.log(element.innerHTML);
+            }
 
             [...tooltipTriggerList].map(addTooltip);
 
