@@ -59,7 +59,7 @@ function foldResults(evt) {
             }
         });
 
-        [...toggleElements].forEach(togglable => togglable.hidden = !togglable.hidden);
+        [...toggleElements].map(togglable => togglable.hidden = !togglable.hidden);
 
         // if (evt.target.classList.contains("bi-layer-backward")) {
         //     evt.target.setAttribute("data-bs-custom-class", "Show Details");
@@ -164,6 +164,11 @@ function renderOneRecord(result, [k, value]) {
     return result;
 }
 
+function addTooltip(tooltipTriggerEl) {
+    console.log("add tooltip");
+    return new bootstrap.Tooltip(tooltipTriggerEl); // eslint-disable-line no-undef
+}
+
 function renderRecords(ev) {
     Logger.debug("data update");
 
@@ -206,7 +211,9 @@ function renderRecords(ev) {
 
             const tooltipTriggerList = element.querySelectorAll("[data-bs-toggle=\"tooltip\"]");
 
-            [...tooltipTriggerList].map((tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl)); // eslint-disable-line no-undef
+            console.log("add tooltips");
+            console.log(tooltipTriggerList)
+            [...tooltipTriggerList].map(addTooltip);
 
             return section;
         }, targetsection);
