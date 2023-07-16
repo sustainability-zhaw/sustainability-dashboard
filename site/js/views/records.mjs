@@ -202,16 +202,20 @@ function renderRecords(ev) {
         const template = document.querySelector(templateId);
 
         DataModel.feed().reduce((section, object) => {
-            const element = Object.entries(object).reduce(
+            // create a document fragment from the template and fill it with the provided data
+            const recordFragment = Object.entries(object).reduce(
                 renderOneRecord,
                 template.content.cloneNode(true)
             );
 
-            const tooltipTriggerList = element.querySelectorAll("[data-bs-toggle=\"tooltip\"]");
+            // activate tooltips on the relevant components
+            const tooltipTriggerList = recordFragment.querySelectorAll("[data-bs-toggle=\"tooltip\"]");
 
             [...tooltipTriggerList].map(addTooltip);
 
-            section.appendChild(element);
+            // finally add the document fragment to the section. The document fragment will be empty after this step.
+            section.appendChild(recordFragment);
+
             return section;
         }, targetsection);
     }
