@@ -165,7 +165,7 @@ function renderOneRecord(result, [k, value]) {
 }
 
 function addTooltip(tooltipTriggerEl) {
-    console.log("add tooltip");
+    // console.log("add tooltip");
     return new bootstrap.Tooltip(tooltipTriggerEl); // eslint-disable-line no-undef
 }
 
