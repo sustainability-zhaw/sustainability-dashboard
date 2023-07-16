@@ -50,16 +50,23 @@ function foldResults(evt) {
         [...toggleTools].forEach(togglable => {
             togglable.classList.toggle("bi-layer-backward");
             togglable.classList.toggle("bi-layer-forward");
+
+            if (togglable.classList.contains("bi-layer-backward")) {
+                togglable.dataset["bs-custom-class"] = "resultunfold";
+            }
+            else {
+                togglable.dataset["bs-custom-class"] = "resultfold";
+            }
         });
 
         [...toggleElements].forEach(togglable => togglable.hidden = !togglable.hidden);
 
-        if (evt.target.classList.contains("bi-layer-backward")) {
-            evt.target.setAttribute("data-bs-original-title", "Show Details");
-        }
-        else {
-            evt.target.setAttribute("data-bs-original-title", "Hide Details");
-        }
+        // if (evt.target.classList.contains("bi-layer-backward")) {
+        //     evt.target.setAttribute("data-bs-custom-class", "Show Details");
+        // }
+        // else {
+        //     evt.target.setAttribute("data-bs-custom-class", "Hide Details");
+        // }
     }
 }
 
@@ -196,6 +203,10 @@ function renderRecords(ev) {
             );
 
             section.appendChild(element);
+
+            const tooltipTriggerList = element.querySelectorAll("[data-bs-toggle=\"tooltip\"]");
+
+            [...tooltipTriggerList].forEach((tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl)); // eslint-disable-line no-undef
 
             return section;
         }, targetsection);

@@ -200,4 +200,16 @@
     .tooltip.sdg-16 .tooltip-inner::before {
         content: "Frieden, Gerechtigkeit und starke Institutionen";
     }
+
+    .tooltip.resultunfold .tooltip-inner::before {
+        content: "Details öffnen";
+    }
+
+    .tooltip.resultfold .tooltip-inner::after {
+        content: "Details schliessen";
+    }
+
+    .tooltip.tooldownload .tooltip-inner::after {
+        content: "Zur Datenquelle";
+    }
 }
