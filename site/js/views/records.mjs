@@ -206,7 +206,7 @@ function renderRecords(ev) {
 
             const tooltipTriggerList = element.querySelectorAll("[data-bs-toggle=\"tooltip\"]");
 
-            [...tooltipTriggerList].forEach((tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl)); // eslint-disable-line no-undef
+            [...tooltipTriggerList].map((tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl)); // eslint-disable-line no-undef
 
             return section;
         }, targetsection);
