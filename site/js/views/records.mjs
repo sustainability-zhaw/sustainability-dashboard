@@ -207,14 +207,16 @@ function renderRecords(ev) {
                 template.content.cloneNode(true)
             );
 
-            section.appendChild(element);
+            const e2 = section.appendChild(element);
 
             const tooltipTriggerList = element.querySelectorAll("[data-bs-toggle=\"tooltip\"]");
 
             console.log("add tooltips");
             console.log(tooltipTriggerList);
+
             if (!tooltipTriggerList.length) {
-                console.log(element.innerHTML);
+                console.log(element);
+                console.log(e2);
             }
 
             [...tooltipTriggerList].map(addTooltip);
