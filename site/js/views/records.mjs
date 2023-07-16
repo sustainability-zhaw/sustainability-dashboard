@@ -212,7 +212,7 @@ function renderRecords(ev) {
             const tooltipTriggerList = element.querySelectorAll("[data-bs-toggle=\"tooltip\"]");
 
             console.log("add tooltips");
-            console.log(tooltipTriggerList)
+            console.log(tooltipTriggerList);
             [...tooltipTriggerList].map(addTooltip);
 
             return section;
