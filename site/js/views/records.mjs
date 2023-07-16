@@ -52,10 +52,10 @@ function foldResults(evt) {
             togglable.classList.toggle("bi-layer-forward");
 
             if (togglable.classList.contains("bi-layer-backward")) {
-                togglable.dataset["bs-custom-class"] = "resultunfold";
+                togglable.setAttribute("data-bs-custom-class", "resultunfold");
             }
             else {
-                togglable.dataset["bs-custom-class"] = "resultfold";
+                togglable.setAttribute("data-bs-custom-class", "resultfold");
             }
         });
 
@@ -213,6 +213,7 @@ function renderRecords(ev) {
 
             console.log("add tooltips");
             console.log(tooltipTriggerList);
+
             [...tooltipTriggerList].map(addTooltip);
 
             return section;
