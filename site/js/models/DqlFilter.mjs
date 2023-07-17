@@ -451,13 +451,17 @@ function buildTermFilter(type, term) {
     if (isQuoted) {
         // clean quoted term
         const quotechar = isQuoted[0];
-        const regex = new RegExp(`^${quotechar}([^${quotechar}]*)(?:${quotechar}.*)?$`);
+        const regex = new RegExp(`^${quotechar}([^${quotechar}]*?)(?:${quotechar}.*)?$`);
+
+        console.log(`quoted term: ${term}`);
 
         term = term.trim()
             .replace(regex, "$1")
             .replace(/\s+/g, " ")
             .replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
             .replace(/^\s|\s$/g, "\\b");
+
+        console.log(`quoted term: ${term}`);
 
         return `${not ? "not" : ""}(regexp(InfoObject.title, /${term}/i) or regexp(InfoObject.abstract, /${term}/i) or regexp(InfoObject.extras, /${term}/i))`;
     }
