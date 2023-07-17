@@ -459,6 +459,7 @@ function buildTermFilter(type, term) {
         console.log(`quoted term: ${term}`);
 
         term = term.trim()
+            .replace(/\\['"]/g, `${quotechar}`) // drop quoted quotes
             .replace(regex, "$1")
             .replace(/\s+/g, " ")
             .replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
