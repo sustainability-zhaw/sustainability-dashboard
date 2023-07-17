@@ -446,6 +446,21 @@ function buildUidFilter(type, id, refType) {
 
 function buildTermFilter(type, term) {
     const not = type !== "term";
+    const isQuoted = term.match(/^['"]$/);
+
+    if (isQuoted) {
+        // clean quoted term
+        const quotechar = isQuoted[0];
+        const regex = new RegExp(`^${quotechar}([^${quotechar}]*)(?:${quotechar}.*)?$`);
+
+        term = term.trim()
+            .replace(regex, "$1")
+            .replace(/\s+/g, " ")
+            .replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+            .replace(/^\s|\s$/g, "\\b");
+
+        return `${not ? "not" : ""}(regexp(InfoObject.title, /${term}/i) or regexp(InfoObject.abstract, /${term}/i) or regexp(InfoObject.extras, /${term}/i))`;
+    }
 
     return `${not ? "not" : ""}(alloftext(InfoObject.title, ${term}) or alloftext(InfoObject.abstract, ${term}) or alloftext(InfoObject.extras, ${term}))`;
 }
