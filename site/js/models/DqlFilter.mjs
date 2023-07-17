@@ -446,7 +446,7 @@ function buildUidFilter(type, id, refType) {
 
 function buildTermFilter(type, term) {
     const not = type !== "term";
-    const isQuoted = term.match(/^['"]$/);
+    const isQuoted = term.match(/^['"]/);
 
     if (isQuoted) {
         // clean quoted term
