@@ -446,11 +446,14 @@ function buildUidFilter(type, id, refType) {
 
 function buildTermFilter(type, term) {
     const not = type !== "term";
-    const isQuoted = term.match(/^['"]/);
+
+    const isQuoted = term.match(/^"\\['"]/);
 
     if (isQuoted) {
         // clean quoted term
-        const quotechar = isQuoted[0];
+        term = term.replace(/^"\\|"$/, ""); // remove internal quotes and helpers
+
+        const quotechar = term.match(/^['"]/)[0];
         const regex = new RegExp(`^${quotechar}([^${quotechar}]*?)(?:${quotechar}.*)?$`);
 
         console.log(`quoted term: ${term}`);
