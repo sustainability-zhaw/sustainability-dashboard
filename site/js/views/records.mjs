@@ -100,6 +100,11 @@ const objHandler = {
         field.classList.add(value);
         field.dataset.qtype = qtype;
         field.dataset.qvalue = qvalue;
+    },
+    "abstract": (value, e) => {
+        const field = e.querySelector(".abstract");
+
+        field.innerHTML = value.replace(/(?:\\r\\n)+/g, "<br/>");
     }
 };
 
