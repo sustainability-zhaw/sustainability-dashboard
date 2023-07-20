@@ -24,6 +24,12 @@ export async function fetchData(body, RequestController) {
         body
     });
 
+    if (response.redirected &&
+        response.headers.get("Content-Type").match(/^text\/html/) !== null &&
+        response.url.match(/auth\/$/) !== null) {
+        window.location.replace(response.url);
+    }
+
     const result = await response.json();
 
     if ("data" in result && result.data) {
