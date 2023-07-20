@@ -104,7 +104,7 @@ const objHandler = {
     "abstract": (value, e) => {
         const field = e.querySelector(".abstract");
 
-        field.innerHTML = value.replace(/(?:\\r\\n)+/g, "<br/>");
+        field.innerHTML = value.replace(/\\"/g, "\"").replace(/(?:\\r\\n)+/g, "<br/>");
     }
 };
 
