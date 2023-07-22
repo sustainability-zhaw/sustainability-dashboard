@@ -44,8 +44,28 @@
             content: "Press Return to add";
         }
 
-        #query-warning::before {
+        #query-warning.exists::before {
            content: "The query exists already.";
+        }
+
+        #query-warning.invalidterm::before {
+            content: "Invalid query.";
+        }
+
+        #query-warning.invaliddept::before {
+            content: "Invalid Department ID.";
+        }
+
+        #query-warning.invalidsdg::before {
+            content: "Invalid SDG Number.";
+        }
+
+        #query-warning.invalidlang::before {
+            content: "Invalid Language.";
+        }
+
+        #query-warning.invalidtype::before {
+            content: "Invalid Condition.";
         }
     }
 

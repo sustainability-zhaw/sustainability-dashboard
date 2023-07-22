@@ -99,7 +99,7 @@ function validateSDG(query) {
 
     if (!(nValue >= 1 && nValue <= 16)) {
         Logger.debug("sdg out of bounds");
-        Events.trigger.queryError({message: "SDG number is not between 1 and 16."});
+        Events.trigger.queryError({message: "SDG number is not between 1 and 16.", id: "invalidsdg"});
         return 0; // value out of bounds
     }
 
@@ -108,9 +108,10 @@ function validateSDG(query) {
 
 function validateDepartment(query) {
     const message = "No query term found. Please add a Department ID.";
+    const id = "noterm";
 
     if (validateEmpty(query)) {
-        Events.trigger.queryError({message});
+        Events.trigger.queryError({message, id});
         return 0;
     }
 
@@ -122,7 +123,7 @@ function validateDepartment(query) {
 
     if (!QueryModel.config.departments.includes(query)) {
         Logger.debug("dept out of bounds");
-        Events.trigger.queryError({message: "Invalid Department ID."});
+        Events.trigger.queryError({message: "Invalid Department ID.", id: "invaliddept"});
         return 0; // value out of bounds
     }
 
@@ -153,7 +154,7 @@ function validateLang(query) {
     query = query.toUpperCase();
     if (query.length !== 2 ||
         !["EN", "DE", "FR", "IT"].includes(query)) {
-        Events.trigger.queryError({message: "Invalid language"});
+        Events.trigger.queryError({message: "Invalid language", id: "invalidlang"});
         return 0;
     }
 
@@ -186,7 +187,7 @@ function validateType(type) {
         "not"
     ].includes(type)) {
         Logger.debug(message);
-        Events.trigger.queryError({message});
+        Events.trigger.queryError({message, id: "invalidtype"});
         return 0;
     }
 
@@ -226,6 +227,7 @@ function add(ev) {
         Logger.debug("item exists");
         Events.trigger.queryError({
             message: "The query already exists.",
+            id: "exists",
             offendingSearchTerms: offendingSearchTerms,
         });
         return;

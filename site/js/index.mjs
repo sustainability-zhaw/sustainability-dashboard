@@ -212,11 +212,13 @@ function showQueryError(ev) {
     const queryWarningElement = document.querySelector("#query-warning");
 
     queryWarningElement.classList.add("error");
-    queryWarningElement.innerText = ev.detail.message;
+    queryWarningElement.classList.add(ev.detail.id);
+    // queryWarningElement.innerText = ev.detail.message;
+
     queryWarningElement.removeAttribute("hidden");
 
     // Adds red border around the search term box
-    ev.detail.offendingSearchTerms.forEach(({value}) => {
+    ev.detail.offendingSearchTerms?.forEach(({value}) => {
         document.querySelector(`.optioncontainer[data-qvalue="${value}"]`)?.classList.add("error");
     });
 }
@@ -244,12 +246,14 @@ function addSearchTerm() {
 
         Logger.debug(`click on ${evt.target.id}`);
 
-        let [type, value] = currentValue.split(":").map(str => str.trim());
+        let [type, value] = ["term", currentValue];
 
-        if (value === undefined) {
-            // if no colon is in the current value, the query is definitely a term.
-            type = "term";
-            value = currentValue;
+        //handle quoted terms correctly
+        const match = currentValue.match(/^([^'"][^:]*):(.*)$/);
+
+        if (match) {
+            type = match[1].trim();
+            value = match[2].trim();
         }
 
         searchTermElement.classList.remove("error");

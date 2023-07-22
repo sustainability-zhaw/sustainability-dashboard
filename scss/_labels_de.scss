@@ -44,8 +44,28 @@
             content: "Hinzufügen mit Eingabetaste";
         }
 
-        #query-warning::before {
-           content: "Das Indexsuche existiert bereits.";
+        #query-warning.exists::before {
+            content: "Die Teilsuche existiert bereits.";
+         }
+ 
+        #query-warning.invalidterm::before {
+            content: "Ungültiger Suchbegriff.";
+        }
+
+        #query-warning.invaliddept::before {
+            content: "Üngültiges Departement.";
+        }
+
+        #query-warning.invalidsdg::before {
+            content: "Ungültiges SDG.";
+        }
+
+        #query-warning.invalidlang::before {
+            content: "Ungültige Sprache.";
+        }
+
+        #query-warning.invalidtype::before {
+            content: "Ungültige Bedingung.";
         }
     }
 
