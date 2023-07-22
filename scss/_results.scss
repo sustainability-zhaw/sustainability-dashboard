@@ -404,7 +404,7 @@
 
         }
 
-        .required:not(:empty)::before {
+        :not(:last-child)::after + :not(:empty){
             content: ", ";
         }
 
@@ -414,7 +414,7 @@
             &::before {
                 @extend .bi;
 
-                content: ", \f567";
+                content: "\f567";
                 margin-right: .2em;
             }
         }
