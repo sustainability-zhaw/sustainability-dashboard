@@ -409,6 +409,11 @@
             content: "; ";
         }
 
+        .forbidden:not(:empty)::before {           
+            color: $orange-600;
+            content: "; ";
+        }
+
         span {
             padding: .1em;
         }
