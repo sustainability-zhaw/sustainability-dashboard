@@ -414,7 +414,8 @@
             &::before {
                 @extend .bi;
 
-                content: ", \f567 ";
+                content: ", \f567";
+                margin-right: .2em;
             }
         }
 
