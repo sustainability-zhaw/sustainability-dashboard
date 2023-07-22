@@ -404,8 +404,7 @@
 
         }
 
-        .required:not(:empty)::before,
-        .forbidden:not(:empty)::before {
+        .required:not(:empty)::before {
             content: ", ";
         }
 
