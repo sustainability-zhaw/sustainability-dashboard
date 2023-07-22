@@ -433,12 +433,16 @@
             grid-template-areas: "searchinput inputbuttons";
         }
 
-        #query-warning.error {
-            @extend .btn;
-            @extend .btn-danger;
+        #query-warning {
+            display: none;
+            
+            &.error {
+                @extend .btn;
+                @extend .btn-danger;
 
-            display: inline-block;
-            grid-area: inputbuttons;
+                display: inline-block;
+                grid-area: inputbuttons;
+            }
         }
     }
 

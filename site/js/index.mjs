@@ -164,6 +164,8 @@ function handleCategoryChange(ev) {
     const category = ev.currentTarget.dataset.category;
     const value = ev.currentTarget.dataset.lang;
 
+    clearQueryError();
+
     if (!category && ["de", "en", "fr", "it"].includes(value)) {
         const type = "lang";
 
@@ -201,6 +203,7 @@ function addQType(evt) {
         let value = target.dataset.qvalue;
 
         // console.log(`${type} -> ${value} `);
+        clearQueryError();
         Events.trigger.queryAddItem({type, value});
     }
 }
@@ -215,7 +218,7 @@ function showQueryError(ev) {
     queryWarningElement.classList.add(ev.detail.id);
     // queryWarningElement.innerText = ev.detail.message;
 
-    queryWarningElement.removeAttribute("hidden");
+    // queryWarningElement.removeAttribute("hidden");
 
     // Adds red border around the search term box
     ev.detail.offendingSearchTerms?.forEach(({value}) => {
@@ -227,7 +230,7 @@ function clearQueryError() {
     const queryWarningElement = document.querySelector("#query-warning");
 
     queryWarningElement.classList.remove("error");
-    queryWarningElement.setAttribute("hidden", "hidden");
+    // queryWarningElement.setAttribute("hidden", "hidden");
 
     document.querySelectorAll(".optioncontainer.error").forEach((optionElement) =>  {
         optionElement.classList.remove("error");
@@ -259,6 +262,7 @@ function addSearchTerm() {
         searchTermElement.classList.remove("error");
         bootstrap.Tooltip.getOrCreateInstance(searchTermElement).dispose(); // eslint-disable-line no-undef
 
+        clearQueryError();
         Events.trigger.queryAddItem({type, value});
 
         evt.preventDefault();
@@ -284,6 +288,8 @@ function addSearchElement() {
 }
 
 function editSearchElement(evt) {
+    clearQueryError();
+
     if (!evt.target.classList.contains("searchoption")) {
         return;
     }
@@ -309,6 +315,8 @@ function editSearchElement(evt) {
 }
 
 function dropSearchElement(evt) {
+    clearQueryError();
+
     // const searchoptions = document.querySelector("#searchcontainer .searchoptions");
     if (!evt.target.classList.contains("optionclose")) {
         return;
