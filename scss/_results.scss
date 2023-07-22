@@ -406,12 +406,20 @@
 
         .required:not(:empty)::before,
         .forbidden:not(:empty)::before {
-            content: "; ";
+            content: ", ";
+        }
+
+        .forbidden:not(:empty) {           
+            color: $orange-600;
+
+            &::before {
+                content: ", \f567";
+            }
         }
 
         .forbidden:not(:empty)::before {           
             color: $orange-600;
-            content: "; ";
+            content: "\f567";
         }
 
         span {
