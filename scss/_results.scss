@@ -415,12 +415,7 @@
                 content: ", \f567";
             }
         }
-
-        .forbidden:not(:empty)::before {           
-            color: $orange-600;
-            content: "\f567";
-        }
-
+        
         span {
             padding: .1em;
         }
