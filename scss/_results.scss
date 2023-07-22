@@ -412,10 +412,12 @@
             color: $orange-600;
 
             &::before {
+                @extend .bi;
+
                 content: ", \f567";
             }
         }
-        
+
         span {
             padding: .1em;
         }
