@@ -68,6 +68,7 @@ async function init() {
 
 
     Logger.debug("call update from init!");
+    Events.trigger.startUserInterface();
     Events.trigger.changeCategory({category});
     Events.trigger.queryUpdate();
 }

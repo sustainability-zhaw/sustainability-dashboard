@@ -3,6 +3,7 @@
 let anchor;
 
 const events = [
+    "startUserInterface", // signal everybody that we have launched
     "queryUpdate", // a query has changed
     "queryExtra",
     "dataUpdate", // new data is available
