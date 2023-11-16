@@ -182,7 +182,7 @@ function validateSubType(query) {
         Events.trigger.queryError({message: "Invalid sub type", id: "invalidsubtype"});
         return 0;
     }
-    
+
     return query;
 }
 

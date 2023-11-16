@@ -167,6 +167,7 @@ function buildFilter(queryObj, refType) {
 
     if (queryObj.subtypes && queryObj.subtypes.length) {
         const orFilter = [];
+
         queryObj.subtypes.forEach((st, i) => {
             orFilter.push(`uid_in(InfoObject.subtype, uid(sh${i}))`);
             aHandler.push(`sh${i} as var(func: type(InfoObjectSubType)) @filter(eq(InfoObjectSubType.name, ${st})) { uid }`);
