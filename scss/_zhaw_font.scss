@@ -9,7 +9,7 @@ $zhaw-icons-font-src: url("https://www.zhaw.ch/typo3conf/ext/zhaw_package_www/Re
 .zhaw-logo::before {
   display: inline-block;
   color: $zhawlogo;
-  font-family: $bootstrap-icons-font !important;
+  font-family: $zhaw-icons-font !important;
   font-style: normal;
   font-weight: normal !important;
   font-variant: normal;
