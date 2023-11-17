@@ -28,6 +28,10 @@ const events = [
     "bookmarkCreate",
     "bookmarkUpdate",
     "bookmarkData",
+    "classificationData",
+    "classificationUpdate",
+    "subtypeData",
+    "subtypeUpdate",
     "changeCategory"
 ];
 
