@@ -25,6 +25,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
       - name: setup dependencies
         run: npm ci
       - name: lint JS and CSS
