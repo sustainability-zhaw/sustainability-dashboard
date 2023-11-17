@@ -81,7 +81,8 @@ const validators = {
 const queryTypes = {
     dept: "department",
     language: "lang",
-    not: "notterm"
+    not: "notterm",
+    type: "subtype"
 };
 
 function categoryChange(ev) {
@@ -203,7 +204,7 @@ function validateType(type) {
         "term",
         "notterm",
         "not",
-        "subtype"
+        "type"
     ].includes(type)) {
         Logger.debug(message);
         Events.trigger.queryError({message, id: "invalidtype"});
