@@ -15,6 +15,7 @@ import * as IndexOverlayView from "./views/indexterms.mjs";
 import * as StatsView from "./views/stats.mjs";
 import * as RecordsView from "./views/records.mjs";
 import * as QueryView from "./views/query.mjs";
+import * as SubTypeView from "./views/subtype.mjs";
 
 // pull up the System with a basic configuration
 Events.listen.queryUpdate(handleQueryUpdate);
@@ -304,6 +305,7 @@ function addSearchElement() {
 
     IndexOverlayView.init(sidebarelement);
     StatsView.init(sidebarelement);
+    SubTypeView.init(sidebarelement);
 }
 
 function editSearchElement(evt) {
