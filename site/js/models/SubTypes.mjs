@@ -12,7 +12,7 @@ const Model = {
     types: []
 };
 
-export function getSubTypes() {
+export function getRecords() {
     // return list of valid subtypes
     return Model.types;
 }
