@@ -130,6 +130,16 @@ export function indexQuery(queryObj, limit, offset, RequestController) {
     );
 }
 
+export function classifcationQuery(queryObj, RequestController) {
+    return buildAndFetch(
+        queryObj,
+        "PublicationClass",
+        RequestController,
+        classifcationSelector,
+        {}
+    );
+}
+
 function buildFilter(queryObj, refType) {
     if (!queryObj) {
         return {};
@@ -383,6 +393,29 @@ function matchSelector(filter, options) {
         language: SdgMatch.language
         sdg: SdgMatch.sdg {
 			id: Sdg.id
+        }
+    }`;
+}
+
+/**
+ * Selector to load classifications of a project or publication
+ *
+ * @param {*} filter - filter terms to be added to the query
+ * @param {*} options - unused
+ */
+function classifcationSelector(filter, optionsUnused) {
+
+    filter = filter && filter.length ? ` @filter(${filter})` : "";
+
+    Logger.debug(`classification filter: "${filter}"`);
+
+    // TODO: the objects MUST be filtered, too!
+    return `
+	classes(func: type(PublicationClass))${filter} {
+		id: PublicationClass.id
+        name: PublicationClass.name
+        obj: PublicationClass.objects {
+            n: count(uid)
         }
     }`;
 }

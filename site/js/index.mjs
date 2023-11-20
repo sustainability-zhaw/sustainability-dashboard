@@ -15,6 +15,7 @@ import * as IndexOverlayView from "./views/indexterms.mjs";
 import * as StatsView from "./views/stats.mjs";
 import * as RecordsView from "./views/records.mjs";
 import * as QueryView from "./views/query.mjs";
+import * as SubTypeView from "./views/subtype.mjs";
 
 // pull up the System with a basic configuration
 Events.listen.queryUpdate(handleQueryUpdate);
@@ -90,7 +91,7 @@ function initTools() {
 
     const mainArea = document.querySelector("#mainarea");
 
-    const funcs = {
+    const menuOpenFunctions = {
         "indexmatcher_menu": () => {
             Events.trigger.indexTermData();
             // Events.trigger.queryUpdate();
@@ -101,7 +102,16 @@ function initTools() {
             }
         },
         "bookmark_menu": Events.trigger.bookmarkData,
-        "configure": () => {}
+        // "settings_menu": () => {},
+        "classification_menu": () => {
+            Events.trigger.classificationData();
+            Events.trigger.classificationUpdate(QueryModel.query());
+        },
+        "subtype_menu": () => {
+            Events.trigger.subtypeData();
+            Events.trigger.subtypeUpdate(QueryModel.query());
+        },
+        // "visualisation_menu": () => {}
     };
 
     const closeFuncs = {
@@ -110,8 +120,17 @@ function initTools() {
         }
     };
 
+    const menus = [
+        "indexmatcher_menu", // Matching terms for the indexer
+        "settings_menu", // Service settings; disabled
+        "bookmark_menu", // User Query Bookmarks; disabled
+        "subtypes_menu", // Publication Types; disabled
+        "classification_menu", // List of classifications
+        "visualisation_menu" // disabled
+    ];
+
     evAnchor.addEventListener("click", (ev) => {
-        if (["indexmatcher_menu", "configure", "bookmark_menu"].includes(ev.target.id)) {
+        if (menus.includes(ev.target.id)) {
             const title = ev.target.dataset.title;
             const overlaySize = ev.target.dataset.size;
             const prevActive = evAnchor.querySelector(".active");
@@ -153,7 +172,7 @@ function initTools() {
             menuAnchor.removeAttribute("hidden");
 
             // trigger event to load the content
-            funcs[ev.target.id]?.();
+            menuOpenFunctions[ev.target.id]?.();
         }
     });
 
@@ -286,6 +305,7 @@ function addSearchElement() {
 
     IndexOverlayView.init(sidebarelement);
     StatsView.init(sidebarelement);
+    SubTypeView.init(sidebarelement);
 }
 
 function editSearchElement(evt) {
