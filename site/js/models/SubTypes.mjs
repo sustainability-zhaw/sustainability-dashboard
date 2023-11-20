@@ -5,7 +5,8 @@ import * as Events from "../Events.mjs";
 Events.listen.startUserInterface(initUI);
 
 const Model = {
-    types: []
+    types: [],
+    stats: []
 };
 
 async function initUI() {
@@ -37,6 +38,10 @@ async function initUI() {
     }
 }
 
-export function getRecords() {
+export function getSubTypes() {
     return Model.types;
+}
+
+export function getRecords() {
+    return Model.stats;
 }
