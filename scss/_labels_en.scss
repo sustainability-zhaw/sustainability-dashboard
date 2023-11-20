@@ -67,6 +67,10 @@
         #query-warning.invalidtype::before {
             content: "Invalid Condition.";
         }
+
+        #query-warning.invalidsubtype::before {
+            content: "Invalid Type.";
+        }
     }
 
     #warnings {

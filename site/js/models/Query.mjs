@@ -3,6 +3,7 @@ import * as Logger from "../Logger.mjs";
 import * as Events from "../Events.mjs";
 
 import * as IdxView from "../views/indexterms.mjs";
+import * as SubTypeModel from "../models/SubTypes.mjs";
 
 Events.listen.queryAddItem(add);
 Events.listen.queryClear(clear);
@@ -73,13 +74,15 @@ const validators = {
     department: validateDepartment,
     lang: validateLang,
     term: validateTerm,
-    notterm: validateTerm
+    notterm: validateTerm,
+    subtype: validateSubType,
 };
 
 const queryTypes = {
     dept: "department",
     language: "lang",
-    not: "notterm"
+    not: "notterm",
+    type: "subtype"
 };
 
 function categoryChange(ev) {
@@ -168,6 +171,22 @@ function validateTerm(query) {
     return query;
 }
 
+function validateSubType(query) {
+    const message = "No sub type found. Please add a sub type.";
+
+    if (validateEmpty(query)) {
+        Events.trigger.queryError({message});
+        return 0;
+    }
+
+    if (!SubTypeModel.getSubTypes().includes(query)) {
+        Events.trigger.queryError({message: "Invalid sub type", id: "invalidsubtype"});
+        return 0;
+    }
+
+    return query;
+}
+
 function validateType(type) {
     type = type.toLowerCase();
 
@@ -184,7 +203,8 @@ function validateType(type) {
         "person",
         "term",
         "notterm",
-        "not"
+        "not",
+        "type"
     ].includes(type)) {
         Logger.debug(message);
         Events.trigger.queryError({message, id: "invalidtype"});
@@ -297,7 +317,8 @@ function collectQueryTerms(query) {
         persons: collectType(query, "person"),
         terms: collectType(query, "term"),
         lang: collectType(query, "lang"),
-        notterms: collectType(query, "notterm")
+        notterms: collectType(query, "notterm"),
+        subtypes: collectType(query, "subtype"),
     };
 }
 
@@ -308,7 +329,8 @@ function countQueryTerms(query) {
         persons: collectType(query, "person").length,
         terms: collectType(query, "term").length,
         lang: collectType(query, "lang").length,
-        notterms: collectType(query, "notterm").length
+        notterms: collectType(query, "notterm").length,
+        subtypes: collectType(query, "subtype").length,
     };
 }
 
@@ -327,7 +349,8 @@ function checkMathingTerm(query) {
         qterms.lang > 1 ||
         qterms.notterms > 1 ||
         qterms.terms === 0 ||
-        qterms.terms > 2
+        qterms.terms > 2 ||
+        qterms.subtypes
     ) {
         Events.trigger.invalidMatchingTerm();
         return;

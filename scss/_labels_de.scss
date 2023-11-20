@@ -67,6 +67,10 @@
         #query-warning.invalidtype::before {
             content: "Ungültige Bedingung.";
         }
+ 
+        #query-warning.invalidsubtype::before {
+            content: "Ungültiger Typ.";
+        }
     }
 
     #warnings {
