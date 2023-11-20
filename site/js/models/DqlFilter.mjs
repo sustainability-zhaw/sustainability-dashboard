@@ -130,12 +130,12 @@ export function indexQuery(queryObj, limit, offset, RequestController) {
     );
 }
 
-export function classifcationQuery(queryObj, RequestController) {
+export function classificationQuery(queryObj, RequestController) {
     return buildAndFetch(
         queryObj,
         "PublicationClass",
         RequestController,
-        classifcationSelector,
+        classificationSelector,
         {}
     );
 }
@@ -403,7 +403,7 @@ function matchSelector(filter, options) {
  * @param {*} filter - filter terms to be added to the query
  * @param {*} options - unused
  */
-function classifcationSelector(filter, optionsUnused) {
+function classificationSelector(filter, optionsUnused) {
 
     filter = filter && filter.length ? ` @filter(${filter})` : "";
 
