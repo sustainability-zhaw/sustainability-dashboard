@@ -414,12 +414,13 @@ function classificationSelector(filter, optionsUnused) {
 
     Logger.debug(`classification filter: "${filter}"`);
 
+    // TODO: Order by ID
     // TODO: the objects MUST be filtered, too!
     return ` ${filter}
 	classes(func: type(PublicationClass))${xfilter} {
 		id: PublicationClass.id
         name: PublicationClass.name
-        obj: PublicationClass.objects {
+        obj: PublicationClass.objects @filter(uid(infoobj)) {
             n: count(uid)
         }
     }`;

@@ -44,8 +44,8 @@ async function loadClassification(event){
                 delete e.obj;
                 return e;
             });
+
             Events.trigger.classificationData();
         }
-
     }
 }

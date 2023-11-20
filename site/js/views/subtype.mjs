@@ -11,6 +11,9 @@ import * as PubTypeModel from "../models/SubTypes.mjs";
 Events.listen.classificationData(renderClassifications);
 Events.listen.subtypeData(renderSubtypes);
 
+// TODO: listen for query update and check which of the views is active
+// if one is, send the correct signal to load the data
+
 export function init(target) {
     target.addEventListener("click", handleTermActivate);
 }
