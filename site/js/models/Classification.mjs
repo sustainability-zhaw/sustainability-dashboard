@@ -38,8 +38,8 @@ async function loadClassification(event){
     if (query) {
         const data = await Filter.classificationQuery(query, RequestController);
 
-        if (data && "class" in data) {
-            Model.records = data.class.map((e) => {
+        if (data && "classes" in data) {
+            Model.records = data.classes.map((e) => {
                 e.objects = e.obj.n;
                 delete e.obj;
                 return e;
