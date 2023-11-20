@@ -133,7 +133,7 @@ export function indexQuery(queryObj, limit, offset, RequestController) {
 export function classificationQuery(queryObj, RequestController) {
     return buildAndFetch(
         queryObj,
-        "PublicationClass",
+        "InfoObject",
         RequestController,
         classificationSelector,
         {}
@@ -405,13 +405,18 @@ function matchSelector(filter, options) {
  */
 function classificationSelector(filter, optionsUnused) {
 
-    filter = filter && filter.length ? ` @filter(${filter})` : "";
+    let xfilter = "";
+
+    if (filter && filter.length) {
+        filter = ` infoobj as var(func: type(InfoObject)) @filter(${filter}) {uid} `;
+        xfilter = " @filter(uid_in(PublicationClass.objects, uid(infoobj))) ";
+    }
 
     Logger.debug(`classification filter: "${filter}"`);
 
     // TODO: the objects MUST be filtered, too!
-    return `
-	classes(func: type(PublicationClass))${filter} {
+    return ` ${filter}
+	classes(func: type(PublicationClass))${xfilter} {
 		id: PublicationClass.id
         name: PublicationClass.name
         obj: PublicationClass.objects {

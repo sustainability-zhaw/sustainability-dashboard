@@ -86,7 +86,7 @@ function renderItems(model) {
 
         result.querySelector(".type-id-name").textContent = rec.id;
         result.querySelector(".type-text").textContent = rec.name || "";
-        result.querySelector(".type-stat").textContent = rec.stat;
+        result.querySelector(".type-stat").textContent = rec.objects;
 
         acc.container.appendChild(result);
         return acc;
