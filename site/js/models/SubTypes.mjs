@@ -6,7 +6,7 @@ Events.listen.startUserInterface(initUI);
 
 const Model = {
     types: [],
-    stats: []
+    records: []
 };
 
 async function initUI() {
@@ -43,5 +43,5 @@ export function getSubTypes() {
 }
 
 export function getRecords() {
-    return Model.stats;
+    return Model.records;
 }

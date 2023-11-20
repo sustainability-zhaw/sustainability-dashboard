@@ -36,7 +36,7 @@ async function loadClassification(event){
     const query = event.detail;
 
     if (query) {
-        const data = await Filter.classicationQuery(query, RequestController);
+        const data = await Filter.classificationQuery(query, RequestController);
 
         if (data && "class" in data) {
             Model.records = data.class.map((e) => {
@@ -44,7 +44,7 @@ async function loadClassification(event){
                 delete e.obj;
                 return e;
             });
-            Events.trigger.classicationData();
+            Events.trigger.classificationData();
         }
 
     }
