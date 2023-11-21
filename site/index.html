@@ -26,17 +26,17 @@
             <nav class="navbar-right navbar">    
             <ul class="navbar-nav">
                 <li class="nav-item fs-5" id="visualize">
-                    <a class="nav-link bi-bar-chart-line disabled" aria-current="page" id="visualisation_menu" href="#"
+                    <a class="nav-link bi-bar-chart-line disabled" aria-current="page" id="visualisation-menu" href="#"
                        data-bs-toggle="tooltip" title=" " data-bs-placement="top" data-bs-custom-class="menuvisualisation"></a>
                 </li>  
 
                 <li class="nav-item fs-5" id="subtypes">
-                    <a class="nav-link bi-files disabled" aria-current="page" href="#" id="subtypes_menu"
+                    <a class="nav-link bi-files disabled" aria-current="page" href="#" id="subtypes-menu"
                        data-bs-toggle="tooltip" title=" " data-bs-placement="top" data-bs-custom-class="menupubtypes"></a>
                 </li>  
 
                 <li class="nav-item fs-5">
-                    <a class="nav-link bi-diagram-3" id="classification_menu" aria-current="page" href="#"
+                    <a class="nav-link bi-diagram-3" id="classification-menu" aria-current="page" href="#"
                     data-bs-toggle="tooltip" title=" " data-bs-custom-class="menuclassifications" data-bs-placement="top" data-size="mini"></a>
                 </li>  
 
@@ -44,19 +44,19 @@
                 </li>
                 
                 <li class="nav-item fs-5">
-                  <a class="nav-link bi-journal-bookmark disabled"  id="bookmarks_menu"
-                     data-bs-toggle="tooltip" id="bookmark_menu" title=" " data-bs-custom-class="menubookmarks" data-bs-placement="top"
+                  <a class="nav-link bi-journal-bookmark disabled"  id="bookmarks-menu"
+                     data-bs-toggle="tooltip" id="bookmark-menu" title=" " data-bs-custom-class="menubookmarks" data-bs-placement="top"
                      href="#" role="button"></a>
                 </li>
 
                 <li class="nav-item fs-5">
-                    <a class="nav-link bi-robot"  href="#" id="indexmatcher_menu"
+                    <a class="nav-link bi-robot"  href="#" id="indexmatcher-menu"
                        data-bs-toggle="tooltip" title=" " data-bs-custom-class="menuindexterms" data-size="mini" data-bs-placement="top"
                        role="button"></a>
                 </li>
 
                 <li class="nav-item fs-5" data-title="Settings">
-                    <a class="nav-link bi-wrench-adjustable-circle disabled" id="settings_menu"
+                    <a class="nav-link bi-wrench-adjustable-circle disabled" id="settings-menu"
                         data-bs-toggle="tooltip" title=" " data-bs-custom-class="menusettings" data-size="mini"  data-bs-placement="top"  href="#"></a>
                 </li>
 
@@ -317,9 +317,13 @@
 
     <template id="templateSubTypeItem">
         <div class="subtype">
-            <span class="type-id-name"></span>
-            <span class="type-text"></span>
-            <span class="type-stat"></span>
+            <div class="label">
+                <span class="type-id-name"></span>
+                <span class="type-text"></span>
+            </div>
+            <div class="stat">
+                <div class="type-stat"></div>
+            </div>
         </div>
     </template>
     </body>

@@ -11,7 +11,7 @@ export function init(target) {
 }
 
 export function isActive() {
-    const menuitem = document.querySelector(".active #indexmatcher_menu");
+    const menuitem = document.querySelector(".active #indexmatcher-menu");
 
     if (menuitem) {
         return true;
@@ -50,6 +50,7 @@ function renderIndexTerms() {
         return;
     }
 
+    Logger.debug("render index term because we are active ");
     const templateList = document.querySelector("#templateIndexTerm");
     // const templateQuery = document.querySelector("#searchoption");
     const container = document.querySelector("#overlaycontent");

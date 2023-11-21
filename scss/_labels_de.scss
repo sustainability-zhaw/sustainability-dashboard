@@ -232,4 +232,16 @@
     .tooltip.tooldownload .tooltip-inner::after {
         content: "Zur Datenquelle";
     }
+
+    .menuoverlay.indexmatcher-menu h3::after {
+        content: "Indizierungsbegriffe";
+    }
+
+    .menuoverlay.classification-menu h3::after {
+        content: "Klassifikationen";
+    }
+
+    .menuoverlay.subtypes-menu h3::after {
+        content: "Publicationstypen";
+    }
 }

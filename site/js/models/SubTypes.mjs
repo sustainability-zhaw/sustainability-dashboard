@@ -3,11 +3,17 @@ import * as Logger from "../Logger.mjs";
 import * as Events from "../Events.mjs";
 
 Events.listen.startUserInterface(initUI);
+Events.listen.changeCategory(categoryChange);
 
 const Model = {
     types: [],
-    records: []
+    records: [],
+    category: ""
 };
+
+function categoryChange(ev) {
+    Model.category = ev.detail.category;
+}
 
 async function initUI() {
     Logger.debug("Subtype fetch: Initializing types");
