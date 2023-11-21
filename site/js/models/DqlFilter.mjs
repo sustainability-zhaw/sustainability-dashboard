@@ -130,13 +130,13 @@ export function indexQuery(queryObj, limit, offset, RequestController) {
     );
 }
 
-export function classificationQuery(queryObj, RequestController) {
+export function classificationQuery(queryObj, category, RequestController) {
     return buildAndFetch(
         queryObj,
         "InfoObject",
         RequestController,
         classificationSelector,
-        {}
+        {category}
     );
 }
 
@@ -403,22 +403,32 @@ function matchSelector(filter, options) {
  * @param {*} filter - filter terms to be added to the query
  * @param {*} options - unused
  */
-function classificationSelector(filter, optionsUnused) {
+function classificationSelector(filter, options) {
+    const {category} = options || {};
 
     let xfilter = "";
     let ofilter = "";
 
     if (filter && filter.length) {
-        filter = ` infoobj as var(func: type(InfoObject)) @filter(${filter}) {uid} `;
-        xfilter = " @filter(uid_in(PublicationClass.objects, uid(infoobj))) ";
-        ofilter = "  @filter(uid(infoobj))";
+        filter = ` infoobj as var(func: type(InfoObject)) @filter(uid_in(InfoObject.category, uid(categ)) and ${filter}) {uid} `;
     }
+    else {
+        filter = " infoobj as var(func: type(InfoObject)) @filter(uid_in(InfoObject.category, uid(categ))) {uid} ";
+    }
+    xfilter = " @filter(uid_in(PublicationClass.objects, uid(infoobj))) ";
+    ofilter = "  @filter(uid(infoobj))";
 
     Logger.debug(`classification filter: "${filter}"`);
 
     // TODO: Order by ID
     // TODO: the objects MUST be filtered, too!
-    return ` ${filter}
+    return `
+    categ as var(func: type(InfoObjectType)) @filter(eq(InfoObjectType.name, ${JSON.stringify(category)})) {
+        uid
+    }
+
+    ${filter}
+
 	classes(func: type(PublicationClass), orderasc: PublicationClass.id)${xfilter} {
 		id: PublicationClass.id
         name: PublicationClass.name

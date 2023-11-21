@@ -1,8 +1,11 @@
 import * as Events from "../Events.mjs";
 import * as Filter from "./DqlFilter.mjs";
 
+import * as Logger from "../Logger.mjs";
+
 Events.listen.startUserInterface(initUI);
 Events.listen.classificationUpdate(loadClassification);
+Events.listen.changeCategory(categoryChange);
 
 const RequestController = new AbortController();
 
@@ -11,8 +14,13 @@ async function initUI() {
 }
 
 const Model = {
+    category: "",
     records: []
 };
+
+function categoryChange(ev) {
+    Model.category = ev.detail.category;
+}
 
 /**
  *
@@ -35,17 +43,19 @@ export function getRecords() {
 async function loadClassification(event){
     const query = event.detail;
 
-    if (query) {
-        const data = await Filter.classificationQuery(query, RequestController);
+    // if (query) {
+    Logger.debug("hello");
 
-        if (data && "classes" in data) {
-            Model.records = data.classes.map((e) => {
-                e.objects = e.obj.n;
-                delete e.obj;
-                return e;
-            });
+    const data = await Filter.classificationQuery(query, Model.category, RequestController);
 
-            Events.trigger.classificationData();
-        }
+    if (data && "classes" in data) {
+        Model.records = data.classes.map((e) => {
+            e.objects = e.obj[0].n;
+            delete e.obj;
+            return e;
+        });
+
+        Events.trigger.classificationData();
     }
+    // }
 }

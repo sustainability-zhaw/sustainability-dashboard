@@ -5,11 +5,14 @@
 import * as Events from "../Events.mjs";
 import * as Logger from "../Logger.mjs";
 
+import * as QueryModel from "../models/Query.mjs";
+
 import * as ClassificationModel from "../models/Classification.mjs";
 import * as PubTypeModel from "../models/SubTypes.mjs";
 
 Events.listen.classificationData(renderClassifications);
 Events.listen.subtypeData(renderSubtypes);
+Events.listen.queryUpdate(updateView);
 
 // TODO: listen for query update and check which of the views is active
 // if one is, send the correct signal to load the data
@@ -24,35 +27,44 @@ export function init(target) {
  * @param {*} type - the overlay to handle
  * @returns boolean - True if the given type is activ
  */
-export function isActive(type) {
-    if (type === "classification") {
-        const menuitemCls  = document.querySelector(".active #classification_menu");
+export function isActive() {
+    const menuitemCls  = document.querySelector(".active #classification_menu");
 
-        if (menuitemCls) {
-            return true;
-        }
+    if (menuitemCls) {
+        return "classification";
     }
 
-    if (type === "subtype") {
-        const menuitemSubT = document.querySelector(".active #classification_menu");
+    const menuitemSubT = document.querySelector(".active #classification_menu");
 
-        if (menuitemSubT) {
-            return true;
-        }
+    if (menuitemSubT) {
+        return "subtype";
     }
 
-    return false;
+    return "none";
+}
+
+const trigger = {
+    "classification": (q) => {
+        Events.trigger.classificationUpdate(q);
+    },
+    "subtype": (q) => {
+        Events.trigger.subtypeUpdate(q);
+    }
+};
+
+function updateView() {
+    trigger[isActive()]?.(QueryModel.query());
 }
 
 /**
  * renders the classifications within the current query
  */
 function renderClassifications() {
-    Logger.debug("render classification items");
-
     if (!isActive("classification")) {
         return;
     }
+
+    Logger.debug("render classification items");
 
     renderItems(ClassificationModel);
 }
@@ -61,11 +73,11 @@ function renderClassifications() {
  * renders the publication types within the active query
  */
 function renderSubtypes() {
-    Logger.debug("render classification items");
-
     if (!isActive("subtype")) {
         return;
     }
+
+    Logger.debug("render publication types");
 
     renderItems(PubTypeModel);
 }

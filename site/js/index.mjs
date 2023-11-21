@@ -158,8 +158,8 @@ function initTools() {
             if (prevActive) {
                 prevActive.classList.remove("active");
                 menuAnchor.classList.remove("mini");
-                menuAnchor.classList.remove(prevActive.id);
-                closeFuncs[prevActive.id]?.();
+                menuAnchor.classList.remove(prevActive.querySelector("a").id);
+                closeFuncs[prevActive.querySelector("a").id]?.();
             }
 
             menuAnchor.classList.add(ev.target.id);
