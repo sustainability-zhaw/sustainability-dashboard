@@ -92,7 +92,7 @@ function initTools() {
     const mainArea = document.querySelector("#mainarea");
 
     const menuOpenFunctions = {
-        "indexmatcher_menu": () => {
+        "indexmatcher-menu": () => {
             Events.trigger.indexTermData();
             // Events.trigger.queryUpdate();
             Events.trigger.indexTermUpdate(QueryModel.query());
@@ -101,32 +101,32 @@ function initTools() {
                 mainArea.classList.add("indexterms");
             }
         },
-        "bookmark_menu": Events.trigger.bookmarkData,
-        // "settings_menu": () => {},
-        "classification_menu": () => {
+        "bookmark-menu": Events.trigger.bookmarkData,
+        // "settings-menu": () => {},
+        "classification-menu": () => {
             Events.trigger.classificationData();
             Events.trigger.classificationUpdate(QueryModel.query());
         },
-        "subtype_menu": () => {
+        "subtype-menu": () => {
             Events.trigger.subtypeData();
             Events.trigger.subtypeUpdate(QueryModel.query());
         },
-        // "visualisation_menu": () => {}
+        // "visualisation-menu": () => {}
     };
 
     const closeFuncs = {
-        "indexmatcher_menu": () => {
+        "indexmatcher-menu": () => {
             Events.trigger.queryUpdate();
         }
     };
 
     const menus = [
-        "indexmatcher_menu", // Matching terms for the indexer
-        "settings_menu", // Service settings; disabled
-        "bookmark_menu", // User Query Bookmarks; disabled
-        "subtypes_menu", // Publication Types; disabled
-        "classification_menu", // List of classifications
-        "visualisation_menu" // disabled
+        "indexmatcher-menu", // Matching terms for the indexer
+        "settings-menu", // Service settings; disabled
+        "bookmark-menu", // User Query Bookmarks; disabled
+        "subtypes-menu", // Publication Types; disabled
+        "classification-menu", // List of classifications
+        "visualisation-menu" // disabled
     ];
 
     evAnchor.addEventListener("click", (ev) => {
@@ -390,7 +390,7 @@ function handleQueryExtraUpdate() {
 
 // FIXME This should be part of the indexerModel.
 function handleQueryUpdateIndex() {
-    const menuitem = document.querySelector("#indexmatcher_menu");
+    const menuitem = document.querySelector("#indexmatcher-menu");
 
     if(!menuitem.parentNode.classList.contains("active")) {
         return;

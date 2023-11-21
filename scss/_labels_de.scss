@@ -233,15 +233,15 @@
         content: "Zur Datenquelle";
     }
 
-    .menuoverlay.indexmatcher_menu h3::after {
+    .menuoverlay.indexmatcher-menu h3::after {
         content: "Indizierungsbegriffe";
     }
 
-    .menuoverlay.classification_menu h3::after {
+    .menuoverlay.classification-menu h3::after {
         content: "Klassifikationen";
     }
 
-    .menuoverlay.subtypes_menu h3::after {
+    .menuoverlay.subtypes-menu h3::after {
         content: "Publicationstypen";
     }
 }

@@ -28,13 +28,13 @@ export function init(target) {
  * @returns boolean - True if the given type is activ
  */
 export function isActive() {
-    const menuitemCls  = document.querySelector(".active #classification_menu");
+    const menuitemCls  = document.querySelector(".active #classification-menu");
 
     if (menuitemCls) {
         return "classification";
     }
 
-    const menuitemSubT = document.querySelector(".active #classification_menu");
+    const menuitemSubT = document.querySelector(".active #classification-menu");
 
     if (menuitemSubT) {
         return "subtype";
