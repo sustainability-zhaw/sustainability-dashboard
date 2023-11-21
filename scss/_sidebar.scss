@@ -376,6 +376,17 @@
                 grid-column: 4;
             }
         }
+
+        .subtype {
+            display: flex;
+            align-items: flex-start;
+            font-size: 0.9em;
+
+            .type-id-name::after {
+                content: ": ";
+                margin-right: 0.4em;
+            }
+        }
     }
 }
 

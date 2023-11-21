@@ -147,6 +147,7 @@ function initTools() {
                 // close the same menu
                 menuAnchor.setAttribute("hidden", "hidden");
                 menuAnchor.classList.remove("mini");
+                menuAnchor.classList.remove(ev.target.id);
 
                 ev.target.parentNode.classList.remove("active");
 
@@ -157,8 +158,11 @@ function initTools() {
             if (prevActive) {
                 prevActive.classList.remove("active");
                 menuAnchor.classList.remove("mini");
+                menuAnchor.classList.remove(prevActive.id);
                 closeFuncs[prevActive.id]?.();
             }
+
+            menuAnchor.classList.add(ev.target.id);
 
             if (overlaySize && overlaySize.length) {
                 menuAnchor.classList.add(overlaySize);

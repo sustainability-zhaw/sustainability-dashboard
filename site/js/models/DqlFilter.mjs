@@ -406,10 +406,12 @@ function matchSelector(filter, options) {
 function classificationSelector(filter, optionsUnused) {
 
     let xfilter = "";
+    let ofilter = "";
 
     if (filter && filter.length) {
         filter = ` infoobj as var(func: type(InfoObject)) @filter(${filter}) {uid} `;
         xfilter = " @filter(uid_in(PublicationClass.objects, uid(infoobj))) ";
+        ofilter = "  @filter(uid(infoobj))";
     }
 
     Logger.debug(`classification filter: "${filter}"`);
@@ -417,10 +419,10 @@ function classificationSelector(filter, optionsUnused) {
     // TODO: Order by ID
     // TODO: the objects MUST be filtered, too!
     return ` ${filter}
-	classes(func: type(PublicationClass))${xfilter} {
+	classes(func: type(PublicationClass), orderasc: PublicationClass.id)${xfilter} {
 		id: PublicationClass.id
         name: PublicationClass.name
-        obj: PublicationClass.objects @filter(uid(infoobj)) {
+        obj: PublicationClass.objects${ofilter} {
             n: count(uid)
         }
     }`;

@@ -233,4 +233,16 @@
     .tooltip.tooldownload .tooltip-inner::after {
         content: "Access Source";
     }
+
+    .menuoverlay.indexmatcher_menu h3::after {
+        content: "Index Terms";
+    }
+
+    .menuoverlay.classification_menu h3::after {
+        content: "Classifications";
+    }
+
+    .menuoverlay.subtypes_menu h3::after {
+        content: "Publication Types";
+    }
 }
