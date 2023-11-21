@@ -378,13 +378,34 @@
         }
 
         .subtype {
-            display: flex;
-            align-items: flex-start;
-            font-size: 0.9em;
+            display: grid;
+            grid-template-columns: auto 2em;
+            margin-bottom: .3em;
 
-            .type-id-name::after {
-                content: ": ";
-                margin-right: 0.4em;
+            .label {
+                border-top: 1px solid $gray-500;
+                display: flex;
+                grid-column: 1;
+                align-items: flex-start;
+                font-size: 0.9em;
+
+                .type-id-name::after {
+                    content: ": ";
+                    margin-right: 0.4em;
+                }
+            }
+
+            .stat {
+                grid-column: 2;
+                font-size: 0.9em;
+
+                .type-stat {
+                    border-top-right-radius: .5em;
+                    border-bottom-right-radius: .5em;
+                    width: 100%;
+                    background-color: $gray-500;
+                    text-align: center;
+                }
             }
         }
     }
