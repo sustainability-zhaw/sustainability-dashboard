@@ -34,7 +34,7 @@ export function isActive() {
         return "classification";
     }
 
-    const menuitemSubT = document.querySelector(".active #classification-menu");
+    const menuitemSubT = document.querySelector(".active #subtypes-menu");
 
     if (menuitemSubT) {
         return "subtype";
@@ -77,7 +77,7 @@ function renderSubtypes() {
         return;
     }
 
-    Logger.debug("render publication types");
+    Logger.debug("render subtype items");
 
     renderItems(PubTypeModel);
 }

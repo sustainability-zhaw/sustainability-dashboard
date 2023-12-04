@@ -1,9 +1,12 @@
 import * as Logger from "../Logger.mjs";
-// import * as Filter from "./DqlFilter.mjs";
+import * as Filter from "./DqlFilter.mjs";
 import * as Events from "../Events.mjs";
 
 Events.listen.startUserInterface(initUI);
+Events.listen.subtypeUpdate(loadSubtype);
 Events.listen.changeCategory(categoryChange);
+
+const RequestController = new AbortController();
 
 const Model = {
     types: [],
@@ -50,4 +53,29 @@ export function getSubTypes() {
 
 export function getRecords() {
     return Model.records;
+}
+
+/**
+ *
+ * @param {CustomEvent} event - the event payload
+ *
+ * loads the subtype for the present query. The query will be passed
+ * as the event payload.
+ */
+async function loadSubtype(event){
+    const query = event.detail;
+
+    Logger.debug("hello");
+
+    const data = await Filter.subtypeQuery(query, Model.category, RequestController);
+
+    if (data && "subtypes" in data) {
+        Model.records = data.subtypes.map((e) => {
+            e.objects = e.obj[0].n;
+            delete e.obj;
+            return e;
+        });
+
+        Events.trigger.subtypeData();
+    }
 }

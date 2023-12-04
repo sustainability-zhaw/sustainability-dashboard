@@ -107,7 +107,7 @@ function initTools() {
             Events.trigger.classificationData();
             Events.trigger.classificationUpdate(QueryModel.query());
         },
-        "subtype-menu": () => {
+        "subtypes-menu": () => {
             Events.trigger.subtypeData();
             Events.trigger.subtypeUpdate(QueryModel.query());
         },
@@ -334,7 +334,7 @@ function editSearchElement(evt) {
         searchTermElement.value = `${value}`;
     }
     else {
-        searchTermElement.value = `${type === "notterm" ? "not" : type}:${value}`;
+        searchTermElement.value = `${type === "notterm" ? "not" : type === "subtype" ? "type" : type}:${value}`;
         searchTermElement.focus();
     }
 }
