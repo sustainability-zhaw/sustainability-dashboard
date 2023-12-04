@@ -34,7 +34,7 @@ export function isActive() {
         return "classification";
     }
 
-    const menuitemSubT = document.querySelector(".active #classification-menu");
+    const menuitemSubT = document.querySelector(".active #subtypes-menu");
 
     if (menuitemSubT) {
         return "subtype";

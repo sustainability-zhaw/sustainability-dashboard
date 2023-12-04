@@ -3,6 +3,7 @@ import * as Logger from "../Logger.mjs";
 import * as Events from "../Events.mjs";
 
 Events.listen.startUserInterface(initUI);
+Events.listen.subtypeUpdate(loadSubtype);
 Events.listen.changeCategory(categoryChange);
 
 const Model = {
@@ -50,4 +51,16 @@ export function getSubTypes() {
 
 export function getRecords() {
     return Model.records;
+}
+
+/**
+ *
+ * @param {CustomEvent} event - the event payload
+ *
+ * loads the subtype for the present query. The query will be passed
+ * as the event payload.
+ */
+async function loadSubtype(event){
+    Model.records = [{ id: "1", name: "test1", objects: "1" }, { id: "2", name: "test2", objects: "2" }];
+    Events.trigger.subtypeData();
 }

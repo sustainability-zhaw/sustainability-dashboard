@@ -107,7 +107,7 @@ function initTools() {
             Events.trigger.classificationData();
             Events.trigger.classificationUpdate(QueryModel.query());
         },
-        "subtype-menu": () => {
+        "subtypes-menu": () => {
             Events.trigger.subtypeData();
             Events.trigger.subtypeUpdate(QueryModel.query());
         },
