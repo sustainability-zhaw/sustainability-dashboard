@@ -77,7 +77,7 @@ function renderSubtypes() {
         return;
     }
 
-    Logger.debug("render publication types");
+    Logger.debug("render subtype items");
 
     renderItems(PubTypeModel);
 }

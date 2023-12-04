@@ -140,6 +140,16 @@ export function classificationQuery(queryObj, category, RequestController) {
     );
 }
 
+export function subtypeQuery(queryObj, category, RequestController) {
+    return buildAndFetch(
+        queryObj,
+        "InfoObject",
+        RequestController,
+        subtypeSelector,
+        {category}
+    );
+}
+
 function buildFilter(queryObj, refType) {
     if (!queryObj) {
         return {};
@@ -433,6 +443,47 @@ function classificationSelector(filter, options) {
 		id: PublicationClass.id
         name: PublicationClass.name
         obj: PublicationClass.objects${ofilter} {
+            n: count(uid)
+        }
+    }`;
+}
+
+/**
+ * Selector to load subtype of a project or publication
+ *
+ * @param {*} filter - filter terms to be added to the query
+ * @param {*} options - unused
+ */
+function subtypeSelector(filter, options) {
+    const {category} = options || {};
+
+    let xfilter = "";
+    let ofilter = "";
+
+    if (filter && filter.length) {
+        filter = ` infoobj as var(func: type(InfoObject)) @filter(uid_in(InfoObject.category, uid(categ)) and ${filter}) {uid} `;
+    }
+    else {
+        filter = " infoobj as var(func: type(InfoObject)) @filter(uid_in(InfoObject.category, uid(categ))) {uid} ";
+    }
+    xfilter = " @filter(uid_in(InfoObjectSubType.objects, uid(infoobj))) ";
+    ofilter = "  @filter(uid(infoobj))";
+
+    Logger.debug(`subtype filter: "${filter}"`);
+
+    // TODO: Order by ID
+    // TODO: the objects MUST be filtered, too!
+    return `
+    categ as var(func: type(InfoObjectType)) @filter(eq(InfoObjectType.name, ${JSON.stringify(category)})) {
+        uid
+    }
+
+    ${filter}
+
+	subtypes(func: type(InfoObjectSubType), orderasc: InfoObjectSubType.name)${xfilter} {
+		id: uid
+        name: InfoObjectSubType.name
+        obj: InfoObjectSubType.objects${ofilter} {
             n: count(uid)
         }
     }`;

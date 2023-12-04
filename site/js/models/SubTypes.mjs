@@ -1,10 +1,12 @@
 import * as Logger from "../Logger.mjs";
-// import * as Filter from "./DqlFilter.mjs";
+import * as Filter from "./DqlFilter.mjs";
 import * as Events from "../Events.mjs";
 
 Events.listen.startUserInterface(initUI);
 Events.listen.subtypeUpdate(loadSubtype);
 Events.listen.changeCategory(categoryChange);
+
+const RequestController = new AbortController();
 
 const Model = {
     types: [],
@@ -61,6 +63,19 @@ export function getRecords() {
  * as the event payload.
  */
 async function loadSubtype(event){
-    Model.records = [{ id: "1", name: "test1", objects: "1" }, { id: "2", name: "test2", objects: "2" }];
-    Events.trigger.subtypeData();
+    const query = event.detail;
+
+    Logger.debug("hello");
+
+    const data = await Filter.subtypeQuery(query, Model.category, RequestController);
+
+    if (data && "subtypes" in data) {
+        Model.records = data.subtypes.map((e) => {
+            e.objects = e.obj[0].n;
+            delete e.obj;
+            return e;
+        });
+
+        Events.trigger.subtypeData();
+    }
 }
