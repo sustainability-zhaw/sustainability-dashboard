@@ -481,7 +481,7 @@ function subtypeSelector(filter, options) {
     ${filter}
 
 	subtypes(func: type(InfoObjectSubType), orderasc: InfoObjectSubType.name)${xfilter} {
-		id: uid
+        id: uid
         name: InfoObjectSubType.name
         obj: InfoObjectSubType.objects${ofilter} {
             n: count(uid)
