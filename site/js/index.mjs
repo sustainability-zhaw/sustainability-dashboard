@@ -334,7 +334,7 @@ function editSearchElement(evt) {
         searchTermElement.value = `${value}`;
     }
     else {
-        searchTermElement.value = `${type === "notterm" ? "not" : type}:${value}`;
+        searchTermElement.value = `${type === "notterm" ? "not" : type === "subtype" ? "type" : type}:${value}`;
         searchTermElement.focus();
     }
 }
