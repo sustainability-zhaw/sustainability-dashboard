@@ -103,19 +103,21 @@ function renderItems(model) {
         result.querySelector(".type-stat").textContent = rec.objects;
 
         switch (isActive()) {
-            case "subtype":
-                result.querySelector(".type-id-name").textContent = "";
-                break;
+                case "subtype":
+                    result.querySelector(".type-id-name").textContent = "";
+                    break;
+                default: /** noop */
         }
 
         result.querySelector(".subtype").addEventListener("click", () => {
             switch(isActive()) {
-                case "subtype":
-                    Events.trigger.queryAddItem({ type: "type", value: rec.name });
-                    break;
-                case "classification":
-                    Events.trigger.queryAddItem({ type: "classification", value: rec.name });
-                    break;
+                    case "subtype":
+                        Events.trigger.queryAddItem({ type: "type", value: rec.name });
+                        break;
+                    case "classification":
+                        Events.trigger.queryAddItem({ type: "classification", value: rec.name });
+                        break;
+                    default: /** noop */
             }
         });
 
