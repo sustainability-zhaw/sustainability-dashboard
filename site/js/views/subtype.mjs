@@ -102,6 +102,9 @@ function renderItems(model) {
         result.querySelector(".type-id-name").textContent = rec.id;
         result.querySelector(".type-text").textContent = rec.name || "";
         result.querySelector(".type-stat").textContent = rec.objects;
+        result.querySelector(".subtype").addEventListener("click", () => {
+            Events.trigger.queryAddItem({ type: "type", value: rec.name });
+        });
 
         acc.container.appendChild(result);
         return acc;
