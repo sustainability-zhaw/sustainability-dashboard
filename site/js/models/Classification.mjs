@@ -9,17 +9,43 @@ Events.listen.changeCategory(categoryChange);
 
 const RequestController = new AbortController();
 
-async function initUI() {
-    // fetch all substypes from Database
-}
-
 const Model = {
     category: "",
+    clssifications: [],
     records: []
 };
 
 function categoryChange(ev) {
     Model.category = ev.detail.category;
+}
+
+async function initUI() {
+    Logger.debug("Classification fetch: Initializing classifications");
+    const response = await fetch("/api", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            query: `{
+                queryPublicationClass {
+                    name
+                }
+            }`
+        })
+    });
+
+    if (!response.ok) {
+        console.error("Classification fetch: Server responded with ", response.status);
+        return;
+    }
+
+    try {
+        const result = await response.json();
+
+        Model.clssifications = result.data.queryPublicationClass.map(classification => classification.name);
+    }
+    catch (error) {
+        console.error("Classification fetch:", error);
+    }
 }
 
 /**
@@ -31,6 +57,10 @@ function categoryChange(ev) {
  */
 export function getRecords() {
     return Model.records;
+}
+
+export function getClassifications() {
+    return Model.clssifications;
 }
 
 /**

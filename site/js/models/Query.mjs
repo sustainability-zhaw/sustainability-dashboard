@@ -4,6 +4,7 @@ import * as Events from "../Events.mjs";
 
 import * as IdxView from "../views/indexterms.mjs";
 import * as SubTypeModel from "../models/SubTypes.mjs";
+import * as ClassificationModel from "../models/Classification.mjs";
 
 Events.listen.queryAddItem(add);
 Events.listen.queryClear(clear);
@@ -76,13 +77,15 @@ const validators = {
     term: validateTerm,
     notterm: validateTerm,
     subtype: validateSubType,
+    classification: validateClassification,
 };
 
 const queryTypes = {
     dept: "department",
     language: "lang",
     not: "notterm",
-    type: "subtype"
+    type: "subtype",
+    classification: "classification",
 };
 
 function categoryChange(ev) {
@@ -187,6 +190,22 @@ function validateSubType(query) {
     return query;
 }
 
+function validateClassification(query) {
+    const message = "No classification found. Please add a classification.";
+
+    if (validateEmpty(query)) {
+        Events.trigger.queryError({message});
+        return 0;
+    }
+
+    if (!ClassificationModel.getClassifications().includes(query)) {
+        Events.trigger.queryError({message: "Invalid classification", id: "invalidclassification"});
+        return 0;
+    }
+
+    return query;
+}
+
 function validateType(type) {
     type = type.toLowerCase();
 
@@ -204,7 +223,8 @@ function validateType(type) {
         "term",
         "notterm",
         "not",
-        "type"
+        "type",
+        "classification"
     ].includes(type)) {
         Logger.debug(message);
         Events.trigger.queryError({message, id: "invalidtype"});
@@ -319,6 +339,7 @@ function collectQueryTerms(query) {
         lang: collectType(query, "lang"),
         notterms: collectType(query, "notterm"),
         subtypes: collectType(query, "subtype"),
+        classifications: collectType(query, "classification"),
     };
 }
 
@@ -331,6 +352,7 @@ function countQueryTerms(query) {
         lang: collectType(query, "lang").length,
         notterms: collectType(query, "notterm").length,
         subtypes: collectType(query, "subtype").length,
+        classifications: collectType(query, "classification").length,
     };
 }
 
@@ -350,7 +372,8 @@ function checkMathingTerm(query) {
         qterms.notterms > 1 ||
         qterms.terms === 0 ||
         qterms.terms > 2 ||
-        qterms.subtypes
+        qterms.subtypes ||
+        qterms.classifications
     ) {
         Events.trigger.invalidMatchingTerm();
         return;
