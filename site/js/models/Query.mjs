@@ -77,7 +77,7 @@ const validators = {
     term: validateTerm,
     notterm: validateTerm,
     subtype: validateSubType,
-    classification: validateClassification,
+    class: validateClassification,
 };
 
 const queryTypes = {
@@ -85,7 +85,7 @@ const queryTypes = {
     language: "lang",
     not: "notterm",
     type: "subtype",
-    class: "classification",
+    classification: "class",
 };
 
 function categoryChange(ev) {
@@ -340,7 +340,7 @@ function collectQueryTerms(query) {
         lang: collectType(query, "lang"),
         notterms: collectType(query, "notterm"),
         subtypes: collectType(query, "subtype"),
-        classifications: collectType(query, "classification"),
+        classifications: collectType(query, "class"),
     };
 }
 
@@ -353,7 +353,7 @@ function countQueryTerms(query) {
         lang: collectType(query, "lang").length,
         notterms: collectType(query, "notterm").length,
         subtypes: collectType(query, "subtype").length,
-        classifications: collectType(query, "classification").length,
+        classifications: collectType(query, "class").length,
     };
 }
 
