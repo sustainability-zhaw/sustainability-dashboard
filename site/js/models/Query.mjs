@@ -76,7 +76,7 @@ const validators = {
     lang: validateLang,
     term: validateTerm,
     notterm: validateTerm,
-    subtype: validateSubType,
+    type: validateSubType,
     class: validateClassification,
 };
 
@@ -84,7 +84,7 @@ const queryTypes = {
     dept: "department",
     language: "lang",
     not: "notterm",
-    type: "subtype",
+    type: "type",
     classification: "class",
 };
 
@@ -339,7 +339,7 @@ function collectQueryTerms(query) {
         terms: collectType(query, "term"),
         lang: collectType(query, "lang"),
         notterms: collectType(query, "notterm"),
-        subtypes: collectType(query, "subtype"),
+        subtypes: collectType(query, "type"),
         classifications: collectType(query, "class"),
     };
 }
@@ -352,7 +352,7 @@ function countQueryTerms(query) {
         terms: collectType(query, "term").length,
         lang: collectType(query, "lang").length,
         notterms: collectType(query, "notterm").length,
-        subtypes: collectType(query, "subtype").length,
+        subtypes: collectType(query, "type").length,
         classifications: collectType(query, "class").length,
     };
 }
