@@ -195,6 +195,13 @@ function buildFilter(queryObj, refType) {
         aFilter.push(`(${orFilter.join(" or ")})`);
     }
 
+    if (queryObj.classifications && queryObj.classifications.length) {
+        queryObj.classifications.forEach((t, i) => {
+            aFilter.push(`uid_in(InfoObject.class, uid(ch${i}))`);
+            aHandler.push(`ch${i} as var(func: type(PublicationClass)) @filter(eq(PublicationClass.id, ${t})) { uid }`);
+        });
+    }
+
     if (refType === "SdgMatch") {
         const tf = buildMatchTermFilter(queryObj);
 
