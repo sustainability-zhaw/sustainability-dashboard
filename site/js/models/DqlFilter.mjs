@@ -198,7 +198,7 @@ function buildFilter(queryObj, refType) {
     if (queryObj.classifications && queryObj.classifications.length) {
         queryObj.classifications.forEach((t, i) => {
             aFilter.push(`uid_in(InfoObject.class, uid(ch${i}))`);
-            aHandler.push(`ch${i} as var(func: type(PublicationClass)) @filter(eq(PublicationClass.name, ${t})) { uid }`);
+            aHandler.push(`ch${i} as var(func: type(PublicationClass)) @filter(eq(PublicationClass.id, ${t})) { uid }`);
         });
     }
 

@@ -111,7 +111,7 @@ function renderItems(model) {
                 Events.trigger.queryAddItem({ type: "type", value: rec.name });
             }
             else if (isActive() === "classification") {
-                Events.trigger.queryAddItem({ type: "classification", value: rec.name });
+                Events.trigger.queryAddItem({ type: "class", value: rec.id });
             }
         });
 

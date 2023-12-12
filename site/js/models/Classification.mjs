@@ -27,7 +27,7 @@ async function initUI() {
         body: JSON.stringify({
             query: `{
                 queryPublicationClass {
-                    name
+                    id
                 }
             }`
         })
@@ -41,7 +41,7 @@ async function initUI() {
     try {
         const result = await response.json();
 
-        Model.clssifications = result.data.queryPublicationClass.map(classification => classification.name);
+        Model.clssifications = result.data.queryPublicationClass.map(classification => classification.id);
     }
     catch (error) {
         console.error("Classification fetch:", error);

@@ -85,7 +85,7 @@ const queryTypes = {
     language: "lang",
     not: "notterm",
     type: "subtype",
-    classification: "classification",
+    class: "classification",
 };
 
 function categoryChange(ev) {
@@ -224,6 +224,7 @@ function validateType(type) {
         "notterm",
         "not",
         "type",
+        "class",
         "classification"
     ].includes(type)) {
         Logger.debug(message);
