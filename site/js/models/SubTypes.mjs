@@ -11,6 +11,7 @@ const RequestController = new AbortController();
 const Model = {
     types: [],
     records: [],
+    remainingRecords: [],
     category: ""
 };
 
@@ -55,6 +56,10 @@ export function getRecords() {
     return Model.records;
 }
 
+export function getRemainingRecords() {
+    return Model.remainingRecords;
+}
+
 /**
  *
  * @param {CustomEvent} event - the event payload
@@ -75,6 +80,22 @@ async function loadSubtype(event){
             delete e.obj;
             return e;
         });
+
+        if (query.subtypes.length) {
+            const unfiltered = await Filter.subtypeQuery({ ...query, subtypes: [] }, Model.category, RequestController)
+            Model.remainingRecords = unfiltered.subtypes.map((e) => {
+                e.objects = e.obj[0].n;
+                delete e.obj;
+                return e;
+            });
+            Model.remainingRecords = Model.remainingRecords
+                .filter(rr => !Model.records.find(r => rr.id === r.id));
+        }
+        else {
+            Model.remainingRecords = [];
+        }
+
+        console.log(Model);
 
         Events.trigger.subtypeData();
     }

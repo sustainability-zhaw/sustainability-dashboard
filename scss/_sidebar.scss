@@ -411,6 +411,12 @@
                     line-height: 1.3rem;
                 }
             }
+
+            &--remaining {
+                .label {
+                    color: gray;
+                }
+            }
         }
     }
 }

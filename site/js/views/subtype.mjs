@@ -119,6 +119,31 @@ function renderItems(model) {
         return acc;
     }, {template, container});
 
+    for (const rec of model.getRemainingRecords()) {
+        const result = template.content.cloneNode(true);
+
+        result.querySelector(".subtype").id = "stype-" + rec.id;
+        result.querySelector(".subtype").classList.add("subtype--remaining");
+        result.querySelector(".type-id-name").textContent = rec.id;
+        result.querySelector(".type-text").textContent = rec.name || "";
+        result.querySelector(".type-stat").textContent = rec.objects;
+
+        if (isActive() === "subtype") {
+            result.querySelector(".type-id-name").textContent = "";
+        }
+
+        result.querySelector(".subtype").addEventListener("click", () => {
+            if (isActive() === "subtype") {
+                Events.trigger.queryAddItem({ type: "type", value: rec.name });
+            }
+            else if (isActive() === "classification") {
+                Events.trigger.queryAddItem({ type: "class", value: rec.id });
+            }
+        });
+
+        container.appendChild(result);
+    }
+
 }
 
 /**
