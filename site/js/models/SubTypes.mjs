@@ -82,7 +82,8 @@ async function loadSubtype(event){
         });
 
         if (query.subtypes.length) {
-            const unfiltered = await Filter.subtypeQuery({ ...query, subtypes: [] }, Model.category, RequestController)
+            const unfiltered = await Filter.subtypeQuery({ ...query, subtypes: [] }, Model.category, RequestController);
+
             Model.remainingRecords = unfiltered.subtypes.map((e) => {
                 e.objects = e.obj[0].n;
                 delete e.obj;
