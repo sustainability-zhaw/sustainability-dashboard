@@ -16,6 +16,7 @@ import * as StatsView from "./views/stats.mjs";
 import * as RecordsView from "./views/records.mjs";
 import * as QueryView from "./views/query.mjs";
 import * as SubTypeView from "./views/subtype.mjs";
+import * as SettingsView from "./views/settings.mjs";
 
 // pull up the System with a basic configuration
 Events.listen.queryUpdate(handleQueryUpdate);
@@ -111,6 +112,9 @@ function initTools() {
             Events.trigger.subtypeData();
             Events.trigger.subtypeUpdate(QueryModel.query());
         },
+        "settings-menu": () => {
+            Events.trigger.settingsShow();
+        }
         // "visualisation-menu": () => {}
     };
 
@@ -310,6 +314,7 @@ function addSearchElement() {
     IndexOverlayView.init(sidebarelement);
     StatsView.init(sidebarelement);
     SubTypeView.init(sidebarelement);
+    SettingsView.init(sidebarelement);
 }
 
 function editSearchElement(evt) {

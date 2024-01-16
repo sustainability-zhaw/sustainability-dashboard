@@ -248,4 +248,12 @@
     .menuoverlay.subtypes-menu h3::after {
         content: "Publicationstypen";
     }
+
+    .menuoverlay.settings-menu h3::after {
+        content: "Einstellungen";
+    }
+
+    .menuoverlay .settings-clear-index::after {
+        content: "Index leeren";
+    }
 }

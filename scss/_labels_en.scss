@@ -249,4 +249,12 @@
     .menuoverlay.subtypes-menu h3::after {
         content: "Publication Types";
     }
+
+    .menuoverlay.settings-menu h3::after {
+        content: "Settings";
+    }
+
+    .menuoverlay .settings-clear-index::after {
+        content: "Clear index";
+    }
 }
