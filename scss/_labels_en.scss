@@ -254,7 +254,25 @@
         content: "Settings";
     }
 
-    .menuoverlay .settings-clear-index::after {
-        content: "Clear index";
+    .settings{
+        .settings-label.lang::before {
+            content: "Interface Language";
+        }
+
+        .settings-label.clearindex::before {
+            content: "Indexmanagement";
+        }
+
+        .settings-clear-index::after {
+            content: "Reindex";
+        }
+
+        .settings-label.graphiql::before {
+            content: "Developer";
+        }
+
+        .settings-graphiql::before {
+            content: "Editor";
+        }
     }
 }

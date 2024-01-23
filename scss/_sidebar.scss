@@ -420,10 +420,23 @@
         }
 
         .settings {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
+            .settings.row {
+                margin-bottom: 1em; 
+            }
         }
+        // .settings {
+        //     display: flex;
+        //     flex-direction: column;
+        //     gap: 1rem;
+
+        //     // .settings-row {
+        //     //     & > div {
+        //     //         display: flex;
+        //     //         flex-direction: row;
+        //     //         gap: 1rem;
+        //     //     }
+        //     // }
+        // }
     }
 }
 

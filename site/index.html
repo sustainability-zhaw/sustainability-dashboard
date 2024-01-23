@@ -328,16 +328,37 @@
     </template>
 
     <template id="templateSettingsMenu">
-        <div class="settings">
-            <div class="btn-group settings-lang" role="group" aria-label="Language selection group">
-                <input type="radio" class="btn-check" name="lang" id="settings-lang-de" value="de" autocomplete="off">
-                <label class="btn btn-outline-primary" for="settings-lang-de">DE</label>
-            
-                <input type="radio" class="btn-check" name="lang" id="settings-lang-en" value="en" autocomplete="off">
-                <label class="btn btn-outline-primary" for="settings-lang-en">EN</label>
+        <div class="settings container">
+            <div class="settings row">
+                <div class="col-1 bi bi-flag"></div>
+                <div class="col-7 settings-label lang">
+                </div>
+                <div class="col settings-tool"> 
+                    <div class="btn-group btn-group-sm settings-lang" role="group" aria-label="Language selection group">
+                        <input type="radio" class="btn-check" name="lang" id="settings-lang-de" value="de" autocomplete="off">
+                        <label class="btn btn-outline-primary" for="settings-lang-de">DE</label>
+                        <input type="radio" class="btn-check" name="lang" id="settings-lang-en" value="en" autocomplete="off">
+                        <label class="btn btn-outline-primary" for="settings-lang-en">EN</label>
+                    </div>
+                </div>
             </div>
-            <button class="btn btn-danger settings-clear-index"></button>
-            <a class="btn btn-link settings-graphiql" href="/graphiql/" target="_blank">Graphiql</a>
+            <div class="settings row">
+                <i class="col-1 bi bi-exclamation-triangle"></i>
+                <div class="col-7 settings-label clearindex">
+                </div>
+                <div class="col settings-tool">
+                    <button class="btn btn-sm btn-danger settings-clear-index" disabled></button>
+                </div>
+            </div>
+
+            <div class="settings row">
+                <div class="col-1 bi bi-tools"></div> 
+                <div class="col-7 settings-label graphiql">
+                </div>
+                <div class="col settings-tool">
+                    <a class="btn btn-sm btn-outline-primary settings-graphiql" href="/graphiql/" target="_blank"></a>
+                </div>
+            </div>
         </div>
     </template>
     </body>
