@@ -43,9 +43,9 @@ jobs:
       # https://github.com/docker/setup-qemu-action
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
       - name: setup dependencies
         run: npm ci
       - name: Build site assets
