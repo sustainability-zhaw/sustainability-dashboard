@@ -33,7 +33,9 @@ const events = [
     "subtypeData",
     "subtypeUpdate",
     "changeCategory",
-    "settingsShow"
+    "settingsShow",
+    "settingsReindex",
+    "settingsReindexDone",
 ];
 
 export const trigger = events.reduce((a, e) => {

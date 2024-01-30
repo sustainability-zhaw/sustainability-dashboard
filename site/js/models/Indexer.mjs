@@ -12,12 +12,30 @@ const Model = {
     query: ""
 };
 
+const urlReindex = "/clearindex/clearall";
+
 const RequestController = new AbortController();
 
 Events.listen.indexTermCreate(createRecord);
 Events.listen.indexTermDelete(deleteRecord);
 Events.listen.indexTermUpdate(loadData);
 Events.listen.queryUpdate(selectRecords);
+
+Events.listen.settingsReindex(handleReindexing);
+
+async function handleReindexing() {
+    console.log("reindexing start");
+    const result = await fetch(urlReindex);
+
+    if (result.status !== 200) {
+        console.log("reindexing failed");
+        return;
+    }
+
+    console.log("reindexing done");
+
+    Events.trigger.settingsReindexDone();
+}
 
 /**
  * returns the list of records for the UI
