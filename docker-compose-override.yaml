@@ -1,0 +1,9 @@
+services:
+  sustainability-dashboard:
+    volumes: 
+      # https://docs.docker.com/compose/multiple-compose-files/merge/
+      # All paths in the files are relative to the base compose file
+      # (the first one specified). In our case the case is in 
+      # sustainability-zhaw/integration-tests/docker-compose.yml
+      - ../sustainability-dashboard/site:/usr/share/caddy
+ 
