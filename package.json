@@ -36,7 +36,7 @@
   "dependencies": {
     "@popperjs/core": "2.11.8",
     "bootstrap": "5.2.3",
-    "bootstrap-icons": "1.10.3"
+    "bootstrap-icons": "1.11.3"
   },
   "devDependencies": {
     "@eslint/js": "8.57.0",
