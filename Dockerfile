@@ -1,5 +1,5 @@
 # Create runtime (public) container
-FROM caddy:2.6.2
+FROM caddy:2.10.0
 
 LABEL maintainer="phish108 <cpglahn@gmail.com>"
 LABEL org.opencontainers.image.source="https://github.com/dxiai/sustainability-dashboard"
